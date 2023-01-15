@@ -4,6 +4,7 @@ import { open, close, getEvents, render, clear, getScreen } from 'zic_node_ui';
 import { sequence } from './components/sequence';
 import { color } from './style';
 import { config } from './config';
+import { Track } from './track';
 
 const screenFile = 'screen.json';
 
@@ -83,11 +84,22 @@ const patterns = [
     ]},
 ];
 
+const tracks: Track[] = [
+{ id: 0, name: 'Kick' },
+{ id: 1, name: 'PD' },
+{ id: 2, name: 'Synth' },
+{ id: 3, name: 'Bass' },
+{ id: 4, name: 'Midi1' },
+{ id: 5, name: 'Midi2' },
+{ id: 6, name: 'Pad' },
+{ id: 7, name: 'Drone' },
+];
+
 const playing = [4, 7, 8, 10];
 for (let id = 0; id < 21; id++) {
     const pattern = patterns[Math.floor(Math.random() * patterns.length)];
     sequence(id, {
-        track: Math.floor(Math.random() * 8),
+        track: tracks[Math.floor(Math.random() * 8)],
         selected: id === 2,
         playing: playing.includes(id),
         detune: 0,

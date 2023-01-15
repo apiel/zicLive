@@ -29,6 +29,12 @@ export const color = {
 };
 
 export const font = {
-    bold: '/usr/share/fonts/truetype/padauk/Padauk-Bold.ttf',
-    regular: '/usr/share/fonts/truetype/padauk/Padauk-Regular.ttf',
+    // bold: '/usr/share/fonts/truetype/padauk/Padauk-Bold.ttf',
+    // regular: '/usr/share/fonts/truetype/padauk/Padauk-Regular.ttf',
+
+    // bold: '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf',
+    // regular: '/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+
+    bold: '/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
+    regular: '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
 }

@@ -2,6 +2,7 @@ import { drawFilledRect, drawLine, drawRect, drawText, Point, setColor } from 'z
 import { color, font } from '../style';
 import { config } from '../config';
 import { Pattern } from '../pattern';
+import { Track } from '../track';
 
 const windowPadding = 1;
 const margin = 1;
@@ -9,7 +10,7 @@ const col = 4;
 const size = { w: config.screen.size.w / col - margin, h: 40 };
 
 interface Props {
-    track: number;
+    track: Track;
     selected: boolean;
     playing: boolean;
     detune: number;
@@ -32,9 +33,9 @@ export function sequence(id: number, props: Props) {
     }
 
     drawText(
-        `${id + 1}`,
+        `${id + 1} ${props.track.name}`,
         { x: position.x + 2, y: position.y + 1 },
-        { color: color.tracks[props.track], size: 10, font: font.bold },
+        { color: color.tracks[props.track.id], size: 10, font: font.bold },
     );
 
     renderPattern({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.playing);
@@ -42,7 +43,7 @@ export function sequence(id: number, props: Props) {
 
 function renderPattern(position: Point, pattern: Pattern, playing: boolean) {
     setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
-    const stepWidth = size.w / pattern.stepCount;
+    const stepWidth = (size.w - 2) / pattern.stepCount;
     const notes = pattern.steps.flatMap((voices) => voices.map(({ note }) => note));
     const noteMin = Math.min(...notes);
     const noteRange = Math.max(...notes) - noteMin;
@@ -74,7 +75,7 @@ function renderPattern(position: Point, pattern: Pattern, playing: boolean) {
                     y: position.y + ((note - noteMin) / noteRange) * (size.h - 20),
                 };
                 const point2 = {
-                    x: point1.x + stepWidth - 1,
+                    x: point1.x + stepWidth - 2,
                     y: point1.y,
                 };
                 drawLine(point1, point2);

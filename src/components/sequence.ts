@@ -37,45 +37,48 @@ export function sequence(id: number, props: Props) {
         { color: color.tracks[props.track], size: 10, font: font.bold },
     );
 
-    renderPattern({ x: position.x + 2, y: position.y + 15 }, props.pattern);
+    renderPattern({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.playing);
 }
 
-function renderPattern(position: Point, pattern: Pattern) {
-    setColor(color.sequencer.pattern);
+function renderPattern(position: Point, pattern: Pattern, playing: boolean) {
+    setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
     const stepWidth = size.w / pattern.stepCount;
     const notes = pattern.steps.flatMap((voices) => voices.map(({ note }) => note));
     const noteMin = Math.min(...notes);
     const noteRange = Math.max(...notes) - noteMin;
 
-    for (let step = 0; step < pattern.stepCount; step++) {
-        const voices = pattern.steps[step];
-        for (let voice = 0; voice < voices.length; voice++) {
-            const { note } = voices[voice];
-            const point1 = {
-                x: position.x + step * stepWidth,
-                y: position.y + (note - noteMin) / noteRange * size.h,
-            };
-            const point2 = {
-                x: point1.x + stepWidth,
-                y: point1.y,
-            };
-            drawLine(point1, point2);
+    if (noteRange === 0) {
+        for (let step = 0; step < pattern.stepCount; step++) {
+            const voices = pattern.steps[step];
+            for (let voice = 0; voice < voices.length; voice++) {
+                const rect = {
+                    position: {
+                        x: position.x + step * stepWidth,
+                        y: position.y + 10,
+                    },
+                    size: {
+                        w: stepWidth - 1,
+                        h: 5,
+                    },
+                };
+                drawFilledRect(rect);
+            }
+        }
+    } else {
+        for (let step = 0; step < pattern.stepCount; step++) {
+            const voices = pattern.steps[step];
+            for (let voice = 0; voice < voices.length; voice++) {
+                const { note } = voices[voice];
+                const point1 = {
+                    x: position.x + step * stepWidth,
+                    y: position.y + ((note - noteMin) / noteRange) * size.h,
+                };
+                const point2 = {
+                    x: point1.x + stepWidth,
+                    y: point1.y,
+                };
+                drawLine(point1, point2);
+            }
         }
     }
-
-    // for (let step = 0; step < pattern.stepCount; step++) {
-    //     const stepPosition = { x: position.x + step * stepSize.w, y: position.y };
-    //     drawRect({ position: stepPosition, size: stepSize });
-    //     const notes = pattern.steps[step];
-    //     if (notes.length > 0) {
-    //         const noteSize = { w: stepSize.w, h: stepSize.h / notes.length };
-    //         for (let note = 0; note < notes.length; note++) {
-    //             const notePosition = {
-    //                 x: stepPosition.x,
-    //                 y: stepPosition.y + note * noteSize.h,
-    //             };
-    //             drawFilledRect({ position: notePosition, size: noteSize });
-    //         }
-    //     }
-    // }
 }

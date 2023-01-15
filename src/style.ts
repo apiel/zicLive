@@ -7,7 +7,11 @@ export const color = {
     sequencer: {
         selected: { r: 150, g: 150, b: 150 },
         playing: rgb('#42454A'),
-        pattern: rgb('#595f6b')
+        pattern: {
+            playing: rgb('#595f6b'),
+            waiting: rgb('#3f444e'),
+        } 
+        
     },
     tracks: [
         rgb('#0d6efd'),

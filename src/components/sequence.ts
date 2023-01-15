@@ -1,5 +1,5 @@
-import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
-import { color } from '../style';
+import { drawFilledRect, drawRect, drawText, setColor } from 'zic_node_ui';
+import { color, font } from '../style';
 import { config } from '../config';
 
 const windowPadding = 1;
@@ -7,7 +7,13 @@ const margin = 1;
 const col = 4;
 const size = { w: config.screen.size.w / col - margin, h: 40 };
 
-export function sequence(id: number) {
+interface Props {
+    track: number;
+    selected: boolean;
+    playing: boolean;
+}
+
+export function sequence(id: number, props: Props) {
     setColor(color.foreground);
     const position = {
         x: windowPadding + (margin + size.w) * (id % col),
@@ -15,7 +21,14 @@ export function sequence(id: number) {
     };
     drawFilledRect({ position, size });
 
-    setColor(color.tracks[id % 5]);
-    drawFilledRect({ position: { x: position.x + 2, y: position.y + 2 }, size: { w: 14, h: 12 } });
-    drawText(`${id + 1}`, { x: position.x + 2, y: position.y + 1 }, { color: color.white, size: 10 });
+    if (props.selected) {
+        setColor(color.sequencer.selected);
+        drawRect({ position, size });
+    }
+
+    drawText(
+        `${id + 1}`,
+        { x: position.x + 2, y: position.y + 1 },
+        { color: color.tracks[props.track], size: 10, font: font.bold },
+    );
 }

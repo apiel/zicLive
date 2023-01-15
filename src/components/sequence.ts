@@ -71,10 +71,10 @@ function renderPattern(position: Point, pattern: Pattern, playing: boolean) {
                 const { note } = voices[voice];
                 const point1 = {
                     x: position.x + step * stepWidth,
-                    y: position.y + ((note - noteMin) / noteRange) * size.h,
+                    y: position.y + ((note - noteMin) / noteRange) * (size.h - 20),
                 };
                 const point2 = {
-                    x: point1.x + stepWidth,
+                    x: point1.x + stepWidth - 1,
                     y: point1.y,
                 };
                 drawLine(point1, point2);

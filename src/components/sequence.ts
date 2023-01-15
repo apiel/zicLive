@@ -11,6 +11,11 @@ interface Props {
     track: number;
     selected: boolean;
     playing: boolean;
+    detune: number;
+    nextSequenceId: number;
+    repeat: number;
+    patternId: number;
+    pattern: [];
 }
 
 export function sequence(id: number, props: Props) {
@@ -25,6 +30,12 @@ export function sequence(id: number, props: Props) {
         setColor(color.sequencer.selected);
         drawRect({ position, size });
     }
+
+    // setColor(props.playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
+    // const patternRect = { position :{...position}, size: {...size} };
+    // patternRect.position.y += 15;
+    // patternRect.size.h -= 15;
+    // drawFilledRect(patternRect);
 
     drawText(
         `${id + 1}`,

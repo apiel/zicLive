@@ -2,10 +2,11 @@ import { rgb } from 'zic_node_ui';
 
 export const color = {
     background: rgb('#21252b'),
-    foreground: rgb('#42454A'),
+    foreground: rgb('#2b2c2e'),
     white: { r: 255, g: 255, b: 255 },
     sequencer: {
         selected: { r: 150, g: 150, b: 150 },
+        playing: rgb('#42454A'),
     },
     tracks: [
         rgb('#0d6efd'),

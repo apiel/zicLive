@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function sequence(id: number, props: Props) {
-    setColor(color.foreground);
+    setColor(props.playing ? color.sequencer.playing: color.foreground);
     const position = {
         x: windowPadding + (margin + size.w) * (id % col),
         y: windowPadding + (margin + size.h) * Math.floor(id / col),

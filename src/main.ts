@@ -22,16 +22,43 @@ if (screenConfig) {
 
 clear(color.background);
 
+const patterns = [
+    {id: 0, stepCount: 4, steps: [
+        [{note: 60, velocity: 100, tie: false}],
+        [],
+        [{note: 60, velocity: 100, tie: false}],
+        [],
+    ]},
+    {id: 1, stepCount: 16, steps: [
+        [{note: 60, velocity: 100, tie: false}],
+        [{note: 62, velocity: 100, tie: false}],
+        [{note: 64, velocity: 100, tie: false}],
+        [{note: 65, velocity: 100, tie: false}],
+        [],
+        [],
+        [{note: 60, velocity: 100, tie: false}],
+        [{note: 54, velocity: 100, tie: false}],
+        [],
+        [],
+        [{note: 58, velocity: 100, tie: false}],
+        [],
+        [{note: 60, velocity: 100, tie: false}],
+        [],
+        [{note: 60, velocity: 100, tie: false}],
+        [{note: 60, velocity: 100, tie: false}],
+    ]},
+];
+
 const playing = [4, 7, 8, 10];
 for (let id = 0; id < 21; id++) {
+    const pattern = patterns[Math.floor(Math.random() * patterns.length)];
     sequence(id, {
         track: Math.floor(Math.random() * 8),
         selected: id === 2,
         playing: playing.includes(id),
         detune: 0,
         repeat: 0,
-        patternId: 0,
-        pattern: [],
+        pattern,
     });
 }
 render();

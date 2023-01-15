@@ -12,14 +12,14 @@ interface Props {
     selected: boolean;
     playing: boolean;
     detune: number;
-    nextSequenceId: number;
+    nextSequenceId?: number;
     repeat: number;
     patternId: number;
     pattern: [];
 }
 
 export function sequence(id: number, props: Props) {
-    setColor(props.playing ? color.sequencer.playing: color.foreground);
+    setColor(props.playing ? color.sequencer.playing : color.foreground);
     const position = {
         x: windowPadding + (margin + size.w) * (id % col),
         y: windowPadding + (margin + size.h) * Math.floor(id / col),

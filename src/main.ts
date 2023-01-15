@@ -22,9 +22,17 @@ if (screenConfig) {
 
 clear(color.background);
 
-const playing = [4,7,8,10];
+const playing = [4, 7, 8, 10];
 for (let id = 0; id < 21; id++) {
-    sequence(id, { track: Math.floor(Math.random()*8), selected: id === 2, playing: playing.includes(id) });
+    sequence(id, {
+        track: Math.floor(Math.random() * 8),
+        selected: id === 2,
+        playing: playing.includes(id),
+        detune: 0,
+        repeat: 0,
+        patternId: 0,
+        pattern: [],
+    });
 }
 render();
 

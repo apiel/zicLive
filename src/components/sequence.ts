@@ -33,9 +33,23 @@ export function sequence(id: number, props: Props) {
     }
 
     drawText(
-        `${id + 1} ${props.track.name}`,
+        `${id + 1}`,
         { x: position.x + 2, y: position.y + 1 },
         { color: color.tracks[props.track.id], size: 10, font: font.bold },
+    );
+
+    drawText(
+        `${props.track.name}`,
+        { x: position.x + 15, y: position.y + 1 },
+        { color: color.tracks[props.track.id], size: 10, font: font.regular },
+    );
+
+    drawText(
+        `${props.detune < 0 ? props.detune : `+${props.detune}`} x${props.repeat}${
+            props.nextSequenceId !== undefined ? ` >${props.nextSequenceId + 1}` : ''
+        }`,
+        { x: position.x + 50, y: position.y + 1 },
+        { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
     renderPattern({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.playing);

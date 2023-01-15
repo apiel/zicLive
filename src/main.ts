@@ -105,6 +105,7 @@ for (let id = 0; id < 21; id++) {
         detune: 0,
         repeat: 0,
         pattern,
+        nextSequenceId: Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
     });
 }
 render();

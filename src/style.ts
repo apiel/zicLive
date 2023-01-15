@@ -10,8 +10,8 @@ export const color = {
         pattern: {
             playing: rgb('#595f6b'),
             waiting: rgb('#3f444e'),
-        } 
-        
+        },
+        info: { r: 150, g: 150, b: 150 },
     },
     tracks: [
         rgb('#0d6efd'),
@@ -37,4 +37,4 @@ export const font = {
 
     bold: '/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
     regular: '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
-}
+};

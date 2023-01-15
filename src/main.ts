@@ -21,7 +21,7 @@ if (screenConfig) {
 }
 
 clear(color.background);
-for (let id = 0; id < 10; id++) {
+for (let id = 0; id < 21; id++) {
     sequence(id);
 }
 render();

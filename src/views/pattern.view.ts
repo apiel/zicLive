@@ -14,7 +14,12 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems, Direction, findNextSelectableItem, pushSelectableItem } from '../selector';
+import {
+    cleanSelectableItems,
+    Direction,
+    findNextSelectableItem,
+    pushSelectableItem,
+} from '../selector';
 import { eventSelector } from '../events';
 
 const margin = 1;
@@ -73,37 +78,47 @@ export async function partternView(id: number) {
             setColor(color.foreground);
             drawFilledRect({ position, size });
 
-            const step = voices[voice];
-            if (step) {
-                drawSelectableText(
-                    `${Midi.midiToNoteName(step.note, { sharps: true })}`,
-                    { x: position.x + 2, y: position.y + 1 },
-                    { color: color.info, size: 14, font: font.bold },
-                );
-
-                drawSelectableText(
-                    `${step.velocity}%`,
-                    { x: position.x + 35, y: position.y + 1 },
-                    { color: color.info, size: 12, font: font.regular },
-                );
-
-                if (step.tie) {
-                    drawSelectableText(
-                        `Tie`,
-                        { x: position.x + 82, y: position.y + 1 },
-                        { color: color.info, size: 12, font: font.regular },
-                    );
-                }
-
-                const condition = step.condition
+            const stepStr = {
+                note: '---',
+                velocity: '----',
+                condition: '---',
+                tie: '     ',
+            };
+            if (voices[voice]) {
+                const step = voices[voice];
+                stepStr.note = Midi.midiToNoteName(step.note, { sharps: true });
+                stepStr.velocity = `${step.velocity.toString().padStart(3, ' ')}%`;
+                stepStr.condition = step.condition
                     ? STEP_CONDITIONS[step.condition]
                     : STEP_CONDITIONS[0];
-                drawSelectableText(
-                    condition,
-                    { x: position.x + 35, y: position.y + 18 },
-                    { color: color.secondaryInfo, size: 12, font: font.regular },
-                );
+                if (step.tie) {
+                    stepStr.tie = 'Tie';
+                }
             }
+
+            drawSelectableText(
+                stepStr.note,
+                { x: position.x + 2, y: position.y + 1 },
+                { color: color.info, size: 14, font: font.bold },
+            );
+
+            drawSelectableText(
+                stepStr.velocity,
+                { x: position.x + 35, y: position.y + 1 },
+                { color: color.info, size: 12, font: font.regular },
+            );
+
+            drawSelectableText(
+                stepStr.tie,
+                { x: position.x + 82, y: position.y + 1 },
+                { color: color.info, size: 12, font: font.regular },
+            );
+
+            drawSelectableText(
+                stepStr.condition,
+                { x: position.x + 35, y: position.y + 18 },
+                { color: color.secondaryInfo, size: 12, font: font.regular },
+            );
         }
     }
 }

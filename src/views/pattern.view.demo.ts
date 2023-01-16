@@ -6,7 +6,7 @@ import { partternView, patternUpdate } from './pattern.view';
 open({ size: config.screen.size });
 
 (async function() {
-    await partternView(1);
+    await partternView();
     render();
 })();
 

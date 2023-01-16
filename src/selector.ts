@@ -10,8 +10,13 @@ export enum Direction {
 let selectableItems: Point[] = [];
 let selectedItem = 0;
 
+export function getSlectedItem() {
+    return { id: selectedItem, position: selectableItems[selectedItem] };
+}
+
 export function pushSelectableItem(position: Point) {
-    return selectableItems.push(position) - 1 === selectedItem;
+    const selected = selectableItems.push(position) - 1 === selectedItem;
+    return { ...getSlectedItem(), selected };
 }
 
 export function cleanSelectableItems() {
@@ -34,7 +39,13 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.DOWN) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if ( item.y < 10000000 && item.x === current.x && item.y > current.y && (!next || item.y < next.y)) { // item.y < 10000000 are item with negative pos, might find better fix!
+            if (
+                item.y < 10000000 &&
+                item.x === current.x &&
+                item.y > current.y &&
+                (!next || item.y < next.y)
+            ) {
+                // item.y < 10000000 are item with negative pos, might find better fix!
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -72,7 +83,8 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.DOWN) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y < 10000000 && item.y > current.y && (!next || item.y < next.y)) { // item.y < 10000000 are item with negative pos, might find better fix!
+            if (item.y < 10000000 && item.y > current.y && (!next || item.y < next.y)) {
+                // item.y < 10000000 are item with negative pos, might find better fix!
                 next = item;
                 nextIndex = parseInt(index);
             }

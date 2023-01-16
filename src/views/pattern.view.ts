@@ -14,8 +14,16 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems, pushSelectableItem } from '../selector';
-import { eventSelector } from '../events';
+import { cleanSelectableItems, getSlectedItem, pushSelectableItem } from '../selector';
+import {
+    eventSelector,
+    isEventDownPressed,
+    isEventEditPressed,
+    isEventEditRelease,
+    isEventLeftPressed,
+    isEventRightPressed,
+    isEventUpPressed,
+} from '../events';
 
 let scrollY = 0;
 const margin = 1;
@@ -23,9 +31,16 @@ const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
-function drawSelectableText(text: string, position: Point, options: TextOptions) {
+type EditHandler = (direction: number) => void;
+
+let id = 1;
+let editHandler: EditHandler[] = [];
+
+function drawSelectableText(text: string, position: Point, options: TextOptions, edit = () => {}) {
     const rect = drawText(text, position, options);
-    if (pushSelectableItem(rect.position)) {
+    const item = pushSelectableItem(rect.position);
+    editHandler[item.id] = edit;
+    if (item.selected) {
         setColor(color.secondarySelected);
         drawRect({
             position: { x: rect.position.x - 2, y: rect.position.y - 2 },
@@ -34,7 +49,7 @@ function drawSelectableText(text: string, position: Point, options: TextOptions)
     }
 }
 
-export async function partternView(id: number) {
+export async function partternView() {
     const idStr = id.toString().padStart(3, '0');
 
     let pattern = defaultPattern(id);
@@ -43,6 +58,7 @@ export async function partternView(id: number) {
         pattern = JSON.parse(content.toString());
     } catch (error) {}
     cleanSelectableItems();
+    editHandler = [];
 
     clear(color.background);
 
@@ -119,15 +135,38 @@ export async function partternView(id: number) {
     }
 }
 
+let editPressed = false;
 export async function patternUpdate(events: Events) {
-    const item = eventSelector(events);
-    if (item) {
-        if (item.y > config.screen.size.h - 40) {
-            scrollY -= 40;
-        } else if (item.y < 40 && scrollY < 0) {
-            scrollY += 40;
+    if (isEventEditPressed(events)) {
+        editPressed = true;
+    }
+    if (editPressed && !isEventEditRelease(events)) {
+        console.log('EditReleased');
+        editPressed = false;
+    }
+    
+    if (editPressed) {
+        const item = getSlectedItem();
+        const edit = editHandler[item.id];
+        if (isEventUpPressed(events)) {
+            edit(-1);
+        } else if (isEventDownPressed(events)) {
+            edit(+1);
+        } else if (isEventLeftPressed(events)) {
+            edit(-1);
+        } else if (isEventRightPressed(events)) {
+            edit(+1);
+        }
+    } else {
+        const item = eventSelector(events);
+        if (item) {
+            if (item.y > config.screen.size.h - 40) {
+                scrollY -= 40;
+            } else if (item.y < 40 && scrollY < 0) {
+                scrollY += 40;
+            }
         }
     }
-    await partternView(1);
+    await partternView();
     return true;
 }

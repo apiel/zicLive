@@ -15,20 +15,18 @@ import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
 
-const itemPerField = 4;
-
 const margin = 1;
 const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
-let selector = 0;
-const selectionHeader = 2;
-let maxSelection = selectionHeader;
+let selectableItems: Point[] = [];
+let selectedItem = 0;
 
-function drawSelectableText(text: string, position: Point, options: TextOptions, selected = false) {
+function drawSelectableText(text: string, position: Point, options: TextOptions) {
     const rect = drawText(text, position, options);
-    if (selected) {
+    const pos = selectableItems.push(rect.position);
+    if (pos - 1 === selectedItem) {
         setColor(color.secondarySelected);
         drawRect({
             position: { x: rect.position.x - 2, y: rect.position.y - 2 },
@@ -45,7 +43,7 @@ export async function partternView(id: number) {
         const content = await readFile(`${config.path.patterns}/${idStr}.json`, 'utf8');
         pattern = JSON.parse(content.toString());
     } catch (error) {}
-    maxSelection = pattern.stepCount * itemPerField * MAX_VOICES + selectionHeader;
+    selectableItems = [];
 
     clear(color.background);
 
@@ -57,14 +55,12 @@ export async function partternView(id: number) {
         `ID: ${idStr}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
-        selector === 0,
     );
 
     drawSelectableText(
         `Len: ${pattern.stepCount}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 24 },
         { color: color.info, size: 14, font: font.regular },
-        selector === 1,
     );
 
     patternPreview({ x: 100, y: 5 }, { w: 300, h: 40 }, pattern);
@@ -85,14 +81,12 @@ export async function partternView(id: number) {
                     `${Midi.midiToNoteName(step.note, { sharps: true })}`,
                     { x: position.x + 2, y: position.y + 1 },
                     { color: color.info, size: 14, font: font.bold },
-                    selector === stepIndex + selectionHeader,
                 );
 
                 drawSelectableText(
                     `${step.velocity}%`,
                     { x: position.x + 35, y: position.y + 1 },
                     { color: color.info, size: 12, font: font.regular },
-                    false,
                 );
 
                 if (step.tie) {
@@ -100,7 +94,6 @@ export async function partternView(id: number) {
                         `Tie`,
                         { x: position.x + 82, y: position.y + 1 },
                         { color: color.info, size: 12, font: font.regular },
-                        false,
                     );
                 }
 
@@ -111,21 +104,82 @@ export async function partternView(id: number) {
                     condition,
                     { x: position.x + 35, y: position.y + 18 },
                     { color: color.secondaryInfo, size: 12, font: font.regular },
-                    false,
                 );
             }
         }
     }
 }
 
-export async function patternUpdate(events: Events) {
-    // if (selector < selectionHeader) {
-        if (events.keysDown?.includes(82)) {
-            selector = (maxSelection + selector - 1) % maxSelection;
-        } else if (events.keysUp?.includes(81)) {
-            selector = (maxSelection + selector + 1) % maxSelection;
+const KEY_UP = 82;
+const KEY_DOWN = 81;
+const KEY_LEFT = 80;
+const KEY_RIGHT = 79;
+
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+}
+
+function findNextSelectableItem(direction: Direction) {
+    const current = selectableItems[selectedItem];
+    let next: Point | undefined;
+    let nextIndex = -1;
+    if (direction === Direction.UP) {
+        for (let index in selectableItems) {
+            const item = selectableItems[index];
+            if (item.y < current.y && (!next || item.y > next.y)) { // || (item.y === next.y && item.x > next.x)
+                next = item;
+                nextIndex = parseInt(index);
+            }
         }
-    // }
+    } else if (direction === Direction.DOWN) {
+        for (let index in selectableItems) {
+            const item = selectableItems[index];
+            if (item.y > current.y && (!next || item.y < next.y)) { // || (item.y === next.y && item.x < next.x)
+                next = item;
+                nextIndex = parseInt(index);
+            }
+        }
+    } else if (direction === Direction.LEFT) {
+        for (let index in selectableItems) {
+            const item = selectableItems[index];
+            if (item.x < current.x && (!next || item.x > next.x)) { // || (item.x === next.x && item.y > next.y)
+                next = item;
+                nextIndex = parseInt(index);
+            }
+        }
+    } else if (direction === Direction.RIGHT) {
+        for (let index in selectableItems) {
+            const item = selectableItems[index];
+            if (item.x > current.x && (!next || item.x < next.x)) { // || (item.x === next.x && item.y < next.y)
+                next = item;
+                nextIndex = parseInt(index);
+            }
+        }
+    }
+    if (next) {
+        selectedItem = nextIndex;
+        console.log('New selected item: ', selectedItem, next);
+    }
+}
+
+export async function patternUpdate(events: Events) {
+    if (events.keysDown) {
+        if (events.keysDown.includes(KEY_UP)) {
+            findNextSelectableItem(Direction.UP);
+        }
+        if (events.keysDown.includes(KEY_DOWN)) {
+            findNextSelectableItem(Direction.DOWN);
+        }
+        if (events.keysDown.includes(KEY_LEFT)) {
+            findNextSelectableItem(Direction.LEFT);
+        }
+        if (events.keysDown.includes(KEY_RIGHT)) {
+            findNextSelectableItem(Direction.RIGHT);
+        }
+    }
     await partternView(1);
     return true;
 }

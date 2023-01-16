@@ -14,19 +14,17 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
+import { cleanSelectableItems, Direction, findNextSelectableItem, pushSelectableItem } from '../selector';
+import { eventSelector } from '../events';
 
 const margin = 1;
 const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
-let selectableItems: Point[] = [];
-let selectedItem = 0;
-
 function drawSelectableText(text: string, position: Point, options: TextOptions) {
     const rect = drawText(text, position, options);
-    const pos = selectableItems.push(rect.position);
-    if (pos - 1 === selectedItem) {
+    if (pushSelectableItem(rect.position)) {
         setColor(color.secondarySelected);
         drawRect({
             position: { x: rect.position.x - 2, y: rect.position.y - 2 },
@@ -43,7 +41,7 @@ export async function partternView(id: number) {
         const content = await readFile(`${config.path.patterns}/${idStr}.json`, 'utf8');
         pattern = JSON.parse(content.toString());
     } catch (error) {}
-    selectableItems = [];
+    cleanSelectableItems();
 
     clear(color.background);
 
@@ -110,113 +108,8 @@ export async function partternView(id: number) {
     }
 }
 
-const KEY_UP = 82;
-const KEY_DOWN = 81;
-const KEY_LEFT = 80;
-const KEY_RIGHT = 79;
-
-enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-}
-
-function findNextSelectableItem(direction: Direction) {
-    const current = selectableItems[selectedItem];
-    let next: Point | undefined;
-    let nextIndex = -1;
-    if (direction === Direction.UP) {
-        for (let index in selectableItems) {
-            const item = selectableItems[index];
-            if (item.x === current.x && item.y < current.y && (!next || item.y > next.y)) {
-                next = item;
-                nextIndex = parseInt(index);
-            }
-        }
-    } else if (direction === Direction.DOWN) {
-        for (let index in selectableItems) {
-            const item = selectableItems[index];
-            if (item.x === current.x && item.y > current.y && (!next || item.y < next.y)) {
-                next = item;
-                nextIndex = parseInt(index);
-            }
-        }
-    } else if (direction === Direction.LEFT) {
-        for (let index in selectableItems) {
-            const item = selectableItems[index];
-            if (item.y === current.y && item.x < current.x && (!next || item.x > next.x)) {
-                next = item;
-                nextIndex = parseInt(index);
-            }
-        }
-    } else if (direction === Direction.RIGHT) {
-        for (let index in selectableItems) {
-            const item = selectableItems[index];
-            if (item.y === current.y && item.x > current.x && (!next || item.x < next.x)) {
-                next = item;
-                nextIndex = parseInt(index);
-            }
-        }
-    }
-    if (next) {
-        selectedItem = nextIndex;
-    } else {
-        if (direction === Direction.UP) {
-            for (let index in selectableItems) {
-                const item = selectableItems[index];
-                if (item.y < current.y && (!next || item.y > next.y)) {
-                    next = item;
-                    nextIndex = parseInt(index);
-                }
-            }
-        } else if (direction === Direction.DOWN) {
-            for (let index in selectableItems) {
-                const item = selectableItems[index];
-                if (item.y > current.y && (!next || item.y < next.y)) {
-                    next = item;
-                    nextIndex = parseInt(index);
-                }
-            }
-        }
-        // else if (direction === Direction.LEFT) {
-        //     for (let index in selectableItems) {
-        //         const item = selectableItems[index];
-        //         if (item.x < current.x && (!next || item.x > next.x)) {
-        //             next = item;
-        //             nextIndex = parseInt(index);
-        //         }
-        //     }
-        // } else if (direction === Direction.RIGHT) {
-        //     for (let index in selectableItems) {
-        //         const item = selectableItems[index];
-        //         if (item.x > current.x && (!next || item.x < next.x)) {
-        //             next = item;
-        //             nextIndex = parseInt(index);
-        //         }
-        //     }
-        // }
-    }
-    if (next) {
-        selectedItem = nextIndex;
-    }
-}
-
 export async function patternUpdate(events: Events) {
-    if (events.keysDown) {
-        if (events.keysDown.includes(KEY_UP)) {
-            findNextSelectableItem(Direction.UP);
-        }
-        if (events.keysDown.includes(KEY_DOWN)) {
-            findNextSelectableItem(Direction.DOWN);
-        }
-        if (events.keysDown.includes(KEY_LEFT)) {
-            findNextSelectableItem(Direction.LEFT);
-        }
-        if (events.keysDown.includes(KEY_RIGHT)) {
-            findNextSelectableItem(Direction.RIGHT);
-        }
-    }
+    eventSelector(events);
     await partternView(1);
     return true;
 }

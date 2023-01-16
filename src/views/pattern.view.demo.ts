@@ -1,6 +1,5 @@
 import { exit } from 'process';
-import { open, close, getEvents, clear, render } from 'zic_node_ui';
-import { color } from '../style';
+import { open, close, getEvents, render } from 'zic_node_ui';
 import { config } from '../config';
 import { partternView, patternUpdate } from './pattern.view';
 
@@ -17,7 +16,7 @@ setInterval(async () => {
         close();
         exit();
     } else if (events.keysDown || events.keysUp) {
-        console.log('events', events);
+        // console.log('events', events);
         if (await patternUpdate(events)) {
             render();
         }

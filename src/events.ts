@@ -9,16 +9,16 @@ const KEY_RIGHT = 79;
 export function eventSelector(events: Events) {
     if (events.keysDown) {
         if (events.keysDown.includes(KEY_UP)) {
-            findNextSelectableItem(Direction.UP);
+            return findNextSelectableItem(Direction.UP);
         }
         if (events.keysDown.includes(KEY_DOWN)) {
-            findNextSelectableItem(Direction.DOWN);
+            return findNextSelectableItem(Direction.DOWN);
         }
         if (events.keysDown.includes(KEY_LEFT)) {
-            findNextSelectableItem(Direction.LEFT);
+            return findNextSelectableItem(Direction.LEFT);
         }
         if (events.keysDown.includes(KEY_RIGHT)) {
-            findNextSelectableItem(Direction.RIGHT);
+            return findNextSelectableItem(Direction.RIGHT);
         }
     }
 }

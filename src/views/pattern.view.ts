@@ -14,14 +14,10 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import {
-    cleanSelectableItems,
-    Direction,
-    findNextSelectableItem,
-    pushSelectableItem,
-} from '../selector';
+import { cleanSelectableItems, pushSelectableItem } from '../selector';
 import { eventSelector } from '../events';
 
+let scrollY = 0;
 const margin = 1;
 const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
@@ -51,7 +47,7 @@ export async function partternView(id: number) {
     clear(color.background);
 
     setColor(color.foreground);
-    const headerPosition = { x: margin, y: margin };
+    const headerPosition = { x: margin, y: margin + scrollY };
     drawFilledRect({ position: headerPosition, size: headerSize });
 
     drawSelectableText(
@@ -66,14 +62,14 @@ export async function partternView(id: number) {
         { color: color.info, size: 14, font: font.regular },
     );
 
-    patternPreview({ x: 100, y: 5 }, { w: 300, h: 40 }, pattern);
+    patternPreview({ x: 100, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);
 
     for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
         const voices = pattern.steps[stepIndex];
         for (let voice = 0; voice < MAX_VOICES; voice++) {
             const position = {
                 x: margin + (margin + size.w) * (voice % col),
-                y: margin * 2 + headerSize.h + (margin + size.h) * stepIndex,
+                y: margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex,
             };
             setColor(color.foreground);
             drawFilledRect({ position, size });
@@ -124,7 +120,15 @@ export async function partternView(id: number) {
 }
 
 export async function patternUpdate(events: Events) {
-    eventSelector(events);
+    const item = eventSelector(events);
+    if (item) {
+        console.log({ item });
+        if (item.y > config.screen.size.h - 40) {
+            scrollY -= 40;
+        } else if (item.y < 40 && scrollY < 0) {
+            scrollY += 40;
+        }
+    }
     await partternView(1);
     return true;
 }

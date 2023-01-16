@@ -14,7 +14,7 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems, pushSelectableItem, selectableItems } from '../selector';
+import { cleanSelectableItems, pushSelectableItem } from '../selector';
 import { eventSelector } from '../events';
 
 let scrollY = 0;

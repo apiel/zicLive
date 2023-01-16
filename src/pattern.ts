@@ -16,3 +16,5 @@ export const defaultPattern = (id = 0): Pattern => ({
     stepCount: 16,
     steps: Array.from({ length: 16 }, () => []),
 });
+
+export const MAX_VOICES = 4;

@@ -6,7 +6,6 @@ import { Track } from '../track';
 import { Patch, Preset } from '../patch';
 import { patternPreview } from './patternPreview';
 
-const windowPadding = 1;
 const margin = 1;
 const col = 4;
 const size = { w: config.screen.size.w / col - margin, h: 49 };
@@ -27,8 +26,8 @@ interface Props {
 export function sequence(id: number, props: Props) {
     setColor(props.playing ? color.sequencer.playing : color.foreground);
     const position = {
-        x: windowPadding + (margin + size.w) * (id % col),
-        y: windowPadding + (margin + size.h) * Math.floor(id / col),
+        x: margin + (margin + size.w) * (id % col),
+        y: margin + (margin + size.h) * Math.floor(id / col),
     };
     drawFilledRect({ position, size });
 

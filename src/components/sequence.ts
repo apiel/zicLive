@@ -3,11 +3,12 @@ import { color, font } from '../style';
 import { config } from '../config';
 import { Pattern } from '../pattern';
 import { Track } from '../track';
+import { Patch, Preset } from '../patch';
 
 const windowPadding = 1;
 const margin = 1;
 const col = 4;
-const size = { w: config.screen.size.w / col - margin, h: 40 };
+const size = { w: config.screen.size.w / col - margin, h: 49 };
 
 interface Props {
     track: Track;
@@ -17,6 +18,8 @@ interface Props {
     nextSequenceId?: number;
     repeat: number;
     pattern: Pattern;
+    patch: Patch;
+    preset: Preset;
 }
 
 export function sequence(id: number, props: Props) {
@@ -39,16 +42,22 @@ export function sequence(id: number, props: Props) {
     );
 
     drawText(
-        `${props.track.name}`,
+        `${props.patch.name}`,
         { x: position.x + 15, y: position.y + 1 },
         { color: color.tracks[props.track.id], size: 10, font: font.regular },
+    );
+
+    drawText(
+        `${props.preset.id}`,
+        { x: position.x + 90, y: position.y + 1 },
+        { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
     drawText(
         `${props.detune < 0 ? props.detune : `+${props.detune}`} x${props.repeat}${
             props.nextSequenceId !== undefined ? ` >${props.nextSequenceId + 1}` : ''
         }`,
-        { x: position.x + 50, y: position.y + 1 },
+        { x: position.x + 2, y: position.y + 37 },
         { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
@@ -86,7 +95,7 @@ function renderPattern(position: Point, pattern: Pattern, playing: boolean) {
                 const { note } = voices[voice];
                 const point1 = {
                     x: position.x + step * stepWidth,
-                    y: position.y + ((note - noteMin) / noteRange) * (size.h - 20),
+                    y: position.y + ((note - noteMin) / noteRange) * (size.h - 30),
                 };
                 const point2 = {
                     x: point1.x + stepWidth - 2,

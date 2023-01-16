@@ -1,5 +1,16 @@
 import { readFile } from 'fs/promises';
-import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
+import {
+    clear,
+    drawFilledRect,
+    drawLine,
+    drawRect,
+    drawText,
+    Events,
+    Point,
+    setColor,
+    Size,
+    TextOptions,
+} from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
@@ -11,6 +22,21 @@ const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
+let selector = 0;
+const selectionHeader = 2;
+let maxSelection = selectionHeader;
+
+function drawSelectableText(text: string, position: Point, options: TextOptions, selected = false) {
+    const rect = drawText(text, position, options);
+    if (selected) {
+        setColor(color.secondarySelected);
+        drawRect({
+            position: { x: rect.position.x - 2, y: rect.position.y - 2 },
+            size: { w: rect.size.w + 4, h: rect.size.h + 3 },
+        });
+    }
+}
+
 export async function partternView(id: number) {
     const idStr = id.toString().padStart(3, '0');
 
@@ -19,22 +45,35 @@ export async function partternView(id: number) {
         const content = await readFile(`${config.path.patterns}/${idStr}.json`, 'utf8');
         pattern = JSON.parse(content.toString());
     } catch (error) {}
+    maxSelection = pattern.stepCount + selectionHeader;
+
+    clear(color.background);
 
     setColor(color.foreground);
     const headerPosition = { x: margin, y: margin };
     drawFilledRect({ position: headerPosition, size: headerSize });
 
-    drawText(
+    drawSelectableText(
         `ID: ${idStr}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
+        selector === 0,
     );
 
-    drawText(
+    // if (selector === 0) {
+    //     drawSelection({ x: headerPosition.x + 25, y: headerPosition.y + 4 }, { w: 30, h: 14 });
+    // }
+
+    drawSelectableText(
         `Len: ${pattern.stepCount}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 24 },
         { color: color.info, size: 14, font: font.regular },
+        selector === 1,
     );
+
+    // if (selector === 1) {
+    //     drawSelection({ x: headerPosition.x + 35, y: headerPosition.y + 24 }, { w: 20, h: 14 });
+    // }
 
     patternPreview({ x: 100, y: 5 }, { w: 300, h: 40 }, pattern);
 
@@ -83,21 +122,15 @@ export async function partternView(id: number) {
     }
 }
 
-// -- , 01-99 , /2, /3, /4, /5, /6, /7, /8
-// 1 every step, 2 every 2nd step, 3 every 3rd step, 4 every 4th step... '!' could be only once
-// NEED probability
-// need also condition to play only the first time or the 2 first times '!' '!2'
-// // must be char[3]
-// void getConditionName(char * name)
-// {
-//     if (condition == 0) {
-//         name[0] = '-';
-//         name[1] = '-';
-//     } else if (condition < 100) {
-//         sprintf(name, "%02d", condition);
-//     } else {
-//         name[0] = '/';
-//         name[1] = '2' + condition - 100;
-//     }
-//     name[2] = '\0';
-// }
+export async function patternUpdate(events: Events) {
+    if (selector < selectionHeader) {
+        if (events.keysDown?.includes(82)) {
+            selector = (maxSelection + selector - 1) % maxSelection;
+        } else if (events.keysUp?.includes(81)) {
+            selector = (maxSelection + selector + 1) % maxSelection;
+        }
+        console.log('selector', selector);
+    }
+    await partternView(1);
+    return true;
+}

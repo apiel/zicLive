@@ -7,12 +7,14 @@ const baseColor = {
     white: { r: 255, g: 255, b: 255 },
     info: { r: 150, g: 150, b: 150 },
     secondaryInfo: { r: 100, g: 100, b: 100 },
+    selected: { r: 150, g: 150, b: 150 },
+    secondarySelected: { r: 100, g: 100, b: 100 },
 };
 
 export const color = {
     ...baseColor,
     sequencer: {
-        selected: { r: 150, g: 150, b: 150 },
+        selected: baseColor.selected,
         playing: rgb('#42454A'),
         pattern: {
             playing: rgb('#595f6b'),

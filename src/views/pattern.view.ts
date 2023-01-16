@@ -129,7 +129,7 @@ function findNextSelectableItem(direction: Direction) {
     if (direction === Direction.UP) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y < current.y && (!next || item.y > next.y)) { // || (item.y === next.y && item.x > next.x)
+            if (item.x === current.x && item.y < current.y && (!next || item.y > next.y)) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -137,7 +137,7 @@ function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.DOWN) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y > current.y && (!next || item.y < next.y)) { // || (item.y === next.y && item.x < next.x)
+            if (item.x === current.x && item.y > current.y && (!next || item.y < next.y)) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -145,7 +145,7 @@ function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.LEFT) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.x < current.x && (!next || item.x > next.x)) { // || (item.x === next.x && item.y > next.y)
+            if (item.y === current.y && item.x < current.x && (!next || item.x > next.x)) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -153,7 +153,7 @@ function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.RIGHT) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.x > current.x && (!next || item.x < next.x)) { // || (item.x === next.x && item.y < next.y)
+            if (item.y === current.y && item.x > current.x && (!next || item.x < next.x)) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -161,7 +161,44 @@ function findNextSelectableItem(direction: Direction) {
     }
     if (next) {
         selectedItem = nextIndex;
-        console.log('New selected item: ', selectedItem, next);
+    } else {
+        if (direction === Direction.UP) {
+            for (let index in selectableItems) {
+                const item = selectableItems[index];
+                if (item.y < current.y && (!next || item.y > next.y)) {
+                    next = item;
+                    nextIndex = parseInt(index);
+                }
+            }
+        } else if (direction === Direction.DOWN) {
+            for (let index in selectableItems) {
+                const item = selectableItems[index];
+                if (item.y > current.y && (!next || item.y < next.y)) {
+                    next = item;
+                    nextIndex = parseInt(index);
+                }
+            }
+        }
+        // else if (direction === Direction.LEFT) {
+        //     for (let index in selectableItems) {
+        //         const item = selectableItems[index];
+        //         if (item.x < current.x && (!next || item.x > next.x)) {
+        //             next = item;
+        //             nextIndex = parseInt(index);
+        //         }
+        //     }
+        // } else if (direction === Direction.RIGHT) {
+        //     for (let index in selectableItems) {
+        //         const item = selectableItems[index];
+        //         if (item.x > current.x && (!next || item.x < next.x)) {
+        //             next = item;
+        //             nextIndex = parseInt(index);
+        //         }
+        //     }
+        // }
+    }
+    if (next) {
+        selectedItem = nextIndex;
     }
 }
 

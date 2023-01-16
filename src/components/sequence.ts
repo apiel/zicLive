@@ -4,6 +4,7 @@ import { config } from '../config';
 import { Pattern } from '../pattern';
 import { Track } from '../track';
 import { Patch, Preset } from '../patch';
+import { patternPreview } from './patternPreview';
 
 const windowPadding = 1;
 const margin = 1;
@@ -62,9 +63,18 @@ export function sequence(id: number, props: Props) {
         { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
-    renderPattern({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.playing);
+    patternPreview(
+        { x: position.x + 2, y: position.y + 15 },
+        { w: size.w, h: size.h - 30 },
+        props.pattern,
+        props.playing,
+    );
     if (props.activeStep !== undefined && props.playing) {
-        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.activeStep);
+        renderActiveStep(
+            { x: position.x + 2, y: position.y + 15 },
+            props.pattern,
+            props.activeStep,
+        );
     }
 }
 
@@ -75,47 +85,4 @@ function renderActiveStep(position: Point, pattern: Pattern, step: number) {
         { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y },
         { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + 20 },
     );
-}
-
-function renderPattern(position: Point, pattern: Pattern, playing: boolean) {
-    setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
-    const stepWidth = (size.w - 2) / pattern.stepCount;
-    const notes = pattern.steps.flatMap((voices) => voices.map(({ note }) => note));
-    const noteMin = Math.min(...notes);
-    const noteRange = Math.max(...notes) - noteMin;
-
-    if (noteRange === 0) {
-        for (let step = 0; step < pattern.stepCount; step++) {
-            const voices = pattern.steps[step];
-            for (let voice = 0; voice < voices.length; voice++) {
-                const rect = {
-                    position: {
-                        x: position.x + step * stepWidth,
-                        y: position.y + 10,
-                    },
-                    size: {
-                        w: stepWidth - 1,
-                        h: 5,
-                    },
-                };
-                drawFilledRect(rect);
-            }
-        }
-    } else {
-        for (let step = 0; step < pattern.stepCount; step++) {
-            const voices = pattern.steps[step];
-            for (let voice = 0; voice < voices.length; voice++) {
-                const { note } = voices[voice];
-                const point1 = {
-                    x: position.x + step * stepWidth,
-                    y: position.y + ((note - noteMin) / noteRange) * (size.h - 30),
-                };
-                const point2 = {
-                    x: point1.x + stepWidth - 2,
-                    y: point1.y,
-                };
-                drawLine(point1, point2);
-            }
-        }
-    }
 }

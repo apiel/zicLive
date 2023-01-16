@@ -1,11 +1,16 @@
 import { exit } from 'process';
-import { open, close, getEvents, clear } from 'zic_node_ui';
-import { color } from './style';
-import { config } from './config';
+import { open, close, getEvents, clear, render } from 'zic_node_ui';
+import { color } from '../style';
+import { config } from '../config';
+import { partternView } from './pattern.view';
 
 open({ size: config.screen.size });
 
-clear(color.background);
+(async function() {
+    clear(color.background);
+    await partternView(1);
+    render();
+})();
 
 setInterval(() => {
     const events = getEvents();

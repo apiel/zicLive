@@ -1,0 +1,22 @@
+{
+    "id": 1,
+    "stepCount": 16,
+    "steps": [
+        [{ "note": 60, "velocity": 100, "tie": false }],
+        [{ "note": 62, "velocity": 100, "tie": false }],
+        [{ "note": 64, "velocity": 100, "tie": false }],
+        [{ "note": 65, "velocity": 100, "tie": false }],
+        [],
+        [],
+        [{ "note": 60, "velocity": 100, "tie": false }],
+        [{ "note": 54, "velocity": 100, "tie": false }],
+        [],
+        [],
+        [{ "note": 58, "velocity": 100, "tie": false }],
+        [],
+        [{ "note": 60, "velocity": 100, "tie": false }],
+        [],
+        [{ "note": 60, "velocity": 100, "tie": false }],
+        [{ "note": 60, "velocity": 100, "tie": false }]
+    ]
+}

@@ -4,6 +4,8 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
+    "demo:sequence": "ts-node-dev src/components/sequence.demo.ts",
+    "demo:view:pattern": "ts-node-dev src/views/pattern.view.demo.ts",
     "build": "tsc",
     "start": "node dist/main.js",
     "devmon": "ts-node-dev src/main.ts",

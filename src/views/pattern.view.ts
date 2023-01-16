@@ -14,7 +14,7 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems, pushSelectableItem } from '../selector';
+import { cleanSelectableItems, pushSelectableItem, selectableItems } from '../selector';
 import { eventSelector } from '../events';
 
 let scrollY = 0;
@@ -122,7 +122,6 @@ export async function partternView(id: number) {
 export async function patternUpdate(events: Events) {
     const item = eventSelector(events);
     if (item) {
-        console.log({ item });
         if (item.y > config.screen.size.h - 40) {
             scrollY -= 40;
         } else if (item.y < 40 && scrollY < 0) {

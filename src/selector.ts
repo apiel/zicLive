@@ -34,7 +34,7 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.DOWN) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.x === current.x && item.y > current.y && (!next || item.y < next.y)) {
+            if ( item.y < 10000000 && item.x === current.x && item.y > current.y && (!next || item.y < next.y)) { // item.y < 10000000 are item with negative pos, might find better fix!
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -72,7 +72,7 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.DOWN) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y > current.y && (!next || item.y < next.y)) {
+            if (item.y < 10000000 && item.y > current.y && (!next || item.y < next.y)) { // item.y < 10000000 are item with negative pos, might find better fix!
                 next = item;
                 nextIndex = parseInt(index);
             }

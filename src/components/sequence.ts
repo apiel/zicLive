@@ -18,6 +18,7 @@ interface Props {
     nextSequenceId?: number;
     repeat: number;
     pattern: Pattern;
+    activeStep?: number;
     patch: Patch;
     preset: Preset;
 }
@@ -62,6 +63,18 @@ export function sequence(id: number, props: Props) {
     );
 
     renderPattern({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.playing);
+    if (props.activeStep !== undefined && props.playing) {
+        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, props.pattern, props.activeStep);
+    }
+}
+
+function renderActiveStep(position: Point, pattern: Pattern, step: number) {
+    setColor(color.sequencer.pattern.playing);
+    const stepWidth = (size.w - 2) / pattern.stepCount;
+    drawLine(
+        { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y },
+        { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + 20 },
+    );
 }
 
 function renderPattern(position: Point, pattern: Pattern, playing: boolean) {

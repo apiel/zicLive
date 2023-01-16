@@ -130,9 +130,12 @@ const presets = [
 ];
 
 const playing = [4, 7, 8, 10];
+let stepCounter = 0;
+
+let seqProps: any = [];
 for (let id = 0; id < 21; id++) {
     const pattern = patterns[Math.floor(Math.random() * patterns.length)];
-    sequence(id, {
+    seqProps[id] = {
         track: tracks[Math.floor(Math.random() * 8)],
         selected: id === 2,
         playing: playing.includes(id),
@@ -142,9 +145,23 @@ for (let id = 0; id < 21; id++) {
         nextSequenceId: Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
         patch: patches[Math.floor(Math.random() * patches.length)],
         preset: presets[Math.floor(Math.random() * presets.length)],
-    });
+    };
 }
-render();
+
+setInterval(() => {
+    stepCounter++;
+    if (stepCounter > 10000) { // just because
+        stepCounter = 0;
+    }
+    demoSequence();
+}, 150);
+demoSequence();
+function demoSequence() {
+    for (let id = 0; id < 21; id++) {
+        sequence(id, {...seqProps[id], activeStep: stepCounter % seqProps[id].pattern.stepCount});
+    }
+    render();
+}
 
 setInterval(() => {
     const events = getEvents();

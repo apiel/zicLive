@@ -3,7 +3,7 @@ import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
-import { defaultPattern, MAX_VOICES } from '../pattern';
+import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
 
 const margin = 1;
@@ -69,7 +69,35 @@ export async function partternView(id: number) {
                         { color: color.info, size: 12, font: font.regular },
                     );
                 }
+
+                const condition = step.condition
+                    ? STEP_CONDITIONS[step.condition]
+                    : STEP_CONDITIONS[0];
+                drawText(
+                    condition,
+                    { x: position.x + 35, y: position.y + 18 },
+                    { color: color.secondaryInfo, size: 12, font: font.regular },
+                );
             }
         }
     }
 }
+
+// -- , 01-99 , /2, /3, /4, /5, /6, /7, /8
+// 1 every step, 2 every 2nd step, 3 every 3rd step, 4 every 4th step... '!' could be only once
+// NEED probability
+// need also condition to play only the first time or the 2 first times '!' '!2'
+// // must be char[3]
+// void getConditionName(char * name)
+// {
+//     if (condition == 0) {
+//         name[0] = '-';
+//         name[1] = '-';
+//     } else if (condition < 100) {
+//         sprintf(name, "%02d", condition);
+//     } else {
+//         name[0] = '/';
+//         name[1] = '2' + condition - 100;
+//     }
+//     name[2] = '\0';
+// }

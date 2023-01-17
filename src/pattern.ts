@@ -1,10 +1,8 @@
 import { readFile, writeFile } from 'fs/promises';
+import { MAX_STEPS_IN_PATTERN, PATTERN_COUNT } from 'zic_node';
 import { config } from './config';
 import { minmax } from './util';
 
-export const MAX_PATTERNS = 999;
-export const MAX_VOICES = 4;
-export const MAX_STEPS_IN_PATTERN = 64; // TODO get this from C++
 export interface Step {
     note: number;
     velocity: number;
@@ -79,7 +77,7 @@ export function getPattern() {
 }
 
 export function setPatternId(id: number) {
-    patternId = minmax(id, 0, MAX_PATTERNS);
+    patternId = minmax(id, 0, PATTERN_COUNT - 1);
 }
 
 function getFilepath(id: number) {
@@ -110,7 +108,7 @@ export async function reloadPattern(id: number) {
 }
 
 export async function loadPatterns() {
-    for (let id = 0; id < MAX_PATTERNS; id++) {
+    for (let id = 0; id < PATTERN_COUNT; id++) {
         patterns.push(await loadPattern(id));
     }
 }

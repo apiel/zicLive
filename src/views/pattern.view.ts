@@ -2,12 +2,13 @@ import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
-import { getPattern, MAX_VOICES, reloadPattern, savePattern, setPatternId, STEP_CONDITIONS } from '../pattern';
+import { getPattern, reloadPattern, savePattern, setPatternId, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
 import { cleanSelectableItems } from '../selector';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { drawSelectableText } from '../draw';
 import { minmax } from '../util';
+import { MAX_VOICES_IN_PATTERN, NOTE_END, NOTE_START } from 'zic_node';
 
 let scrollY = 0;
 const margin = 1;
@@ -30,9 +31,7 @@ export async function patternView() {
         `ID: ${idStr}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
-        (direction) => {
-            setPatternId(pattern.id + direction);
-        },
+        (direction) => setPatternId(pattern.id + direction),
         [1, 10],
     );
 
@@ -49,7 +48,7 @@ export async function patternView() {
         { color: color.info, size: 14, font: font.regular },
         (direction) => {
             pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
-        }
+        },
     );
 
     drawSelectableText(
@@ -63,7 +62,7 @@ export async function patternView() {
 
     for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
         const voices = pattern.steps[stepIndex];
-        for (let voice = 0; voice < MAX_VOICES; voice++) {
+        for (let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
             const position = {
                 x: margin + (margin + size.w) * (voice % col),
                 y: margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex,
@@ -95,7 +94,25 @@ export async function patternView() {
                 { color: color.info, size: 14, font: font.bold },
                 (direction) => {
                     console.log('note', { direction, stepIndex, voice });
+                    if (step) {
+                        if (direction < 0 && step.note <= NOTE_START) {
+                            pattern.steps[stepIndex][voice] = null;
+                        } else {
+                            step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+                        }
+                    } else if (direction === 1) {
+                        const previousStep = pattern.steps
+                            .slice(0, stepIndex)
+                            .reverse()
+                            .find((step) => step[voice]?.note)?.[voice];
+                        pattern.steps[stepIndex][voice] = {
+                            note: previousStep?.note || 60,
+                            velocity: 100,
+                            tie: false,
+                        };
+                    }
                 },
+                [1, 12],
             );
 
             drawSelectableText(

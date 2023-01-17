@@ -59,10 +59,10 @@ export async function eventEdit(events: Events) {
         return false;
     }
     if (isEventUpPressed(events)) {
-        await edit(-1 * (steps?.[1] ?? 1));
+        await edit(+1 * (steps?.[1] ?? 1));
         return true;
     } else if (isEventDownPressed(events)) {
-        await edit(+1 * (steps?.[1] ?? 1));
+        await edit(-1 * (steps?.[1] ?? 1));
         return true;
     } else if (isEventLeftPressed(events)) {
         await edit(-1 * (steps?.[0] ?? 1));

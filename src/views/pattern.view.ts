@@ -1,13 +1,13 @@
-import { readFile } from 'fs/promises';
 import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
-import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
+import { getPattern, MAX_VOICES, setPatternId, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
 import { cleanSelectableItems } from '../selector';
 import { eventEdit, eventSelector, isEditMode } from '../events';
 import { drawSelectableText } from '../draw';
+import { minmax } from '../util';
 
 let scrollY = 0;
 const margin = 1;
@@ -15,16 +15,9 @@ const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
-let id = 1;
-
 export async function partternView() {
-    const idStr = id.toString().padStart(3, '0');
-
-    let pattern = defaultPattern(id);
-    try {
-        const content = await readFile(`${config.path.patterns}/${idStr}.json`, 'utf8');
-        pattern = JSON.parse(content.toString());
-    } catch (error) {}
+    const pattern = getPattern();
+    const idStr = pattern.id.toString().padStart(3, '0');
     cleanSelectableItems();
 
     clear(color.background);
@@ -38,7 +31,7 @@ export async function partternView() {
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
         (direction) => {
-            id += direction;
+            setPatternId(pattern.id + direction);
         },
         [1, 10],
     );
@@ -47,6 +40,9 @@ export async function partternView() {
         `Len: ${pattern.stepCount}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 24 },
         { color: color.info, size: 14, font: font.regular },
+        (direction) => {
+            pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+        }
     );
 
     patternPreview({ x: 100, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);

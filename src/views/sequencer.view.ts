@@ -7,17 +7,14 @@ import { color } from '../style';
 export async function sequencerView() {
     clear(color.background);
     for (let id = 0; id < sequences.length; id++) {
-        const seq = sequences[id];
+        const { trackId, patchId, patternId, presetId, ...seq } = sequences[id];
         const props = {
-            track: tracks[seq.trackId],
+            ...seq,
+            track: tracks[trackId],
             selected: id === 2,
-            playing: seq.playing,
-            detune: seq.detune,
-            repeat: seq.repeat,
-            pattern: getPattern(id),
-            nextSequenceId: seq.nextSequenceId,
-            patch: patches[seq.patchId],
-            preset: presets[seq.presetId],
+            pattern: getPattern(patternId),
+            patch: patches[patchId],
+            preset: presets[presetId],
             // activeStep: stepCounter % seqProps[id].pattern.stepCount
         }
         sequence(id, props);

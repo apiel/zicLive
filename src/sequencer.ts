@@ -1,4 +1,3 @@
-import { PATTERN_COUNT } from 'zic_node';
 import { Patch } from './patch';
 import { getPattern } from './pattern';
 import { color } from './style';
@@ -53,7 +52,7 @@ export let sequences: Sequence[] = [];
 
 export async function loadSequences() {
     for (let id = 0; id < 21; id++) {
-        const pattern = getPattern(Math.floor(Math.random() * PATTERN_COUNT));
+        const pattern = getPattern(Math.floor(Math.random() * 4));
         sequences[id] = {
             trackId: tracks[Math.floor(Math.random() * 8)].id,
             playing: playing.includes(id),
@@ -65,4 +64,5 @@ export async function loadSequences() {
             presetId: presets[Math.floor(Math.random() * presets.length)].id,
         };
     }
+    // console.log(sequences);
 }

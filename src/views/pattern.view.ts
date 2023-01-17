@@ -83,6 +83,9 @@ export async function partternView() {
                 stepStr.note,
                 { x: position.x + 2, y: position.y + 1 },
                 { color: color.info, size: 14, font: font.bold },
+                (direction) => {
+                    console.log('note', {direction, stepIndex, voice});
+                }
             );
 
             drawSelectableText(

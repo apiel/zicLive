@@ -1,6 +1,6 @@
 import { Events } from 'zic_node_ui';
 import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } from './selector';
-import { setView, View } from './view';
+import { getView, setView, View } from './view';
 
 const KEY_UP = 82;
 const KEY_DOWN = 81;
@@ -13,6 +13,7 @@ const KEY_ACTION = 20;
 const keyState = {
     edit: false,
     menu: false,
+    menuTime: 0,
     action: false,
 };
 
@@ -62,12 +63,19 @@ export function eventSelector(events: Events): SelectableItem | undefined {
 }
 
 export function eventMenu(events: Events) {
-    if (isEventMenuPressed(events)) {
+    if (!keyState.menu && isEventMenuPressed(events)) {
         keyState.menu = true;
+        keyState.menuTime = Date.now();
     }
     if (keyState.menu) {
         if (events.keysUp?.includes(KEY_MENU)) {
             keyState.menu = false;
+            if (Date.now() - keyState.menuTime < 500) {
+                if (getView() === View.Sequencer) {
+                    return setView(View.SequencerEdit);
+                }
+                return setView(View.Sequencer);
+            }
             return true;
         }
         if (isEventUpPressed(events)) {

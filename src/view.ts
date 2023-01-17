@@ -19,6 +19,8 @@ export enum View {
 // let view: View = View.Sequencer;
 let view: View = View.Pattern;
 
+export const getView = () => view;
+
 export const setView = (newView: View) => {
     view = newView;
     return true;

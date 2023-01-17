@@ -22,7 +22,7 @@ setInterval(async () => {
     } else if (events.keysDown?.includes(224) || events.keysDown?.includes(44)) {
         minimize();
     } else if (events.keysDown || events.keysUp) {
-        console.log('events', events);
+        // console.log('events', events);
         if (await viewEventHandler(events)) {
             render();
         }

@@ -1,11 +1,14 @@
 import { clear, Events } from 'zic_node_ui';
 import { sequence } from '../components/sequence';
+import { config } from '../config';
 import { drawSelectableRect } from '../draw';
 import { eventSelector, getEditMode } from '../events';
 import { getPattern } from '../pattern';
 import { cleanSelectableItems } from '../selector';
 import { patches, presets, sequences, tracks } from '../sequencer';
 import { color } from '../style';
+
+let scrollY = 0;
 
 export async function sequencerView() {
     cleanSelectableItems();
@@ -20,8 +23,8 @@ export async function sequencerView() {
             patch: patches[patchId],
             preset: presets[presetId],
             // activeStep: stepCounter % seqProps[id].pattern.stepCount
-        }
-        drawSelectableRect(sequence(id, props), color.sequencer.selected);
+        };
+        drawSelectableRect(sequence(id, props, scrollY), color.sequencer.selected);
     }
 }
 
@@ -33,6 +36,11 @@ export async function sequencerEventHandler(events: Events) {
     }
     const item = eventSelector(events);
     if (item) {
+        if (item.position.y > config.screen.size.h - 50) {
+            scrollY -= 50;
+        } else if (item.position.y < 40 && scrollY < 0) {
+            scrollY += 50;
+        }
         await sequencerView();
         return true;
     }

@@ -12,7 +12,6 @@ const size = { w: config.screen.size.w / col - margin, h: 49 };
 
 interface Props {
     track: Track;
-    // selected: boolean;
     playing: boolean;
     detune: number;
     nextSequenceId?: number;
@@ -23,18 +22,13 @@ interface Props {
     preset: Preset;
 }
 
-export function sequence(id: number, props: Props): Rect {
+export function sequence(id: number, props: Props, scrollY = 0): Rect {
     setColor(props.playing ? color.sequencer.playing : color.foreground);
     const position = {
         x: margin + (margin + size.w) * (id % col),
-        y: margin + (margin + size.h) * Math.floor(id / col),
+        y: scrollY + margin + (margin + size.h) * Math.floor(id / col),
     };
     drawFilledRect({ position, size });
-
-    // if (props.selected) {
-    //     setColor(color.sequencer.selected);
-    //     drawRect({ position, size });
-    // }
 
     drawText(
         `${id + 1}`,

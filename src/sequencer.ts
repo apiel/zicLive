@@ -51,7 +51,7 @@ interface Sequence {
 export let sequences: Sequence[] = [];
 
 export async function loadSequences() {
-    for (let id = 0; id < 21; id++) {
+    for (let id = 0; id < 25; id++) {
         const pattern = getPattern(Math.floor(Math.random() * 4));
         sequences[id] = {
             trackId: tracks[Math.floor(Math.random() * 8)].id,
@@ -64,5 +64,4 @@ export async function loadSequences() {
             presetId: presets[Math.floor(Math.random() * presets.length)].id,
         };
     }
-    // console.log(sequences);
 }

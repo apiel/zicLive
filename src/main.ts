@@ -2,12 +2,14 @@ import { exit } from 'process';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from './config';
 import { loadPatterns } from './pattern';
+import { loadSequences } from './sequencer';
 import { renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });
 
 (async function () {
     await loadPatterns();
+    await loadSequences();
     await renderView();
     render();
 })();

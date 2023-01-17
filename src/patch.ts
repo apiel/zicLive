@@ -1,4 +1,5 @@
 export interface Patch {
+    id: number;
     name: string;
 }
 

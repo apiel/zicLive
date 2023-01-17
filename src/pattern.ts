@@ -69,11 +69,11 @@ const defaultPattern = (id = 0): Pattern => ({
 const patterns: Pattern[] = [];
 let patternId: number = 0;
 
-export function getPattern() {
+export function getPattern(id = patternId) {
     if (patterns.length === 0) {
         throw new Error("Patterns haven't been initialized yet.");
     }
-    return patterns[patternId];
+    return patterns[id];
 }
 
 export function setPatternId(id: number) {

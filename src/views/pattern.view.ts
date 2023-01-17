@@ -2,7 +2,7 @@ import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
-import { getPattern, MAX_VOICES, reloadPattern, setPatternId, STEP_CONDITIONS } from '../pattern';
+import { getPattern, MAX_VOICES, reloadPattern, savePattern, setPatternId, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
 import { cleanSelectableItems } from '../selector';
 import { eventEdit, eventSelector, getEditMode } from '../events';
@@ -40,9 +40,7 @@ export async function patternView() {
         `Save`,
         { x: headerPosition.x + 70, y: headerPosition.y + 4 },
         { color: color.info, size: 14, font: font.regular },
-        () => {
-            console.log('save');
-        }
+        async () => savePattern(pattern),
     );
 
     drawSelectableText(

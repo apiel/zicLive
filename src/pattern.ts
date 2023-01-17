@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import { config } from './config';
 import { minmax } from './util';
 
@@ -82,10 +82,14 @@ export function setPatternId(id: number) {
     patternId = minmax(id, 0, MAX_PATTERNS);
 }
 
-export async function loadPattern(id: number) {
+function getFilepath(id: number) {
     const idStr = id.toString().padStart(3, '0');
+    return `${config.path.patterns}/${idStr}.json`;
+}
+
+export async function loadPattern(id: number) {
     try {
-        const content = await readFile(`${config.path.patterns}/${idStr}.json`, 'utf8');
+        const content = await readFile(getFilepath(id), 'utf8');
         const pattern = JSON.parse(content.toString());
         // Fill missing step to pattern
         pattern.steps = [
@@ -95,6 +99,10 @@ export async function loadPattern(id: number) {
         return pattern;
     } catch (error) {}
     return defaultPattern(id);
+}
+
+export function savePattern(pattern: Pattern) {
+    return writeFile(getFilepath(pattern.id), JSON.stringify(pattern));
 }
 
 export async function reloadPattern(id: number) {

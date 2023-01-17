@@ -1,21 +1,13 @@
 import { readFile } from 'fs/promises';
-import {
-    clear,
-    drawFilledRect,
-    drawRect,
-    drawText,
-    Events,
-    Point,
-    setColor,
-    TextOptions,
-} from 'zic_node_ui';
+import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems, EditHandler, pushSelectableItem } from '../selector';
+import { cleanSelectableItems } from '../selector';
 import { eventEdit, eventSelector, isEditMode } from '../events';
+import { drawSelectableText } from '../draw';
 
 let scrollY = 0;
 const margin = 1;
@@ -24,23 +16,6 @@ const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
 let id = 1;
-
-function drawSelectableText(
-    text: string,
-    position: Point,
-    options: TextOptions,
-    edit: EditHandler = () => {},
-    steps?: [number, number],
-) {
-    const rect = drawText(text, position, options);
-    if (pushSelectableItem(rect.position, edit, steps)) {
-        setColor(color.secondarySelected);
-        drawRect({
-            position: { x: rect.position.x - 2, y: rect.position.y - 2 },
-            size: { w: rect.size.w + 4, h: rect.size.h + 3 },
-        });
-    }
-}
 
 export async function partternView() {
     const idStr = id.toString().padStart(3, '0');

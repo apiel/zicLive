@@ -7,17 +7,23 @@ export enum Direction {
     RIGHT,
 }
 
-let selectableItems: Point[] = [];
+export type EditHandler = (direction: number) => void;
+export interface SelectableItem {
+    position: Point;
+    edit?: EditHandler;
+    steps?: [number, number]; // incrementation step for edit handler, first number is for left/right, second number is for up/down
+}
+
+let selectableItems: SelectableItem[] = [];
 let selectedItem = 0;
 
 export function getSlectedItem() {
-    return { id: selectedItem, position: selectableItems[selectedItem] };
+    return selectableItems[selectedItem];
 }
 
-export function pushSelectableItem(position: Point) {
-    const id = selectableItems.push(position) - 1;
-    const selected = id === selectedItem;
-    return { id, position, selected };
+export function pushSelectableItem(position: Point, edit?: EditHandler, steps?: [number, number]): boolean {
+    const id = selectableItems.push({ position, edit, steps }) - 1;
+    return id === selectedItem;
 }
 
 export function cleanSelectableItems() {
@@ -27,12 +33,16 @@ export function cleanSelectableItems() {
 // TODO need some refactoring
 export function findNextSelectableItem(direction: Direction) {
     const current = selectableItems[selectedItem];
-    let next: Point | undefined;
+    let next: SelectableItem | undefined;
     let nextIndex = -1;
     if (direction === Direction.UP) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.x === current.x && item.y < current.y && (!next || item.y > next.y)) {
+            if (
+                item.position.x === current.position.x &&
+                item.position.y < current.position.y &&
+                (!next || item.position.y > next.position.y)
+            ) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -41,12 +51,12 @@ export function findNextSelectableItem(direction: Direction) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
             if (
-                item.y < 10000000 &&
-                item.x === current.x &&
-                item.y > current.y &&
-                (!next || item.y < next.y)
+                item.position.y < 10000000 &&
+                item.position.x === current.position.x &&
+                item.position.y > current.position.y &&
+                (!next || item.position.y < next.position.y)
             ) {
-                // item.y < 10000000 are item with negative pos, might find better fix!
+                // item.position.y < 10000000 are item with negative pos, might find better fix!
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -54,7 +64,11 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.LEFT) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y === current.y && item.x < current.x && (!next || item.x > next.x)) {
+            if (
+                item.position.y === current.position.y &&
+                item.position.x < current.position.x &&
+                (!next || item.position.x > next.position.x)
+            ) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -62,7 +76,11 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.RIGHT) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y === current.y && item.x > current.x && (!next || item.x < next.x)) {
+            if (
+                item.position.y === current.position.y &&
+                item.position.x > current.position.x &&
+                (!next || item.position.x < next.position.x)
+            ) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -76,7 +94,10 @@ export function findNextSelectableItem(direction: Direction) {
     if (direction === Direction.UP) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y < current.y && (!next || item.y > next.y)) {
+            if (
+                item.position.y < current.position.y &&
+                (!next || item.position.y > next.position.y)
+            ) {
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -84,8 +105,12 @@ export function findNextSelectableItem(direction: Direction) {
     } else if (direction === Direction.DOWN) {
         for (let index in selectableItems) {
             const item = selectableItems[index];
-            if (item.y < 10000000 && item.y > current.y && (!next || item.y < next.y)) {
-                // item.y < 10000000 are item with negative pos, might find better fix!
+            if (
+                item.position.y < 10000000 &&
+                item.position.y > current.position.y &&
+                (!next || item.position.y < next.position.y)
+            ) {
+                // item.position.y < 10000000 are item with negative pos, might find better fix!
                 next = item;
                 nextIndex = parseInt(index);
             }
@@ -94,7 +119,7 @@ export function findNextSelectableItem(direction: Direction) {
     // else if (direction === Direction.LEFT) {
     //     for (let index in selectableItems) {
     //         const item = selectableItems[index];
-    //         if (item.x < current.x && (!next || item.x > next.x)) {
+    //         if (item.position.x < current.position.x && (!next || item.position.x > next.position.x)) {
     //             next = item;
     //             nextIndex = parseInt(index);
     //         }
@@ -102,7 +127,7 @@ export function findNextSelectableItem(direction: Direction) {
     // } else if (direction === Direction.RIGHT) {
     //     for (let index in selectableItems) {
     //         const item = selectableItems[index];
-    //         if (item.x > current.x && (!next || item.x < next.x)) {
+    //         if (item.position.x > current.position.x && (!next || item.position.x < next.position.x)) {
     //             next = item;
     //             nextIndex = parseInt(index);
     //         }

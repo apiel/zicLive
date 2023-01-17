@@ -16,7 +16,7 @@ setInterval(async () => {
         close();
         exit();
     } else if (events.keysDown || events.keysUp) {
-        console.log('events', events);
+        // console.log('events', events);
         if (await patternUpdate(events)) {
             render();
         }

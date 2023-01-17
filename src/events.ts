@@ -1,5 +1,5 @@
 import { Events } from 'zic_node_ui';
-import { Direction, findNextSelectableItem } from './selector';
+import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } from './selector';
 
 const KEY_UP = 82;
 const KEY_DOWN = 81;
@@ -24,7 +24,7 @@ export function isEventRightPressed(events: Events) {
     return events.keysDown?.includes(KEY_RIGHT);
 }
 
-export function eventSelector(events: Events) {
+export function eventSelector(events: Events): SelectableItem | undefined {
     if (events.keysDown) {
         if (isEventUpPressed(events)) {
             return findNextSelectableItem(Direction.UP);
@@ -51,4 +51,23 @@ export function isEventEditPressed(events: Events) {
 
 export function isEventEditRelease(events: Events) {
     return events.keysUp?.includes(KEY_EDIT);
+}
+
+export function eventEdit(events: Events) {
+    const item = getSlectedItem();
+    if (isEventUpPressed(events)) {
+        item.edit?.(-1 * (item.steps?.[1] ?? 1));
+        return true;
+    } else if (isEventDownPressed(events)) {
+        item.edit?.(+1 * (item.steps?.[1] ?? 1));
+        return true;
+    } else if (isEventLeftPressed(events)) {
+        item.edit?.(-1 * (item.steps?.[0] ?? 1));
+        return true;
+    } else if (isEventRightPressed(events)) {
+        item.edit?.(+1 * (item.steps?.[0] ?? 1));
+        return true;
+    } else {
+        return false;
+    }
 }

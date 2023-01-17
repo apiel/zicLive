@@ -65,7 +65,7 @@ const patterns = [
             [],
             [],
             [],
-            [{ note: 60, velocity: 100, tie: false }],
+            [null, { note: 60, velocity: 100, tie: false }],
             [],
             [],
             [],

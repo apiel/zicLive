@@ -8,7 +8,7 @@ export interface Step {
 export interface Pattern {
     id: number;
     stepCount: number;
-    steps: Step[][];
+    steps: (Step | null)[][];
 }
 
 export const defaultPattern = (id = 0): Pattern => ({

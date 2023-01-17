@@ -67,8 +67,8 @@ export async function partternView() {
                 condition: '---',
                 tie: '     ',
             };
-            if (voices[voice]) {
-                const step = voices[voice];
+            const step = voices[voice];
+            if (step) {
                 stepStr.note = Midi.midiToNoteName(step.note, { sharps: true });
                 stepStr.velocity = `${step.velocity.toString().padStart(3, ' ')}%`;
                 stepStr.condition = step.condition
@@ -84,8 +84,8 @@ export async function partternView() {
                 { x: position.x + 2, y: position.y + 1 },
                 { color: color.info, size: 14, font: font.bold },
                 (direction) => {
-                    console.log('note', {direction, stepIndex, voice});
-                }
+                    console.log('note', { direction, stepIndex, voice });
+                },
             );
 
             drawSelectableText(

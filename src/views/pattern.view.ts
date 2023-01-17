@@ -93,7 +93,6 @@ export async function patternView() {
                 { x: position.x + 2, y: position.y + 1 },
                 { color: color.info, size: 14, font: font.bold },
                 (direction) => {
-                    console.log('note', { direction, stepIndex, voice });
                     if (step) {
                         if (direction < 0 && step.note <= NOTE_START) {
                             pattern.steps[stepIndex][voice] = null;
@@ -119,18 +118,34 @@ export async function patternView() {
                 stepStr.velocity,
                 { x: position.x + 35, y: position.y + 1 },
                 { color: color.info, size: 12, font: font.regular },
+                (direction) => {
+                    if (step) {
+                        step.velocity = minmax(step.velocity + direction, 1, 100);
+                    }
+                },
+                [1, 5],
             );
 
             drawSelectableText(
                 stepStr.tie,
                 { x: position.x + 82, y: position.y + 1 },
                 { color: color.info, size: 12, font: font.regular },
+                () => {
+                    if (step) {
+                        step.tie = !step.tie;
+                    }
+                }
             );
 
             drawSelectableText(
                 stepStr.condition,
                 { x: position.x + 35, y: position.y + 18 },
                 { color: color.secondaryInfo, size: 12, font: font.regular },
+                (direction) => {
+                    if (step) {
+                        step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
+                    }
+                }
             );
         }
     }

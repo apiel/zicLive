@@ -1,39 +1,6 @@
-import { Patch } from './patch';
+import { patches, presets } from './patch';
 import { getPattern } from './pattern';
-import { color } from './style';
-import { Track } from './track';
-
-export const tracks: Track[] = [
-    { id: 0, color: color.tracks[0] },
-    { id: 1, color: color.tracks[1] },
-    { id: 2, color: color.tracks[2] },
-    { id: 3, color: color.tracks[3] },
-    { id: 4, color: color.tracks[4] },
-    { id: 5, color: color.tracks[5] },
-    { id: 6, color: color.tracks[6] },
-    { id: 7, color: color.tracks[7] },
-];
-
-export const patches: Patch[] = [
-    { id: 0, name: 'Kick' },
-    { id: 1, name: 'Organic' },
-    { id: 2, name: 'Melo' },
-    { id: 3, name: 'Bass' },
-    { id: 4, name: 'Midi ch1' },
-    { id: 5, name: 'Midi ch2' },
-    { id: 6, name: 'Psy' },
-    { id: 7, name: 'Drone' },
-];
-export const presets = [
-    { id: 0 },
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
-];
+import { tracks } from './track';
 
 export const playing = [4, 7, 8, 10];
 

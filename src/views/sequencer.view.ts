@@ -3,10 +3,12 @@ import { sequence } from '../components/sequence';
 import { config } from '../config';
 import { drawSelectableRect } from '../draw';
 import { eventSelector, getEditMode } from '../events';
+import { patches, presets } from '../patch';
 import { getPattern } from '../pattern';
 import { cleanSelectableItems } from '../selector';
-import { patches, presets, sequences, tracks } from '../sequencer';
+import { sequences } from '../sequencer';
 import { color } from '../style';
+import { tracks } from '../track';
 
 let scrollY = 0;
 
@@ -18,7 +20,6 @@ export async function sequencerView() {
         const props = {
             ...seq,
             track: tracks[trackId],
-            // selected: id === 2,
             pattern: getPattern(patternId),
             patch: patches[patchId],
             preset: presets[presetId],

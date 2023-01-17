@@ -45,19 +45,19 @@ export function isEventEditRelease(events: Events) {
     return events.keysUp?.includes(KEY_EDIT);
 }
 
-export function eventSelector(events: Events): SelectableItem | undefined {
+export function eventSelector(events: Events, findCloseFromSameColumn = true): SelectableItem | undefined {
     if (events.keysDown) {
         if (isEventUpPressed(events)) {
-            return findNextSelectableItem(Direction.UP);
+            return findNextSelectableItem(Direction.UP, findCloseFromSameColumn);
         }
         if (isEventDownPressed(events)) {
-            return findNextSelectableItem(Direction.DOWN);
+            return findNextSelectableItem(Direction.DOWN, findCloseFromSameColumn);
         }
         if (isEventLeftPressed(events)) {
-            return findNextSelectableItem(Direction.LEFT);
+            return findNextSelectableItem(Direction.LEFT, findCloseFromSameColumn);
         }
         if (isEventRightPressed(events)) {
-            return findNextSelectableItem(Direction.RIGHT);
+            return findNextSelectableItem(Direction.RIGHT, findCloseFromSameColumn);
         }
     }
 }
@@ -68,9 +68,14 @@ export function eventMenu(events: Events) {
         keyState.menuTime = Date.now();
     }
     if (keyState.menu) {
+        // Could show help if menuTime over 500?
+        if (keyState.menuTime && Date.now() - keyState.menuTime > 1000) {
+            keyState.menuTime = 0;
+            return setView(View.Help);
+        }
         if (events.keysUp?.includes(KEY_MENU)) {
             keyState.menu = false;
-            if (Date.now() - keyState.menuTime < 500) {
+            if (keyState.menuTime && Date.now() - keyState.menuTime < 500) {
                 if (getView() === View.Sequencer) {
                     return setView(View.SequencerEdit);
                 }
@@ -79,12 +84,16 @@ export function eventMenu(events: Events) {
             return true;
         }
         if (isEventUpPressed(events)) {
+            keyState.menuTime = 0;
             return setView(View.Preset);
         } else if (isEventDownPressed(events)) {
+            keyState.menuTime = 0;
             return setView(View.Pattern);
         } else if (isEventLeftPressed(events)) {
+            keyState.menuTime = 0;
             return setView(View.Master);
         } else if (isEventRightPressed(events)) {
+            keyState.menuTime = 0;
             return setView(View.Project);
         }
     }

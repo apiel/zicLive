@@ -1,11 +1,12 @@
-import { Events } from "zic_node_ui";
-import { eventMenu } from "./events";
-import { masterEventHandler, masterView } from "./views/master.view";
-import { patternEventHandler, patternView } from "./views/pattern.view";
-import { presetEventHandler, presetView } from "./views/preset.view";
-import { projectEventHandler, projectView } from "./views/project.view";
-import { sequencerEventHandler, sequencerView } from "./views/sequencer.view";
-import { sequencerEditEventHandler, sequencerEditView } from "./views/sequencerEdit.view";
+import { Events } from 'zic_node_ui';
+import { eventMenu } from './events';
+import { helpEventHandler, helpView } from './views/help.view';
+import { masterEventHandler, masterView } from './views/master.view';
+import { patternEventHandler, patternView } from './views/pattern.view';
+import { presetEventHandler, presetView } from './views/preset.view';
+import { projectEventHandler, projectView } from './views/project.view';
+import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
+import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
 
 export enum View {
     Sequencer,
@@ -14,17 +15,17 @@ export enum View {
     Preset, // Patch preset (patch connot be changed as they done programmatically, but setting of the patch can be saved as preset)
     Master, // Master Volume, Tempo, FX, etc... (mixer?, scatter?)
     Project,
+    Help,
 }
 
-// let view: View = View.Sequencer;
-let view: View = View.Pattern;
+let view: View = View.Sequencer;
 
 export const getView = () => view;
 
 export const setView = (newView: View) => {
     view = newView;
     return true;
-}
+};
 
 export const renderView = () => {
     switch (view) {
@@ -40,9 +41,11 @@ export const renderView = () => {
             return masterView();
         case View.Project:
             return projectView();
+        case View.Help:
+            return helpView();
     }
     return sequencerView();
-}
+};
 
 export const viewEventHandler = (events: Events) => {
     if (eventMenu(events)) {
@@ -62,5 +65,7 @@ export const viewEventHandler = (events: Events) => {
             return masterEventHandler(events);
         case View.Project:
             return projectEventHandler(events);
+        case View.Help:
+            return helpEventHandler(events);
     }
-}
+};

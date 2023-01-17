@@ -14,17 +14,8 @@ import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
 import { defaultPattern, MAX_VOICES, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems, EditHandler, getSlectedItem, pushSelectableItem } from '../selector';
-import {
-    eventEdit,
-    eventSelector,
-    isEventDownPressed,
-    isEventEditPressed,
-    isEventEditRelease,
-    isEventLeftPressed,
-    isEventRightPressed,
-    isEventUpPressed,
-} from '../events';
+import { cleanSelectableItems, EditHandler, pushSelectableItem } from '../selector';
+import { eventEdit, eventSelector, isEditMode } from '../events';
 
 let scrollY = 0;
 const margin = 1;
@@ -34,7 +25,13 @@ const size = { w: config.screen.size.w / col - margin, h: 35 };
 
 let id = 1;
 
-function drawSelectableText(text: string, position: Point, options: TextOptions, edit: EditHandler = () => {}, steps?: [number, number]) {
+function drawSelectableText(
+    text: string,
+    position: Point,
+    options: TextOptions,
+    edit: EditHandler = () => {},
+    steps?: [number, number],
+) {
     const rect = drawText(text, position, options);
     if (pushSelectableItem(rect.position, edit, steps)) {
         setColor(color.secondarySelected);
@@ -134,17 +131,8 @@ export async function partternView() {
     }
 }
 
-let editPressed = false;
 export async function patternUpdate(events: Events) {
-    if (isEventEditPressed(events)) {
-        editPressed = true;
-    }
-    if (editPressed && isEventEditRelease(events)) {
-        // console.log('EditReleased');
-        editPressed = false;
-    }
-
-    if (editPressed) {
+    if (isEditMode(events)) {
         const updated = eventEdit(events);
         if (updated) {
             await partternView();

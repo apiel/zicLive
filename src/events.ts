@@ -71,3 +71,15 @@ export function eventEdit(events: Events) {
         return false;
     }
 }
+
+let editPressed = false;
+export function isEditMode(events: Events) {
+    if (isEventEditPressed(events)) {
+        editPressed = true;
+    }
+    if (editPressed && isEventEditRelease(events)) {
+        // console.log('EditReleased');
+        editPressed = false;
+    }
+    return editPressed;
+}

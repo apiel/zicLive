@@ -1,4 +1,4 @@
-import { drawFilledRect, drawLine, drawRect, drawText, Point, setColor } from 'zic_node_ui';
+import { drawFilledRect, drawLine, drawRect, drawText, Point, Rect, setColor } from 'zic_node_ui';
 import { color, font } from '../style';
 import { config } from '../config';
 import { Pattern } from '../pattern';
@@ -12,7 +12,7 @@ const size = { w: config.screen.size.w / col - margin, h: 49 };
 
 interface Props {
     track: Track;
-    selected: boolean;
+    // selected: boolean;
     playing: boolean;
     detune: number;
     nextSequenceId?: number;
@@ -23,7 +23,7 @@ interface Props {
     preset: Preset;
 }
 
-export function sequence(id: number, props: Props) {
+export function sequence(id: number, props: Props): Rect {
     setColor(props.playing ? color.sequencer.playing : color.foreground);
     const position = {
         x: margin + (margin + size.w) * (id % col),
@@ -31,10 +31,10 @@ export function sequence(id: number, props: Props) {
     };
     drawFilledRect({ position, size });
 
-    if (props.selected) {
-        setColor(color.sequencer.selected);
-        drawRect({ position, size });
-    }
+    // if (props.selected) {
+    //     setColor(color.sequencer.selected);
+    //     drawRect({ position, size });
+    // }
 
     drawText(
         `${id + 1}`,
@@ -75,6 +75,8 @@ export function sequence(id: number, props: Props) {
             props.activeStep,
         );
     }
+
+    return { position, size };
 }
 
 function renderActiveStep(position: Point, pattern: Pattern, step: number) {

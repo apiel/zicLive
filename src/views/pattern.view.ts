@@ -36,7 +36,7 @@ type EditHandler = (direction: number) => void;
 let id = 1;
 let editHandler: EditHandler[] = [];
 
-function drawSelectableText(text: string, position: Point, options: TextOptions, edit = () => {}) {
+function drawSelectableText(text: string, position: Point, options: TextOptions, edit: EditHandler = () => {}) {
     const rect = drawText(text, position, options);
     const item = pushSelectableItem(rect.position);
     editHandler[item.id] = edit;
@@ -70,6 +70,9 @@ export async function partternView() {
         `ID: ${idStr}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
+        (direction) => {
+            console.log('direction', direction);
+        }
     );
 
     drawSelectableText(
@@ -140,11 +143,11 @@ export async function patternUpdate(events: Events) {
     if (isEventEditPressed(events)) {
         editPressed = true;
     }
-    if (editPressed && !isEventEditRelease(events)) {
-        console.log('EditReleased');
+    if (editPressed && isEventEditRelease(events)) {
+        // console.log('EditReleased');
         editPressed = false;
     }
-    
+
     if (editPressed) {
         const item = getSlectedItem();
         const edit = editHandler[item.id];
@@ -156,6 +159,8 @@ export async function patternUpdate(events: Events) {
             edit(-1);
         } else if (isEventRightPressed(events)) {
             edit(+1);
+        } else {
+            return false;
         }
     } else {
         const item = eventSelector(events);
@@ -165,8 +170,9 @@ export async function patternUpdate(events: Events) {
             } else if (item.y < 40 && scrollY < 0) {
                 scrollY += 40;
             }
+            await partternView();
+            return true;
         }
     }
-    await partternView();
-    return true;
+    return false;
 }

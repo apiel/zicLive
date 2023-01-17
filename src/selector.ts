@@ -15,8 +15,9 @@ export function getSlectedItem() {
 }
 
 export function pushSelectableItem(position: Point) {
-    const selected = selectableItems.push(position) - 1 === selectedItem;
-    return { ...getSlectedItem(), selected };
+    const id = selectableItems.push(position) - 1;
+    const selected = id === selectedItem;
+    return { id, position, selected };
 }
 
 export function cleanSelectableItems() {

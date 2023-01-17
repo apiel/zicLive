@@ -2,7 +2,7 @@ import { exit } from 'process';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from '../config';
 import { loadPatterns } from '../pattern';
-import { patternView, patternUpdate } from './pattern.view';
+import { patternView, patternEventHandler } from './pattern.view';
 
 open({ size: config.screen.size });
 
@@ -23,7 +23,7 @@ setInterval(async () => {
         minimize();
     } else if (events.keysDown || events.keysUp) {
         // console.log('events', events);
-        if (await patternUpdate(events)) {
+        if (await patternEventHandler(events)) {
             render();
         }
     }

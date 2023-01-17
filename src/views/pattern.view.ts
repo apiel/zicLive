@@ -151,7 +151,7 @@ export async function patternView() {
     }
 }
 
-export async function patternUpdate(events: Events) {
+export async function patternEventHandler(events: Events) {
     const editMode = await getEditMode(events);
     if (editMode.refreshScreen) {
         await patternView();

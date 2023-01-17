@@ -1,5 +1,6 @@
 import { Events } from 'zic_node_ui';
 import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } from './selector';
+import { setView, View } from './view';
 
 const KEY_UP = 82;
 const KEY_DOWN = 81;
@@ -7,6 +8,13 @@ const KEY_LEFT = 80;
 const KEY_RIGHT = 79;
 const KEY_MENU = 4;
 const KEY_EDIT = 22;
+const KEY_ACTION = 20;
+
+const keyState = {
+    edit: false,
+    menu: false,
+    action: false,
+};
 
 export function isEventUpPressed(events: Events) {
     return events.keysDown?.includes(KEY_UP);
@@ -22,6 +30,18 @@ export function isEventLeftPressed(events: Events) {
 
 export function isEventRightPressed(events: Events) {
     return events.keysDown?.includes(KEY_RIGHT);
+}
+
+export function isEventMenuPressed(events: Events) {
+    return events.keysDown?.includes(KEY_MENU);
+}
+
+export function isEventEditPressed(events: Events) {
+    return events.keysDown?.includes(KEY_EDIT);
+}
+
+export function isEventEditRelease(events: Events) {
+    return events.keysUp?.includes(KEY_EDIT);
 }
 
 export function eventSelector(events: Events): SelectableItem | undefined {
@@ -41,20 +61,30 @@ export function eventSelector(events: Events): SelectableItem | undefined {
     }
 }
 
-export function isEventMenuPressed(events: Events) {
-    return events.keysDown?.includes(KEY_MENU);
-}
-
-export function isEventEditPressed(events: Events) {
-    return events.keysDown?.includes(KEY_EDIT);
-}
-
-export function isEventEditRelease(events: Events) {
-    return events.keysUp?.includes(KEY_EDIT);
+export function eventMenu(events: Events) {
+    if (isEventMenuPressed(events)) {
+        keyState.menu = true;
+    }
+    if (keyState.menu) {
+        if (events.keysUp?.includes(KEY_MENU)) {
+            keyState.menu = false;
+            return true;
+        }
+        if (isEventUpPressed(events)) {
+            return setView(View.Preset);
+        } else if (isEventDownPressed(events)) {
+            return setView(View.Pattern);
+        } else if (isEventLeftPressed(events)) {
+            return setView(View.Master);
+        } else if (isEventRightPressed(events)) {
+            return setView(View.Project);
+        }
+    }
+    return false;
 }
 
 export async function eventEdit(events: Events) {
-    const {edit, steps} = getSlectedItem();
+    const { edit, steps } = getSlectedItem();
     if (!edit) {
         return false;
     }
@@ -75,18 +105,17 @@ export async function eventEdit(events: Events) {
     }
 }
 
-let editPressed = false;
 export async function getEditMode(events: Events) {
     if (isEventEditPressed(events)) {
-        editPressed = true;
+        keyState.edit = true;
     }
-    if (editPressed && isEventEditRelease(events)) {
+    if (keyState.edit && isEventEditRelease(events)) {
         const item = getSlectedItem();
-        editPressed = false;
+        keyState.edit = false;
         if (item.edit) {
             await item.edit(0);
             return { edit: false, refreshScreen: true };
         }
     }
-    return { edit: editPressed, refreshScreen: false };
+    return { edit: keyState.edit, refreshScreen: false };
 }

@@ -3,7 +3,8 @@ import { config } from './config';
 import { minmax } from './util';
 
 export const MAX_PATTERNS = 999;
-
+export const MAX_VOICES = 4;
+export const MAX_STEPS_IN_PATTERN = 64; // TODO get this from C++
 export interface Step {
     note: number;
     velocity: number;
@@ -16,8 +17,6 @@ export interface Pattern {
     stepCount: number;
     steps: (Step | null)[][];
 }
-
-export const MAX_VOICES = 4;
 
 export const STEP_CONDITIONS = [
     '---',
@@ -66,7 +65,7 @@ export enum StepCondition {
 const defaultPattern = (id = 0): Pattern => ({
     id,
     stepCount: 16,
-    steps: Array.from({ length: 16 }, () => []),
+    steps: Array.from({ length: MAX_STEPS_IN_PATTERN }, () => []),
 });
 
 const patterns: Pattern[] = [];
@@ -74,7 +73,7 @@ let patternId: number = 0;
 
 export function getPattern() {
     if (patterns.length === 0) {
-        throw new Error('Patterns haven\'t been initialized yet.');
+        throw new Error("Patterns haven't been initialized yet.");
     }
     return patterns[patternId];
 }
@@ -87,7 +86,13 @@ export async function loadPattern(id: number) {
     const idStr = id.toString().padStart(3, '0');
     try {
         const content = await readFile(`${config.path.patterns}/${idStr}.json`, 'utf8');
-        return JSON.parse(content.toString());
+        const pattern = JSON.parse(content.toString());
+        // Fill missing step to pattern
+        pattern.steps = [
+            ...pattern.steps,
+            ...Array.from({ length: MAX_STEPS_IN_PATTERN - pattern.steps.length }, () => []),
+        ];
+        return pattern;
     } catch (error) {}
     return defaultPattern(id);
 }

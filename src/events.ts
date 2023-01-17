@@ -78,7 +78,6 @@ export function isEditMode(events: Events) {
         editPressed = true;
     }
     if (editPressed && isEventEditRelease(events)) {
-        // console.log('EditReleased');
         editPressed = false;
     }
     return editPressed;

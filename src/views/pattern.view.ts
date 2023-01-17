@@ -38,7 +38,7 @@ export async function partternView() {
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
         (direction) => {
-            console.log('direction', direction);
+            id += direction;
         },
         [1, 10],
     );

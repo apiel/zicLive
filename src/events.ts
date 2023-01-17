@@ -53,19 +53,22 @@ export function isEventEditRelease(events: Events) {
     return events.keysUp?.includes(KEY_EDIT);
 }
 
-export function eventEdit(events: Events) {
-    const item = getSlectedItem();
+export async function eventEdit(events: Events) {
+    const {edit, steps} = getSlectedItem();
+    if (!edit) {
+        return false;
+    }
     if (isEventUpPressed(events)) {
-        item.edit?.(-1 * (item.steps?.[1] ?? 1));
+        await edit(-1 * (steps?.[1] ?? 1));
         return true;
     } else if (isEventDownPressed(events)) {
-        item.edit?.(+1 * (item.steps?.[1] ?? 1));
+        await edit(+1 * (steps?.[1] ?? 1));
         return true;
     } else if (isEventLeftPressed(events)) {
-        item.edit?.(-1 * (item.steps?.[0] ?? 1));
+        await edit(-1 * (steps?.[0] ?? 1));
         return true;
     } else if (isEventRightPressed(events)) {
-        item.edit?.(+1 * (item.steps?.[0] ?? 1));
+        await edit(+1 * (steps?.[0] ?? 1));
         return true;
     } else {
         return false;
@@ -73,12 +76,17 @@ export function eventEdit(events: Events) {
 }
 
 let editPressed = false;
-export function isEditMode(events: Events) {
+export async function getEditMode(events: Events) {
     if (isEventEditPressed(events)) {
         editPressed = true;
     }
     if (editPressed && isEventEditRelease(events)) {
+        const item = getSlectedItem();
         editPressed = false;
+        if (item.edit) {
+            await item.edit(0);
+            return { edit: false, refreshScreen: true };
+        }
     }
-    return editPressed;
+    return { edit: editPressed, refreshScreen: false };
 }

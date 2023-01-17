@@ -7,7 +7,7 @@ export enum Direction {
     RIGHT,
 }
 
-export type EditHandler = (direction: number) => void;
+export type EditHandler = (direction: number) => Promise<void> | void;
 export interface SelectableItem {
     position: Point;
     edit?: EditHandler;

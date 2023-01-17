@@ -97,6 +97,10 @@ export async function loadPattern(id: number) {
     return defaultPattern(id);
 }
 
+export async function reloadPattern(id: number) {
+    patterns[id] = await loadPattern(id);
+}
+
 export async function loadPatterns() {
     for (let id = 0; id < MAX_PATTERNS; id++) {
         patterns.push(await loadPattern(id));

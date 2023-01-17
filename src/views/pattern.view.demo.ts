@@ -2,13 +2,13 @@ import { exit } from 'process';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from '../config';
 import { loadPatterns } from '../pattern';
-import { partternView, patternUpdate } from './pattern.view';
+import { patternView, patternUpdate } from './pattern.view';
 
 open({ size: config.screen.size });
 
 (async function () {
     await loadPatterns();
-    await partternView();
+    await patternView();
     render();
 })();
 

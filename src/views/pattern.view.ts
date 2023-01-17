@@ -2,10 +2,10 @@ import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreview } from '../components/patternPreview';
 import { config } from '../config';
-import { getPattern, MAX_VOICES, setPatternId, STEP_CONDITIONS } from '../pattern';
+import { getPattern, MAX_VOICES, reloadPattern, setPatternId, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
 import { cleanSelectableItems } from '../selector';
-import { eventEdit, eventSelector, isEditMode } from '../events';
+import { eventEdit, eventSelector, getEditMode } from '../events';
 import { drawSelectableText } from '../draw';
 import { minmax } from '../util';
 
@@ -15,7 +15,7 @@ const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
-export async function partternView() {
+export async function patternView() {
     const pattern = getPattern();
     const idStr = pattern.id.toString().padStart(3, '0');
     cleanSelectableItems();
@@ -37,6 +37,15 @@ export async function partternView() {
     );
 
     drawSelectableText(
+        `Save`,
+        { x: headerPosition.x + 70, y: headerPosition.y + 4 },
+        { color: color.info, size: 14, font: font.regular },
+        () => {
+            console.log('save');
+        }
+    );
+
+    drawSelectableText(
         `Len: ${pattern.stepCount}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 24 },
         { color: color.info, size: 14, font: font.regular },
@@ -45,7 +54,14 @@ export async function partternView() {
         }
     );
 
-    patternPreview({ x: 100, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);
+    drawSelectableText(
+        `Reload`,
+        { x: headerPosition.x + 70, y: headerPosition.y + 24 },
+        { color: color.info, size: 14, font: font.regular },
+        async () => reloadPattern(pattern.id),
+    );
+
+    patternPreview({ x: 140, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);
 
     for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
         const voices = pattern.steps[stepIndex];
@@ -106,10 +122,15 @@ export async function partternView() {
 }
 
 export async function patternUpdate(events: Events) {
-    if (isEditMode(events)) {
-        const updated = eventEdit(events);
+    const editMode = await getEditMode(events);
+    if (editMode.refreshScreen) {
+        await patternView();
+        return true;
+    }
+    if (editMode.edit) {
+        const updated = await eventEdit(events);
         if (updated) {
-            await partternView();
+            await patternView();
             return true;
         }
         return false;
@@ -121,7 +142,7 @@ export async function patternUpdate(events: Events) {
             } else if (item.position.y < 40 && scrollY < 0) {
                 scrollY += 40;
             }
-            await partternView();
+            await patternView();
             return true;
         }
     }

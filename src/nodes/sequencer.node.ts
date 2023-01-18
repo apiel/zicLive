@@ -12,6 +12,7 @@ export function sequencerNode(
     col: number,
     scrollY: number,
     onEdit: (id: number) => void,
+    onSelected: (id: number) => void = () => {},
 ) {
     for (let id = 0; id < sequences.length; id++) {
         const { trackId, patchId, presetId, patternId, nextSequenceId, ...seq } = sequences[id];
@@ -32,6 +33,7 @@ export function sequencerNode(
         };
         drawSelectableRect(sequenceNode(id, width, col, props, scrollY), color.sequencer.selected, {
             edit: () => onEdit(id),
+            onSelected: () => onSelected(id),
         });
     }
     const addRect = sequenceRect(sequences.length, width, col, scrollY);

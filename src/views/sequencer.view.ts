@@ -4,6 +4,7 @@ import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
+import { setSelectedSequenceId } from '../sequence';
 
 let scrollY = 0;
 const col = 4;
@@ -12,7 +13,13 @@ const width = config.screen.size.w / col;
 export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(width, col, scrollY, (id) => console.log(`Seq clicked: ${id}`));
+    sequencerNode(
+        width,
+        col,
+        scrollY,
+        (id) => console.log(`Seq clicked: ${id}`),
+        setSelectedSequenceId,
+    );
 }
 
 export async function sequencerEventHandler(events: Events) {
@@ -28,7 +35,7 @@ export async function sequencerEventHandler(events: Events) {
         } else if (item.position.y < 40 && scrollY < 0) {
             scrollY += 50;
         }
-        // setSelectedSequenceId
+        item.options?.onSelected?.();
         await sequencerView();
         return true;
     }

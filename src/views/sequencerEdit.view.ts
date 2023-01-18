@@ -1,7 +1,7 @@
 import { clear, Color, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventSelector, getEditMode } from '../events';
-import { cleanSelectableItems, EditHandler } from '../selector';
+import { cleanSelectableItems, EditHandler, SelectableOptions } from '../selector';
 import { color, font } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
 import { drawSelectableRect } from '../draw';
@@ -24,8 +24,7 @@ function drawField(
     value: string,
     valueColor: Color,
     row: number,
-    edit: EditHandler,
-    steps?: [number, number],
+    selectableOptions: SelectableOptions,
 ) {
     const h = (height + margin) / 2;
     const rect = {
@@ -33,7 +32,7 @@ function drawField(
         size: { w: editRect.size.w, h },
     };
 
-    drawSelectableRect(rect, color.sequencer.selected, edit, steps);
+    drawSelectableRect(rect, color.sequencer.selected, selectableOptions);
     drawText(
         label,
         { x: rect.position.x + 2, y: rect.position.y + 2 },
@@ -53,7 +52,7 @@ function drawButton(text: string, row: number, edit: EditHandler) {
         size: { w: editRect.size.w, h },
     };
 
-    drawSelectableRect(rect, color.sequencer.selected, edit);
+    drawSelectableRect(rect, color.sequencer.selected, { edit });
     drawText(
         text,
         { x: rect.position.x + 80, y: rect.position.y + 2 },
@@ -80,30 +79,26 @@ export async function sequencerEditView() {
 
     const track = getTrack(trackId);
     const patch = getPatch(track.type, patchId);
-    drawField(`Track`, `${trackId} ${track.name}`, getTrackColor(trackId), 0, () => {});
-    drawField(`Patch`, `${patchId} ${patch.name}`, color.white, 1, () => {});
+    drawField(`Track`, `${trackId} ${track.name}`, getTrackColor(trackId), 0, { edit: () => {} });
+    drawField(`Patch`, `${patchId} ${patch.name}`, color.white, 1, { edit: () => {} });
     drawField(
         `Preset`,
         `${presetId} ${getPreset(track.type, patchId, presetId).name}`,
         color.white,
         2,
-        () => {},
+        { edit: () => {} },
     );
-    drawField(`Pattern`, patternId.toString().padStart(3, '0'), color.white, 3, () => {});
+    drawField(`Pattern`, patternId.toString().padStart(3, '0'), color.white, 3, { edit: () => {} });
     drawField(
         `Detune`,
         detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
         color.white,
         4,
-        () => {},
+        { edit: () => {} },
     );
-    drawField(
-        `Repeat`,
-        `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`,
-        color.white,
-        5,
-        () => {},
-    );
+    drawField(`Repeat`, `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`, color.white, 5, {
+        edit: () => {},
+    });
     drawField(
         `Next`,
         nextSequenceId
@@ -113,7 +108,7 @@ export async function sequencerEditView() {
             : `---`,
         color.white,
         6,
-        () => {},
+        { edit: () => {} },
     );
     drawButton('Save', 7, () => console.log('save'));
     drawButton('Reload', 8, () => console.log('reload'));

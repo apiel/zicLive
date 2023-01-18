@@ -101,10 +101,11 @@ export function eventMenu(events: Events) {
 }
 
 export async function eventEdit(events: Events) {
-    const { edit, steps } = getSlectedItem();
-    if (!edit) {
+    const { options } = getSlectedItem();
+    if (!options || !options.edit) {
         return false;
     }
+    const { steps, edit } = options;
     if (isEventUpPressed(events)) {
         await edit(+1 * (steps?.[1] ?? 1));
         return true;
@@ -129,8 +130,8 @@ export async function getEditMode(events: Events) {
     if (keyState.edit && isEventEditRelease(events)) {
         const item = getSlectedItem();
         keyState.edit = false;
-        if (item.edit) {
-            await item.edit(0);
+        if (item.options && item.options.edit) {
+            await item.options.edit(0);
             return { edit: false, refreshScreen: true };
         }
     }

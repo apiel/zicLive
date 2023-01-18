@@ -8,10 +8,15 @@ export enum Direction {
 }
 
 export type EditHandler = (direction: number) => Promise<any> | any;
-export interface SelectableItem {
-    position: Point;
+
+export interface SelectableOptions {
+    onSelected?: () => void;
     edit?: EditHandler;
     steps?: [number, number]; // incrementation step for edit handler, first number is for left/right, second number is for up/down
+}
+export interface SelectableItem {
+    position: Point;
+    options?: SelectableOptions;
 }
 
 let selectableItems: SelectableItem[] = [];
@@ -23,10 +28,9 @@ export function getSlectedItem() {
 
 export function pushSelectableItem(
     position: Point,
-    edit?: EditHandler,
-    steps?: [number, number],
+    options?: SelectableOptions,
 ): boolean {
-    const id = selectableItems.push({ position, edit, steps }) - 1;
+    const id = selectableItems.push({ position, options }) - 1;
     return id === selectedItem;
 }
 

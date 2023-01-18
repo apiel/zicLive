@@ -28,6 +28,7 @@ export async function sequencerEventHandler(events: Events) {
         } else if (item.position.y < 40 && scrollY < 0) {
             scrollY += 50;
         }
+        // setSelectedSequenceId
         await sequencerView();
         return true;
     }

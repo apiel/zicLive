@@ -7,8 +7,12 @@ import { sequences } from '../sequence';
 import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
 
-export function sequencerNode(width: number, col: number, scrollY: number, onSelect: (id: number) => void) {
-    
+export function sequencerNode(
+    width: number,
+    col: number,
+    scrollY: number,
+    onEdit: (id: number) => void,
+) {
     for (let id = 0; id < sequences.length; id++) {
         const { trackId, patchId, presetId, patternId, nextSequenceId, ...seq } = sequences[id];
         let next;
@@ -26,18 +30,16 @@ export function sequencerNode(width: number, col: number, scrollY: number, onSel
             next,
             // activeStep: stepCounter % seqProps[id].pattern.stepCount
         };
-        drawSelectableRect(
-            sequenceNode(id, width, col, props, scrollY),
-            color.sequencer.selected,
-            () => { 
-                onSelect(id); 
-            },
-        );
+        drawSelectableRect(sequenceNode(id, width, col, props, scrollY), color.sequencer.selected, {
+            edit: () => onEdit(id),
+        });
     }
     const addRect = sequenceRect(sequences.length, width, col, scrollY);
     setColor(color.foreground);
     drawFilledRect(addRect);
-    drawSelectableRect(addRect, color.sequencer.selected, () => console.log('add sequence'));
+    drawSelectableRect(addRect, color.sequencer.selected, {
+        edit: () => console.log('add sequence'),
+    });
     drawText(
         `+`,
         { x: addRect.position.x + 40, y: addRect.position.y },

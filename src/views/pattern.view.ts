@@ -31,23 +31,24 @@ export async function patternView() {
         `ID: ${idStr}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 4 },
         { color: color.primary, size: 14, font: font.bold },
-        (direction) => setPatternId(pattern.id + direction),
-        [1, 10],
+        { edit: (direction) => setPatternId(pattern.id + direction), steps: [1, 10] },
     );
 
     drawSelectableText(
         `Save`,
         { x: headerPosition.x + 70, y: headerPosition.y + 4 },
         { color: color.info, size: 14, font: font.regular },
-        async () => savePattern(pattern),
+        { edit: async () => savePattern(pattern) },
     );
 
     drawSelectableText(
         `Len: ${pattern.stepCount}`,
         { x: headerPosition.x + 5, y: headerPosition.y + 24 },
         { color: color.info, size: 14, font: font.regular },
-        (direction) => {
-            pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+        {
+            edit: (direction) => {
+                pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+            },
         },
     );
 
@@ -55,7 +56,7 @@ export async function patternView() {
         `Reload`,
         { x: headerPosition.x + 70, y: headerPosition.y + 24 },
         { color: color.info, size: 14, font: font.regular },
-        async () => reloadPattern(pattern.id),
+        { edit: async () => reloadPattern(pattern.id) },
     );
 
     patternPreviewNode({ x: 140, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);
@@ -92,60 +93,72 @@ export async function patternView() {
                 stepStr.note,
                 { x: position.x + 2, y: position.y + 1 },
                 { color: color.info, size: 14, font: font.bold },
-                (direction) => {
-                    if (step) {
-                        if (direction < 0 && step.note <= NOTE_START) {
-                            pattern.steps[stepIndex][voice] = null;
-                        } else {
-                            step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+                {
+                    edit: (direction) => {
+                        if (step) {
+                            if (direction < 0 && step.note <= NOTE_START) {
+                                pattern.steps[stepIndex][voice] = null;
+                            } else {
+                                step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+                            }
+                        } else if (direction === 1) {
+                            const previousStep = pattern.steps
+                                .slice(0, stepIndex)
+                                .reverse()
+                                .find((step) => step[voice]?.note)?.[voice];
+                            pattern.steps[stepIndex][voice] = {
+                                note: previousStep?.note || 60,
+                                velocity: 100,
+                                tie: false,
+                            };
                         }
-                    } else if (direction === 1) {
-                        const previousStep = pattern.steps
-                            .slice(0, stepIndex)
-                            .reverse()
-                            .find((step) => step[voice]?.note)?.[voice];
-                        pattern.steps[stepIndex][voice] = {
-                            note: previousStep?.note || 60,
-                            velocity: 100,
-                            tie: false,
-                        };
-                    }
+                    },
+                    steps: [1, 12],
                 },
-                [1, 12],
             );
 
             drawSelectableText(
                 stepStr.velocity,
                 { x: position.x + 35, y: position.y + 1 },
                 { color: color.info, size: 12, font: font.regular },
-                (direction) => {
-                    if (step) {
-                        step.velocity = minmax(step.velocity + direction, 1, 100);
-                    }
+                {
+                    edit: (direction) => {
+                        if (step) {
+                            step.velocity = minmax(step.velocity + direction, 1, 100);
+                        }
+                    },
+                    steps: [1, 5],
                 },
-                [1, 5],
             );
 
             drawSelectableText(
                 stepStr.tie,
                 { x: position.x + 82, y: position.y + 1 },
                 { color: color.info, size: 12, font: font.regular },
-                () => {
-                    if (step) {
-                        step.tie = !step.tie;
-                    }
-                }
+                {
+                    edit: () => {
+                        if (step) {
+                            step.tie = !step.tie;
+                        }
+                    },
+                },
             );
 
             drawSelectableText(
                 stepStr.condition,
                 { x: position.x + 35, y: position.y + 18 },
                 { color: color.secondaryInfo, size: 12, font: font.regular },
-                (direction) => {
-                    if (step) {
-                        step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
-                    }
-                }
+                {
+                    edit: (direction) => {
+                        if (step) {
+                            step.condition = minmax(
+                                (step?.condition || 0) + direction,
+                                0,
+                                STEP_CONDITIONS.length - 1,
+                            );
+                        }
+                    },
+                },
             );
         }
     }

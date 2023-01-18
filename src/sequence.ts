@@ -1,4 +1,4 @@
-import { patches, presets } from './patch';
+import { patches, } from './patch';
 import { getPattern } from './pattern';
 import { tracks } from './track';
 
@@ -20,6 +20,7 @@ export let sequences: Sequence[] = [];
 export async function loadSequences() {
     for (let id = 0; id < 25; id++) {
         const pattern = getPattern(Math.floor(Math.random() * 4));
+        const patch = patches[Math.floor(Math.random() * patches.length)];
         sequences[id] = {
             trackId: tracks[Math.floor(Math.random() * 8)].id,
             playing: playing.includes(id),
@@ -27,8 +28,8 @@ export async function loadSequences() {
             repeat: Math.floor(Math.random() * 8),
             patternId: pattern.id,
             nextSequenceId: Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
-            patchId: patches[Math.floor(Math.random() * patches.length)].id,
-            presetId: presets[Math.floor(Math.random() * presets.length)].id,
+            patchId: patch.id,
+            presetId: patch.presets[Math.floor(Math.random() * patch.presets.length)].id,
         };
     }
 }

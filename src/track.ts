@@ -4,7 +4,7 @@ import { color } from './style';
 export interface Track {
     id: number;
     name: string;
-    color: Color;
+    color?: Color;
 }
 
 export const tracks: Track[] = [
@@ -18,4 +18,4 @@ export const tracks: Track[] = [
     { id: 7, name: 'Midi', color: color.tracks[7] },
 ];
 
-export const getTrackColor = (id: number) => tracks[id].color;
+export const getTrackColor = (id: number) => tracks[id].color || color.tracks[id % color.tracks.length];

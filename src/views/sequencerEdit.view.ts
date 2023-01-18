@@ -2,13 +2,13 @@ import { clear, Color, drawFilledRect, drawRect, drawText, Events, setColor } fr
 import { config } from '../config';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, EditHandler } from '../selector';
-import { color } from '../style';
+import { color, font } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
 import { drawSelectableRect } from '../draw';
 import { height, margin, sequenceRect } from '../nodes/sequence.node';
 import { getSelectedSequenceId, sequences, setSelectedSequenceId } from '../sequence';
 import { getPreset, patches } from '../patch';
-import { tracks } from '../track';
+import { getTrackColor, tracks } from '../track';
 
 const editRect = {
     position: { x: margin + config.screen.size.w / 2, y: margin },
@@ -46,6 +46,25 @@ function drawField(
     );
 }
 
+function drawButton(
+    text: string,
+    row: number,
+    edit: EditHandler,
+) {
+    const h = (height + margin) / 2;
+    const rect = {
+        position: { x: editRect.position.x, y: editRect.position.y + row * h },
+        size: { w: editRect.size.w, h },
+    };
+
+    drawSelectableRect(rect, color.sequencer.selected, edit);
+    drawText(
+        text,
+        { x: rect.position.x + 80, y: rect.position.y + 2 },
+        { size: 14, color: color.info, font: font.bold },
+    );
+}
+
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);
@@ -60,16 +79,46 @@ export async function sequencerEditView() {
     setColor(color.foreground);
     drawFilledRect(editRect);
 
-    const { trackId, patchId, presetId, patternId, detune, repeat } = sequences[selectedId];
+    const { trackId, patchId, presetId, patternId, detune, repeat, nextSequenceId } =
+        sequences[selectedId];
 
     const track = tracks[trackId];
-    drawField(`Track`, `${trackId} ${track.name}`, track.color, 0, () => {});
+    drawField(`Track`, `${trackId} ${track.name}`, getTrackColor(trackId), 0, () => {});
     drawField(`Patch`, `${patchId} ${patches[patchId].name}`, color.white, 1, () => {});
-    drawField(`Preset`, `${presetId} ${getPreset(patchId, presetId).name}`, color.white, 2, () => {});
+    drawField(
+        `Preset`,
+        `${presetId} ${getPreset(patchId, presetId).name}`,
+        color.white,
+        2,
+        () => {},
+    );
     drawField(`Pattern`, patternId.toString().padStart(3, '0'), color.white, 3, () => {});
-    drawField(`Detune`, detune < 0 ? detune.toString() : `+${detune}` + ' semitones', color.white, 4, () => {});
-    drawField(`Repeat`, `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`, color.white, 5, () => {});
-    drawField(`Next`, `---`, color.white, 6, () => {});
+    drawField(
+        `Detune`,
+        detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
+        color.white,
+        4,
+        () => {},
+    );
+    drawField(
+        `Repeat`,
+        `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`,
+        color.white,
+        5,
+        () => {},
+    );
+    drawField(
+        `Next`,
+        nextSequenceId
+            ? `${nextSequenceId} ${getPreset(patchId, sequences[nextSequenceId].presetId).name}`
+            : `---`,
+        color.white,
+        6,
+        () => {},
+    );
+    drawButton('Save', 7, () => console.log('save'));
+    drawButton('Reload', 8, () => console.log('reload'));
+    drawButton('Delete', 9, () => console.log('delete'));
 }
 
 export async function sequencerEditEventHandler(events: Events) {

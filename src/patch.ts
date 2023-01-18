@@ -1,6 +1,7 @@
 import { lstat, readdir, readFile } from 'fs/promises';
 import path from 'path';
 import { config } from './config';
+import { minmax } from './util';
 
 export interface Preset {
     id: number;
@@ -17,10 +18,17 @@ const patches: { [name: string]: Patch[] } = {};
 
 export const getPatches = (type: string) => patches[type];
 
-export const getPatch = (type: string, patchId: number) => patches[type][patchId];
+export const getPatch = (type: string, patchId: number) => {
+    const _patches = getPatches(type);
+    const id = minmax(patchId, 0, _patches.length - 1);
+    return _patches[id];
+}
 
-export const getPreset = (type: string, patchId: number, presetId: number) =>
-    patches[type][patchId].presets[presetId];
+export const getPreset = (type: string, patchId: number, presetId: number) => {
+    const _patch = getPatch(type, patchId);
+    const id = minmax(presetId, 0, _patch.presets.length - 1);
+    return _patch.presets[id];
+}
 
 async function loadPresets(patchPath: string) {
     const presets: Preset[] = [];

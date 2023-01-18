@@ -14,6 +14,7 @@ const tracks: Track[] = [];
 
 export const getTracks = () => tracks;
 export const getTrack = (id: number) => tracks[id];
+export const getTrackCount = () => tracks.length;
 
 export const getTrackColor = (id: number) =>
     tracks[id].color || color.tracks[id % color.tracks.length];

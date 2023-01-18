@@ -19,7 +19,7 @@ interface Sequence {
 export let sequences: Sequence[] = [];
 
 export async function loadSequences() {
-    for (let id = 0; id < 25; id++) {
+    for (let id = 0; id < 10; id++) {
         const track = getTrack(Math.floor(Math.random() * 8));
         const pattern = getPattern(Math.floor(Math.random() * 4));
         const patches = getPatches(track.type);
@@ -36,6 +36,20 @@ export async function loadSequences() {
             presetId: patch.presets[Math.floor(Math.random() * patch.presets.length)].id,
         };
     }
+}
+
+export function newSequence() {
+    sequences.push({
+        id: sequences.length,
+        trackId: 0,
+        playing: false,
+        detune: 0,
+        repeat: 0,
+        patternId: 0,
+        nextSequenceId: undefined,
+        patchId: 0,
+        presetId: 0,
+    });
 }
 
 let selectedSequenceId = 0;

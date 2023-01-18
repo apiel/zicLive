@@ -3,7 +3,7 @@ import { sequenceNode, sequenceRect } from './sequence.node';
 import { drawSelectableRect } from '../draw';
 import { getPreset } from '../patch';
 import { getPattern } from '../pattern';
-import { sequences } from '../sequence';
+import { newSequence, sequences } from '../sequence';
 import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
 
@@ -40,7 +40,7 @@ export function sequencerNode(
     setColor(color.foreground);
     drawFilledRect(addRect);
     drawSelectableRect(addRect, color.sequencer.selected, {
-        edit: () => console.log('add sequence'),
+        edit: newSequence,
     });
     drawText(
         `+`,

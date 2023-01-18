@@ -1,5 +1,4 @@
-import { clear, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
-import { sequenceNode, sequenceRect } from '../nodes/sequence.node';
+import { clear, Events } from 'zic_node_ui';
 import { config } from '../config';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';

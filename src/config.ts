@@ -8,6 +8,6 @@ export const config = {
     path: {
         patterns: `${DATA_PATH}/patterns`,
         patches: `${DATA_PATH}/patches`,
-        tracks: `${DATA_PATH}/projects/001/tracks`,
+        tracks: `${DATA_PATH}/projects/000/tracks`,
     }
 };

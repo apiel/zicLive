@@ -13,31 +13,14 @@ export interface Patch {
     presets: Preset[];
 }
 
-const patchTypes: { [name: string]: Patch[] } = {};
+const patches: { [name: string]: Patch[] } = {};
 
-const presets = [
-    { id: 0, name: 'Kick' },
-    { id: 1, name: 'Organic' },
-    { id: 2, name: 'Melo' },
-    { id: 3, name: 'Bass' },
-    { id: 4, name: 'Midi ch1' },
-    { id: 5, name: 'Midi ch2' },
-    { id: 6, name: 'Psy' },
-    { id: 7, name: 'Drone' },
-];
+export const getPatches = (type: string) => patches[type];
 
-export const patches: Patch[] = [
-    { id: 0, name: 'Kick', presets },
-    { id: 1, name: 'Organic', presets },
-    { id: 2, name: 'Melo', presets },
-    { id: 3, name: 'Bass', presets },
-    { id: 4, name: 'Midi ch1', presets },
-    { id: 5, name: 'Midi ch2', presets },
-    { id: 6, name: 'Psy', presets },
-    { id: 7, name: 'Drone', presets },
-];
+export const getPatch = (type: string, patchId: number) => patches[type][patchId];
 
-export const getPreset = (patchId: number, presetId: number) => patches[patchId].presets[presetId];
+export const getPreset = (type: string, patchId: number, presetId: number) =>
+    patches[type][patchId].presets[presetId];
 
 async function loadPresets(patchPath: string) {
     const presets: Preset[] = [];
@@ -57,7 +40,7 @@ async function loadPresets(patchPath: string) {
 }
 
 async function loadPatchesForType(pathTypePath: string) {
-    const patches: Patch[] = [];
+    const patchesForType: Patch[] = [];
     try {
         const patchnames = await readdir(pathTypePath);
         for (const patchname of patchnames) {
@@ -67,13 +50,13 @@ async function loadPatchesForType(pathTypePath: string) {
                 const patch = JSON.parse((await readFile(`${patchPath}/patch.json`)).toString());
                 patch.id = parseInt(patchname);
                 patch.presets = await loadPresets(patchPath);
-                patches.push(patch);
+                patchesForType.push(patch);
             }
         }
     } catch (error) {
         console.error(`Error while loading patches for ${pathTypePath}`, error);
     }
-    return patches;
+    return patchesForType;
 }
 
 export async function loadPatches() {
@@ -83,7 +66,7 @@ export async function loadPatches() {
             const pathTypePath = `${config.path.patches}/${name}`;
             const isDirectory = (await lstat(pathTypePath)).isDirectory();
             if (isDirectory) {
-                patchTypes[name] = await loadPatchesForType(pathTypePath);
+                patches[name] = await loadPatchesForType(pathTypePath);
             }
         }
     } catch (error) {

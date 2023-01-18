@@ -7,8 +7,8 @@ import { sequencerNode } from '../nodes/sequencer.node';
 import { drawSelectableRect } from '../draw';
 import { height, margin, sequenceRect } from '../nodes/sequence.node';
 import { getSelectedSequenceId, sequences, setSelectedSequenceId } from '../sequence';
-import { getPreset, patches } from '../patch';
-import { getTrackColor, tracks } from '../track';
+import { getPatch, getPreset } from '../patch';
+import { getTrack, getTrackColor } from '../track';
 
 const editRect = {
     position: { x: margin + config.screen.size.w / 2, y: margin },
@@ -46,11 +46,7 @@ function drawField(
     );
 }
 
-function drawButton(
-    text: string,
-    row: number,
-    edit: EditHandler,
-) {
+function drawButton(text: string, row: number, edit: EditHandler) {
     const h = (height + margin) / 2;
     const rect = {
         position: { x: editRect.position.x, y: editRect.position.y + row * h },
@@ -82,12 +78,13 @@ export async function sequencerEditView() {
     const { trackId, patchId, presetId, patternId, detune, repeat, nextSequenceId } =
         sequences[selectedId];
 
-    const track = tracks[trackId];
+    const track = getTrack(trackId);
+    const patch = getPatch(track.type, patchId);
     drawField(`Track`, `${trackId} ${track.name}`, getTrackColor(trackId), 0, () => {});
-    drawField(`Patch`, `${patchId} ${patches[patchId].name}`, color.white, 1, () => {});
+    drawField(`Patch`, `${patchId} ${patch.name}`, color.white, 1, () => {});
     drawField(
         `Preset`,
-        `${presetId} ${getPreset(patchId, presetId).name}`,
+        `${presetId} ${getPreset(track.type, patchId, presetId).name}`,
         color.white,
         2,
         () => {},
@@ -110,7 +107,9 @@ export async function sequencerEditView() {
     drawField(
         `Next`,
         nextSequenceId
-            ? `${nextSequenceId} ${getPreset(patchId, sequences[nextSequenceId].presetId).name}`
+            ? `${nextSequenceId} ${
+                  getPreset(track.type, patchId, sequences[nextSequenceId].presetId).name
+              }`
             : `---`,
         color.white,
         6,

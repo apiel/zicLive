@@ -5,7 +5,7 @@ import { getPreset } from '../patch';
 import { getPattern } from '../pattern';
 import { sequences } from '../sequence';
 import { color, font } from '../style';
-import { getTrackColor } from '../track';
+import { getTrack, getTrackColor } from '../track';
 
 export function sequencerNode(width: number, col: number, scrollY: number, onSelect: (id: number) => void) {
     
@@ -17,10 +17,11 @@ export function sequencerNode(width: number, col: number, scrollY: number, onSel
             // next = `${seq.nextSequenceId} ${getPreset(nextSeq.patchId, nextSeq.presetId).name}`;
             next = nextSequenceId.toString();
         }
+        const track = getTrack(trackId);
         const props = {
             ...seq,
             titleColor: getTrackColor(trackId),
-            title: getPreset(patchId, presetId).name,
+            title: getPreset(track.type, patchId, presetId).name,
             pattern: getPattern(patternId),
             next,
             // activeStep: stepCounter % seqProps[id].pattern.stepCount

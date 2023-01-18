@@ -1,5 +1,4 @@
 import { readdir, readFile } from 'fs/promises';
-import path from 'path';
 import { Color } from 'zic_node_ui';
 import { config } from './config';
 import { color } from './style';
@@ -7,11 +6,14 @@ import { color } from './style';
 export interface Track {
     id: number;
     name: string;
-    patchType: string;
+    type: string; // Type of patches (PD, zicSynth, midi, etc.)
     color?: Color;
 }
 
-export const tracks: Track[] = [];
+const tracks: Track[] = [];
+
+export const getTracks = () => tracks;
+export const getTrack = (id: number) => tracks[id];
 
 export const getTrackColor = (id: number) =>
     tracks[id].color || color.tracks[id % color.tracks.length];

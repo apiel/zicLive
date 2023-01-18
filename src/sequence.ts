@@ -5,6 +5,7 @@ import { getTrack } from './track';
 export const playing = [4, 7, 8, 10];
 
 interface Sequence {
+    id: number;
     trackId: number;
     playing: boolean;
     detune: number;
@@ -24,6 +25,7 @@ export async function loadSequences() {
         const patches = getPatches(track.type);
         const patch = patches[Math.floor(Math.random() * patches.length)];
         sequences[id] = {
+            id,
             trackId: track.id,
             playing: playing.includes(id),
             detune: 0,

@@ -94,7 +94,8 @@ export function eventMenu(events: Events) {
             return setView(View.Master);
         } else if (isEventRightPressed(events)) {
             keyState.menuTime = 0;
-            return setView(View.Project);
+            // return setView(View.Project); // Might not even need Project, as everything can be done in master
+            return setView(View.SequencerEdit);
         }
     }
     return false;

@@ -7,9 +7,10 @@ import { sequencerNode } from '../nodes/sequencer.node';
 import { drawSelectableRect } from '../draw';
 import { height, margin, sequenceRect } from '../nodes/sequence.node';
 import { getSelectedSequenceId, sequences, setSelectedSequenceId } from '../sequence';
-import { getPatch, getPreset } from '../patch';
+import { getPatch, getPatches, getPreset } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
+import { PATTERN_COUNT } from 'zic_node';
 
 const editRect = {
     position: { x: margin + config.screen.size.w / 2, y: margin },
@@ -87,12 +88,13 @@ export async function sequencerEditView() {
         sequences[selectedId];
 
     const track = getTrack(trackId);
+    const patches = getPatches(track.type);
     const patch = getPatch(track.type, patchId);
     let row = 0;
     drawField(`Sequence`, `#${selectedId + 1}`, getTrackColor(trackId), row++, {
-        // edit: (direction) => {
-        //     sequences[selectedId].trackId = minmax(trackId + direction, 0, getTrackCount() - 1);
-        // },
+        edit: (direction) => {
+            setSelectedSequenceId(minmax(selectedId + direction, 0, sequences.length - 1));
+        },
     });
     drawField(`Track`, track.name, color.white, row++, {
         edit: (direction) => {
@@ -104,7 +106,12 @@ export async function sequencerEditView() {
         patch.name,
         color.white,
         row++,
-        { edit: () => {} },
+        {
+            edit: (direction) => {
+                sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
+            },
+            steps: [1, 10],
+        },
         '#' + patchId.toString().padStart(3, '0'),
     );
     drawField(
@@ -113,32 +120,61 @@ export async function sequencerEditView() {
         // color.white,
         getTrackColor(trackId),
         row++,
-        { edit: () => {} },
+        {
+            edit: (direction) => {
+                sequences[selectedId].presetId = minmax(
+                    presetId + direction,
+                    0,
+                    patch.presets.length - 1,
+                );
+            },
+            steps: [1, 10],
+        },
         '#' + presetId.toString().padStart(3, '0'),
     );
     drawField(`Pattern`, '#' + patternId.toString().padStart(3, '0'), color.white, row++, {
-        edit: () => {},
+        edit: (direction) => {
+            sequences[selectedId].patternId = minmax(patternId + direction, 0, PATTERN_COUNT - 1);
+        },
+        steps: [1, 10],
     });
     drawField(
         `Detune`,
         detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
         color.white,
         row++,
-        { edit: () => {} },
+        {
+            edit: (direction) => {
+                sequences[selectedId].detune = minmax(detune + direction, -12, 12);
+            },
+        },
     );
     drawField(`Repeat`, `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`, color.white, row++, {
-        edit: () => {},
+        edit: (direction) => {
+            sequences[selectedId].repeat = minmax(repeat + direction, 0, 16);
+        },
     });
     drawField(
         `Next`,
         nextSequenceId
-            ? `${nextSequenceId} ${
+            ? `${nextSequenceId + 1} ${
                   getPreset(track.type, patchId, sequences[nextSequenceId].presetId).name
               }`
             : `---`,
         color.white,
         row++,
-        { edit: () => {} },
+        {
+            edit: (direction) => {
+                if (direction !== 0) {
+                    const ids = sequences
+                        .filter((s) => s.trackId === trackId && s.id !== selectedId)
+                        .map((s) => s.id);
+                    let idx = nextSequenceId !== undefined ? ids.indexOf(nextSequenceId) : -1;
+                    idx = minmax(idx + direction, -1, ids.length - 1);
+                    sequences[selectedId].nextSequenceId = idx === -1 ? undefined : ids[idx];
+                }
+            },
+        },
     );
     drawButton('Save', row++, () => console.log('save'));
     drawButton('Reload', row++, () => console.log('reload'));

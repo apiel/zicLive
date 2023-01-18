@@ -27,13 +27,13 @@ export const color = {
         rgb('#198754'),
         rgb('#dc3545'),
         rgb('#ffc107'),
-        rgb('#6c757d'),
+        rgb('#d63384'),
         rgb('#6f42c1'),
         rgb('#6610f2'),
         rgb('#0dcaf0'),
         rgb('#20c997'),
         rgb('#fd7e14'),
-        rgb('#d63384'),
+        rgb('#6c757d'),
     ],
 };
 

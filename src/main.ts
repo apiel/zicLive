@@ -3,7 +3,7 @@ import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from './config';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
-import { loadSequences } from './sequence';
+import { loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
 import { renderView, viewEventHandler } from './view';
 
@@ -14,6 +14,7 @@ open({ size: config.screen.size });
     await loadPatches();
     await loadPatterns();
     await loadSequences();
+    setSelectedSequenceId(0);
     await renderView();
     render();
 })();

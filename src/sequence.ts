@@ -1,7 +1,7 @@
 import { readdir, readFile, writeFile } from 'fs/promises';
 import { config } from './config';
 import { getPatches } from './patch';
-import { getPattern } from './pattern';
+import { getPattern, setPatternId } from './pattern';
 import { getTrack } from './track';
 
 export const playing = [4, 7, 8, 10];
@@ -85,4 +85,6 @@ export function getSelectedSequenceId() {
 }
 export function setSelectedSequenceId(id: number) {
     selectedSequenceId = id;
+    const sequence = sequences[id];
+    setPatternId(sequence.patternId);
 }

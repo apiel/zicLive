@@ -1,13 +1,17 @@
 import { exit } from 'process';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from './config';
+import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
 import { loadSequences } from './sequence';
+import { loadTracks } from './track';
 import { renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });
 
 (async function () {
+    await loadTracks();
+    await loadPatches();
     await loadPatterns();
     await loadSequences();
     await renderView();
@@ -30,4 +34,3 @@ setInterval(async () => {
         }
     }
 }, 10);
-

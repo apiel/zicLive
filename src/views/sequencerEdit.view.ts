@@ -1,11 +1,14 @@
-import { clear, Color, drawFilledRect, drawText, Events } from 'zic_node_ui';
+import { clear, Color, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, EditHandler } from '../selector';
 import { color } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
 import { drawSelectableRect } from '../draw';
-import { height, margin } from '../nodes/sequence.node';
+import { height, margin, sequenceRect } from '../nodes/sequence.node';
+import { getSelectedSequenceId, sequences, setSelectedSequenceId } from '../sequence';
+import { getPreset, patches } from '../patch';
+import { tracks } from '../track';
 
 const editRect = {
     position: { x: margin + config.screen.size.w / 2, y: margin },
@@ -46,16 +49,26 @@ function drawField(
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(width, col, scrollY);
+    sequencerNode(width, col, scrollY, setSelectedSequenceId);
 
+    const selectedId = getSelectedSequenceId();
+    const selectedRect = sequenceRect(selectedId, width, col, scrollY);
+
+    setColor(color.secondarySelected);
+    drawRect(selectedRect);
+
+    setColor(color.foreground);
     drawFilledRect(editRect);
 
-    drawField(`Track`, `1 (PD)`, color.tracks[0], 0, () => {});
-    drawField(`Patch`, `1`, color.white, 1, () => {});
-    drawField(`Preset`, `1 Kick`, color.white, 2, () => {});
-    drawField(`Pattern`, `1`, color.white, 3, () => {});
-    drawField(`Detune`, `+0`, color.white, 4, () => {});
-    drawField(`Condition`, `---`, color.white, 5, () => {});
+    const { trackId, patchId, presetId, patternId, detune, repeat } = sequences[selectedId];
+
+    const track = tracks[trackId];
+    drawField(`Track`, `${trackId} ${track.name}`, track.color, 0, () => {});
+    drawField(`Patch`, `${patchId} ${patches[patchId].name}`, color.white, 1, () => {});
+    drawField(`Preset`, `${presetId} ${getPreset(patchId, presetId).name}`, color.white, 2, () => {});
+    drawField(`Pattern`, patternId.toString().padStart(3, '0'), color.white, 3, () => {});
+    drawField(`Detune`, detune < 0 ? detune.toString() : `+${detune}` + ' semitones', color.white, 4, () => {});
+    drawField(`Repeat`, `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`, color.white, 5, () => {});
     drawField(`Next`, `---`, color.white, 6, () => {});
 }
 

@@ -24,11 +24,19 @@ export async function loadSequences() {
             trackId: tracks[Math.floor(Math.random() * 8)].id,
             playing: playing.includes(id),
             detune: 0,
-            repeat: 0,
+            repeat: Math.floor(Math.random() * 8),
             patternId: pattern.id,
             nextSequenceId: Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
             patchId: patches[Math.floor(Math.random() * patches.length)].id,
             presetId: presets[Math.floor(Math.random() * presets.length)].id,
         };
     }
+}
+
+let selectedSequenceId = 0;
+export function getSelectedSequenceId() {
+    return selectedSequenceId;
+}
+export function setSelectedSequenceId(id: number) {
+    selectedSequenceId = id;
 }

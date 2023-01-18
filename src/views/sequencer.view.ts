@@ -13,7 +13,7 @@ const width = config.screen.size.w / col;
 export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(width, col, scrollY);
+    sequencerNode(width, col, scrollY, (id) => console.log(`Seq clicked: ${id}`));
 }
 
 export async function sequencerEventHandler(events: Events) {

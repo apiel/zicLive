@@ -7,9 +7,9 @@ import { sequences } from '../sequence';
 import { color, font } from '../style';
 import { getTrackColor } from '../track';
 
-export function sequencerNode(width: number, col: number, scrollY: number) {
-    let id = 0;
-    for (; id < sequences.length; id++) {
+export function sequencerNode(width: number, col: number, scrollY: number, onSelect: (id: number) => void) {
+    
+    for (let id = 0; id < sequences.length; id++) {
         const { trackId, patchId, presetId, patternId, nextSequenceId, ...seq } = sequences[id];
         let next;
         if (nextSequenceId !== undefined) {
@@ -28,13 +28,12 @@ export function sequencerNode(width: number, col: number, scrollY: number) {
         drawSelectableRect(
             sequenceNode(id, width, col, props, scrollY),
             color.sequencer.selected,
-            () => {
-                console.log('click seq, should toggle play', sequences[id]);
+            () => { 
+                onSelect(id); 
             },
         );
     }
-
-    const addRect = sequenceRect(id, width, col, scrollY);
+    const addRect = sequenceRect(sequences.length, width, col, scrollY);
     setColor(color.foreground);
     drawFilledRect(addRect);
     drawSelectableRect(addRect, color.sequencer.selected, () => console.log('add sequence'));

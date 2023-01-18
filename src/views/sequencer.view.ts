@@ -3,7 +3,7 @@ import { sequence } from '../components/sequence';
 import { config } from '../config';
 import { drawSelectableRect } from '../draw';
 import { eventSelector, getEditMode } from '../events';
-import { patches, presets } from '../patch';
+import { presets } from '../patch';
 import { getPattern } from '../pattern';
 import { cleanSelectableItems } from '../selector';
 import { sequences } from '../sequencer';
@@ -16,13 +16,12 @@ export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
     for (let id = 0; id < sequences.length; id++) {
-        const { trackId, patchId, patternId, presetId, ...seq } = sequences[id];
+        const { trackId, presetId, patternId, ...seq } = sequences[id];
         const props = {
             ...seq,
-            track: tracks[trackId],
+            titleColor: tracks[trackId].color,
+            title: presets[presetId].name,
             pattern: getPattern(patternId),
-            patch: patches[patchId],
-            preset: presets[presetId],
             // activeStep: stepCounter % seqProps[id].pattern.stepCount
         };
         drawSelectableRect(sequence(id, props, scrollY), color.sequencer.selected);

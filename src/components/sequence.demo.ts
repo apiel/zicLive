@@ -4,8 +4,6 @@ import { open, close, getEvents, render, clear, getScreen } from 'zic_node_ui';
 import { sequence } from './sequence';
 import { color } from '../style';
 import { config } from '../config';
-import { Track } from '../track';
-import { Patch } from '../patch';
 
 const screenFile = 'screen.json';
 
@@ -97,7 +95,7 @@ const patterns = [
     },
 ];
 
-const tracks: Track[] = [
+const tracks = [
     { id: 0, color: color.tracks[0] },
     { id: 1, color: color.tracks[1] },
     { id: 2, color: color.tracks[2] },
@@ -108,25 +106,15 @@ const tracks: Track[] = [
     { id: 7, color: color.tracks[7] },
 ];
 
-const patches: Patch[] = [
-    { name: 'Kick' },
-    { name: 'Organic' },
-    { name: 'Melo' },
-    { name: 'Bass' },
-    { name: 'Midi ch1' },
-    { name: 'Midi ch2' },
-    { name: 'Psy' },
-    { name: 'Drone' },
-];
 const presets = [
-    { id: 23 },
-    { id: 79 },
-    { id: 12 },
-    { id: 45 },
-    { id: 67 },
-    { id: 89 },
-    { id: 34 },
-    { id: 56 },
+    { id: 0, name: 'Kick' },
+    { id: 1, name: 'Organic' },
+    { id: 2, name: 'Melo' },
+    { id: 3, name: 'Bass' },
+    { id: 4, name: 'Midi ch1' },
+    { id: 5, name: 'Midi ch2' },
+    { id: 6, name: 'Psy' },
+    { id: 7, name: 'Drone' },
 ];
 
 const playing = [4, 7, 8, 10];
@@ -136,15 +124,14 @@ let seqProps: any = [];
 for (let id = 0; id < 21; id++) {
     const pattern = patterns[Math.floor(Math.random() * patterns.length)];
     seqProps[id] = {
-        track: tracks[Math.floor(Math.random() * 8)],
+        titleColor: tracks[Math.floor(Math.random() * 8)].color,
+        title: presets[Math.floor(Math.random() * presets.length)].name,
         selected: id === 2,
         playing: playing.includes(id),
         detune: 0,
         repeat: 0,
         pattern,
         nextSequenceId: Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
-        patch: patches[Math.floor(Math.random() * patches.length)],
-        preset: presets[Math.floor(Math.random() * presets.length)],
     };
 }
 

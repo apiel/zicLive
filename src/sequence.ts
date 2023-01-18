@@ -1,3 +1,5 @@
+import { readdir, readFile, writeFile } from 'fs/promises';
+import { config } from './config';
 import { getPatches } from './patch';
 import { getPattern } from './pattern';
 import { getTrack } from './track';
@@ -18,23 +20,48 @@ interface Sequence {
 
 export let sequences: Sequence[] = [];
 
+export async function loadSequence(id: number) {
+    try {
+        const sequence = JSON.parse(
+            (
+                await readFile(`${config.path.sequences}/${id.toString().padStart(3, '0')}.json`)
+            ).toString(),
+        );
+        sequences.push(sequence);
+    } catch (error) {
+        console.error(`Error while loading sequence ${id}`, error);
+    }
+}
+
 export async function loadSequences() {
-    for (let id = 0; id < 10; id++) {
-        const track = getTrack(Math.floor(Math.random() * 8));
-        const pattern = getPattern(Math.floor(Math.random() * 4));
-        const patches = getPatches(track.type);
-        const patch = patches[Math.floor(Math.random() * patches.length)];
-        sequences[id] = {
-            id,
-            trackId: track.id,
-            playing: playing.includes(id),
-            detune: 0,
-            repeat: Math.floor(Math.random() * 8),
-            patternId: pattern.id,
-            nextSequenceId: undefined, //Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
-            patchId: patch.id,
-            presetId: patch.presets[Math.floor(Math.random() * patch.presets.length)].id,
-        };
+    sequences = [];
+    try {
+        const names = await readdir(config.path.sequences);
+        for (const name of names) {
+            const sequence = JSON.parse(
+                (await readFile(`${config.path.sequences}/${name}`)).toString(),
+            );
+            sequences.push(sequence);
+        }
+    } catch (error) {
+        console.error(`Error while loading sequences`, error);
+    }
+}
+
+export async function saveSequence(sequence: Sequence) {
+    try {
+        await writeFile(
+            `${config.path.sequences}/${sequence.id.toString().padStart(3, '0')}.json`,
+            JSON.stringify(sequence),
+        );
+    } catch (error) {
+        console.error(`Error while saving sequence ${sequence.id}`, error);
+    }
+}
+
+export async function saveSequences() {
+    for (const sequence of sequences) {
+        await saveSequence(sequence);
     }
 }
 

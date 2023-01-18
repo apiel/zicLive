@@ -10,7 +10,7 @@ export interface Track {
     color?: Color;
 }
 
-const tracks: Track[] = [];
+let tracks: Track[] = [];
 
 export const getTracks = () => tracks;
 export const getTrack = (id: number) => tracks[id];
@@ -20,6 +20,7 @@ export const getTrackColor = (id: number) =>
     tracks[id].color || color.tracks[id % color.tracks.length];
 
 export async function loadTracks() {
+    tracks = [];
     try {
         // Going through track folder is questionable as for the moment 
         // tracks are hardcoded in the app... However, would be great to make track assignement dynamic!

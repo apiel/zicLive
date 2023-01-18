@@ -6,7 +6,14 @@ import { color, font } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
 import { drawSelectableRect } from '../draw';
 import { height, margin, sequenceRect } from '../nodes/sequence.node';
-import { getSelectedSequenceId, sequences, setSelectedSequenceId } from '../sequence';
+import {
+    getSelectedSequenceId,
+    loadSequence,
+    loadSequences,
+    saveSequences,
+    sequences,
+    setSelectedSequenceId,
+} from '../sequence';
 import { getPatch, getPatches, getPreset } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
@@ -176,8 +183,10 @@ export async function sequencerEditView() {
             },
         },
     );
-    drawButton('Save', row++, () => console.log('save'));
-    drawButton('Reload', row++, () => console.log('reload'));
+    drawButton('Reload', row++, () => loadSequence(selectedId));
+    // drawButton('Save', row++, () => console.log('save')); // Need to find a solution to fill the gaps
+    drawButton('Reload all', row++, loadSequences);
+    drawButton('Save all', row++, saveSequences);
     // drawButton('Delete', row++, () => console.log('delete'));
 }
 
@@ -197,10 +206,12 @@ export async function sequencerEditEventHandler(events: Events) {
     } else {
         const item = eventSelector(events);
         if (item) {
-            if (item.position.y > config.screen.size.h - 50) {
-                scrollY -= 50;
-            } else if (item.position.y < 40 && scrollY < 0) {
-                scrollY += 50;
+            if (item.position.x < config.screen.size.w / 2) {
+                if (item.position.y > config.screen.size.h - 50) {
+                    scrollY -= 50;
+                } else if (item.position.y < 40 && scrollY < 0) {
+                    scrollY += 50;
+                }
             }
             await sequencerEditView();
             return true;

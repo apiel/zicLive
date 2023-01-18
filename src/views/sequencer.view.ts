@@ -1,31 +1,19 @@
-import { clear, Events } from 'zic_node_ui';
-import { sequence } from '../components/sequence';
+import { clear, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
+import { sequenceNode, sequenceRect } from '../nodes/sequence.node';
 import { config } from '../config';
-import { drawSelectableRect } from '../draw';
 import { eventSelector, getEditMode } from '../events';
-import { presets } from '../patch';
-import { getPattern } from '../pattern';
 import { cleanSelectableItems } from '../selector';
-import { sequences } from '../sequencer';
 import { color } from '../style';
-import { tracks } from '../track';
+import { sequencerNode } from '../nodes/sequencer.node';
 
 let scrollY = 0;
+const col = 4;
+const width = config.screen.size.w / col;
 
 export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
-    for (let id = 0; id < sequences.length; id++) {
-        const { trackId, presetId, patternId, ...seq } = sequences[id];
-        const props = {
-            ...seq,
-            titleColor: tracks[trackId].color,
-            title: presets[presetId].name,
-            pattern: getPattern(patternId),
-            // activeStep: stepCounter % seqProps[id].pattern.stepCount
-        };
-        drawSelectableRect(sequence(id, props, scrollY), color.sequencer.selected);
-    }
+    sequencerNode(width, col, scrollY);
 }
 
 export async function sequencerEventHandler(events: Events) {

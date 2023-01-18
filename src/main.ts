@@ -2,7 +2,7 @@ import { exit } from 'process';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from './config';
 import { loadPatterns } from './pattern';
-import { loadSequences } from './sequencer';
+import { loadSequences } from './sequence';
 import { renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });

@@ -1,6 +1,6 @@
 import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
-import { patternPreview } from '../components/patternPreview';
+import { patternPreviewNode } from '../nodes/patternPreview.node';
 import { config } from '../config';
 import { getPattern, reloadPattern, savePattern, setPatternId, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
@@ -58,7 +58,7 @@ export async function patternView() {
         async () => reloadPattern(pattern.id),
     );
 
-    patternPreview({ x: 140, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);
+    patternPreviewNode({ x: 140, y: headerPosition.y + 4 }, { w: 300, h: 40 }, pattern);
 
     for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
         const voices = pattern.steps[stepIndex];

@@ -2,7 +2,7 @@ import { drawFilledRect, drawLine, Point, setColor, Size } from 'zic_node_ui';
 import { Pattern } from '../pattern';
 import { color } from '../style';
 
-export function patternPreview(position: Point, size: Size, pattern: Pattern, playing = false) {
+export function patternPreviewNode(position: Point, size: Size, pattern: Pattern, playing = false) {
     setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
     const stepWidth = (size.w - 2) / pattern.stepCount;
     const steps = pattern.steps.map((voices) => voices.filter((v) => v)); // remove undefined/null

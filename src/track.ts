@@ -16,3 +16,5 @@ export const tracks: Track[] = [
     { id: 6, color: color.tracks[6] },
     { id: 7, color: color.tracks[7] },
 ];
+
+export const getTrackColor = (id: number) => tracks[id].color;

@@ -29,3 +29,5 @@ export const presets = [
     { id: 6, name: 'Psy' },
     { id: 7, name: 'Drone' },
 ];
+
+export const getPreset = (patchId: number, presetId: number) => presets[presetId];

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { exit } from 'process';
 import { open, close, getEvents, render, clear, getScreen } from 'zic_node_ui';
-import { sequence } from './sequence';
+import { sequenceNode } from './sequence.node';
 import { color } from '../style';
 import { config } from '../config';
 
@@ -131,7 +131,7 @@ for (let id = 0; id < 21; id++) {
         detune: 0,
         repeat: 0,
         pattern,
-        nextSequenceId: Math.random() > 0.5 ? Math.floor(Math.random() * 16) : undefined,
+        next: Math.random() > 0.5 ? Math.floor(Math.random() * 16).toString() : undefined,
     };
 }
 
@@ -142,10 +142,14 @@ setInterval(() => {
     }
     demoSequence();
 }, 150);
+
+const col = 4;
+const width = config.screen.size.w / col;
+
 demoSequence();
 function demoSequence() {
     for (let id = 0; id < 21; id++) {
-        sequence(id, {...seqProps[id], activeStep: stepCounter % seqProps[id].pattern.stepCount});
+        sequenceNode(id, width, col, {...seqProps[id], activeStep: stepCounter % seqProps[id].pattern.stepCount});
     }
     render();
 }

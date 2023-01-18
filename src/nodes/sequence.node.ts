@@ -6,46 +6,48 @@ import {
     Point,
     Rect,
     setColor,
+    Size,
 } from 'zic_node_ui';
 import { color, font } from '../style';
-import { config } from '../config';
 import { Pattern } from '../pattern';
-import { patternPreview } from './patternPreview';
+import { patternPreviewNode } from './patternPreview.node';
+import { truncate } from '../util';
 
-const margin = 1;
-const col = 4;
-const size = { w: config.screen.size.w / col - margin, h: 49 };
+export const margin = 1;
+export const height = 49;
+
+export function sequencePosition(id: number, size: Size, col: number, scrollY = 0): Point {
+    return {
+        x: margin + (margin + size.w) * (id % col),
+        y: scrollY + margin + (margin + size.h) * Math.floor(id / col),
+    };
+}
+
+export function sequenceRect(id: number, width: number, col: number, scrollY = 0): Rect {
+    const size = { w: width - margin, h: height };
+    return { position: sequencePosition(id, size, col, scrollY), size };
+}
 
 interface Props {
     titleColor: Color;
     title: string;
     playing: boolean;
     detune: number;
-    nextSequenceId?: number;
+    next?: string;
     repeat: number;
     pattern: Pattern;
     activeStep?: number;
 }
 
-export function sequence(
+export function sequenceNode(
     id: number,
-    {
-        titleColor,
-        title,
-        playing,
-        detune,
-        nextSequenceId,
-        repeat,
-        pattern,
-        activeStep,
-    }: Props,
+    width: number,
+    col: number,
+    { titleColor, title, playing, detune, next, repeat, pattern, activeStep }: Props,
     scrollY = 0,
 ): Rect {
     setColor(playing ? color.sequencer.playing : color.foreground);
-    const position = {
-        x: margin + (margin + size.w) * (id % col),
-        y: scrollY + margin + (margin + size.h) * Math.floor(id / col),
-    };
+    const { position, size } = sequenceRect(id, width, col, scrollY);
     drawFilledRect({ position, size });
 
     drawText(
@@ -62,26 +64,26 @@ export function sequence(
 
     drawText(
         `${detune < 0 ? detune : `+${detune}`} x${repeat}${
-            nextSequenceId !== undefined ? ` >${nextSequenceId + 1}` : ''
+            next !== undefined ? ` >${truncate(next, 10)}` : ''
         }`,
         { x: position.x + 2, y: position.y + 37 },
         { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
-    patternPreview(
+    patternPreviewNode(
         { x: position.x + 2, y: position.y + 15 },
         { w: size.w, h: size.h - 30 },
         pattern,
         playing,
     );
     if (activeStep !== undefined && playing) {
-        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, pattern, activeStep);
+        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, pattern, activeStep);
     }
 
     return { position, size };
 }
 
-function renderActiveStep(position: Point, pattern: Pattern, step: number) {
+function renderActiveStep(position: Point, size: Size, pattern: Pattern, step: number) {
     setColor(color.sequencer.pattern.playing);
     const stepWidth = (size.w - 2) / pattern.stepCount;
     drawLine(

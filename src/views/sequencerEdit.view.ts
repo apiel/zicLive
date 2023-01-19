@@ -1,10 +1,10 @@
-import { clear, Color, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, drawRect, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
-import { cleanSelectableItems, EditHandler, SelectableOptions } from '../selector';
-import { color, font, unit } from '../style';
+import { cleanSelectableItems } from '../selector';
+import { color, unit } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
-import { drawButton, drawField, drawSelectableRect } from '../draw';
+import { drawButton, drawField } from '../draw';
 import { sequenceRect } from '../nodes/sequence.node';
 import {
     getSelectedSequenceId,
@@ -19,12 +19,7 @@ import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { PATTERN_COUNT } from 'zic_node';
 
-const { margin, height } = unit;
-
-const editRect = {
-    position: { x: margin + config.screen.size.w / 2, y: margin },
-    size: { w: config.screen.size.w / 2 - margin, h: config.screen.size.h },
-};
+const { margin } = unit;
 
 let scrollY = 0;
 const col = 2;
@@ -41,7 +36,10 @@ export async function sequencerEditView() {
     drawRect(selectedRect);
 
     setColor(color.foreground);
-    drawFilledRect(editRect);
+    drawFilledRect({
+        position: { x: margin + config.screen.size.w / 2, y: margin },
+        size: { w: config.screen.size.w / 2 - margin, h: config.screen.size.h },
+    });
 
     const { trackId, patchId, presetId, patternId, detune, repeat, nextSequenceId } =
         sequences[selectedId];
@@ -180,10 +178,10 @@ export async function sequencerEditView() {
             col: 2,
         },
     );
-    drawButton('Reload', row++, () => loadSequence(selectedId), {col: 2});
+    drawButton('Reload', row++, () => loadSequence(selectedId), { col: 2 });
     // drawButton('Save', row++, () => console.log('save'), {col: 2}); // Need to find a solution to fill the gaps
-    drawButton('Reload all', row++, loadSequences, {col: 2});
-    drawButton('Save all', row++, saveSequences, {col: 2});
+    drawButton('Reload all', row++, loadSequences, { col: 2 });
+    drawButton('Save all', row++, saveSequences, { col: 2 });
     // drawButton('Delete', row++, () => console.log('delete'), {col: 2});
 }
 

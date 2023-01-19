@@ -75,10 +75,6 @@ export interface ButtonOptions {
 
 export function drawButton(text: string, row: number, edit: EditHandler, options: ButtonOptions = {}) {
     const { col = 1, size = 1, scrollY = 0 } = options;
-    // const rect = {
-    //     position: { x: editRect.position.x, y: editRect.position.y + row * height },
-    //     size: { w: editRect.size.w, h: height },
-    // };
     const rect = {
         position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
         size: { w: unit.halfScreen * size, h: unit.height },

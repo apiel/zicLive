@@ -1,4 +1,5 @@
 import { exit } from 'process';
+import { start } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config } from './config';
 import { loadPatches } from './patch';
@@ -8,6 +9,7 @@ import { loadTracks } from './track';
 import { renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });
+start();
 
 (async function () {
     await loadTracks();

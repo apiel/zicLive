@@ -1,5 +1,5 @@
 const BASE_PATH = '.'
-const DATA_PATH = `${BASE_PATH}/data`
+export const DATA_PATH = `${BASE_PATH}/data`
 
 export const config = {
     screen: {

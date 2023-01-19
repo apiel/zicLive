@@ -4,7 +4,7 @@ import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
-import { setSelectedSequenceId } from '../sequence';
+import { getSequence, setSelectedSequenceId, toggleSequence } from '../sequence';
 
 let scrollY = 0;
 const col = 4;
@@ -15,7 +15,7 @@ export async function sequencerView() {
     sequencerNode(
         col,
         scrollY,
-        (id) => console.log(`Seq clicked: ${id}`),
+        (id) => toggleSequence(getSequence(id)),
         setSelectedSequenceId,
     );
 }

@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
-import { MAX_STEPS_IN_PATTERN, PATTERN_COUNT } from 'zic_node';
+import { MAX_STEPS_IN_PATTERN, MAX_VOICES_IN_PATTERN, PATTERN_COUNT, setPatternLength, setPatternStep } from 'zic_node';
 import { config } from './config';
 import { minmax } from './util';
 
@@ -85,6 +85,18 @@ function getFilepath(id: number) {
     return `${config.path.patterns}/${idStr}.json`;
 }
 
+function initPattern({id, stepCount, steps}: Pattern) {
+    setPatternLength(id, stepCount);
+    for(let stepIndex = 0; stepIndex < MAX_STEPS_IN_PATTERN; stepIndex++) {
+        for(let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
+            const step = steps[stepIndex]?.[voice];
+            if (step) {
+                setPatternStep(id, stepIndex, step.note, step.velocity, step.tie, voice);
+            }
+        }
+    }
+}
+
 export async function loadPattern(id: number) {
     try {
         const content = await readFile(getFilepath(id), 'utf8');
@@ -94,6 +106,7 @@ export async function loadPattern(id: number) {
             ...pattern.steps,
             ...Array.from({ length: MAX_STEPS_IN_PATTERN - pattern.steps.length }, () => []),
         ];
+        initPattern(pattern);
         return pattern;
     } catch (error) {}
     return defaultPattern(id);

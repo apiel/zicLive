@@ -1,6 +1,8 @@
 import { readdir, readFile, writeFile } from 'fs/promises';
+import path from 'path';
+import { setSequencerState } from 'zic_node';
 import { config } from './config';
-import { setPatternId } from './pattern';
+import { getPattern, setPatternId } from './pattern';
 
 export const playing = [4, 7, 8, 10];
 
@@ -18,6 +20,26 @@ interface Sequence {
 
 export let sequences: Sequence[] = [];
 
+export function getSequence(id: number) {
+    return sequences[id];
+}
+
+export function playSequence(sequence: Sequence) {
+    sequence.playing = true;
+    setSequencerState(sequence.trackId, sequence.patternId, sequence.detune, true);
+}
+
+export function toggleSequence(sequence: Sequence) {
+    sequence.playing = !sequence.playing;
+    setSequencerState(sequence.trackId, sequence.patternId, sequence.detune, sequence.playing, true);
+}
+
+export function initSequence(sequence: Sequence) {
+    if (sequence.playing) {
+        playSequence(sequence);
+    }
+}
+
 export async function loadSequence(id: number) {
     try {
         const sequence = JSON.parse(
@@ -26,6 +48,7 @@ export async function loadSequence(id: number) {
             ).toString(),
         );
         sequences.push(sequence);
+        initSequence(sequence);
     } catch (error) {
         console.error(`Error while loading sequence ${id}`, error);
     }
@@ -36,10 +59,11 @@ export async function loadSequences() {
     try {
         const names = await readdir(config.path.sequences);
         for (const name of names) {
-            const sequence = JSON.parse(
-                (await readFile(`${config.path.sequences}/${name}`)).toString(),
-            );
-            sequences.push(sequence);
+            // const sequence = JSON.parse(
+            //     (await readFile(`${config.path.sequences}/${name}`)).toString(),
+            // );
+            // sequences.push(sequence);
+            await loadSequence(parseInt(path.parse(name).name));
         }
     } catch (error) {
         console.error(`Error while loading sequences`, error);

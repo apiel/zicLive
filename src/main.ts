@@ -1,7 +1,7 @@
 import { exit } from 'process';
-import { start } from 'zic_node';
+import { start, SynthPathIds, trackSetPath } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
-import { config } from './config';
+import { config, DATA_PATH } from './config';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
 import { loadSequences, setSelectedSequenceId } from './sequence';
@@ -10,6 +10,12 @@ import { renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });
 start();
+
+// FIXME might need to remove this?
+trackSetPath(0, `${DATA_PATH}/patches/pd/001`);
+trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
+trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
+trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
 
 (async function () {
     await loadTracks();

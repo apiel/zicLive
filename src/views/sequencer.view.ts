@@ -8,13 +8,11 @@ import { setSelectedSequenceId } from '../sequence';
 
 let scrollY = 0;
 const col = 4;
-const width = config.screen.size.w / col;
 
 export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
     sequencerNode(
-        width,
         col,
         scrollY,
         (id) => console.log(`Seq clicked: ${id}`),

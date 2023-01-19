@@ -8,7 +8,6 @@ import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
 
 export function sequencerNode(
-    width: number,
     col: number,
     scrollY: number,
     onEdit: (id: number) => void,
@@ -31,12 +30,12 @@ export function sequencerNode(
             next,
             // activeStep: stepCounter % seqProps[id].pattern.stepCount
         };
-        drawSelectableRect(sequenceNode(id, width, col, props, scrollY), color.sequencer.selected, {
+        drawSelectableRect(sequenceNode(id, col, props, scrollY), color.sequencer.selected, {
             edit: () => onEdit(id),
             onSelected: () => onSelected(id),
         });
     }
-    const addRect = sequenceRect(sequences.length, width, col, scrollY);
+    const addRect = sequenceRect(sequences.length, col, scrollY);
     setColor(color.foreground);
     drawFilledRect(addRect);
     drawSelectableRect(addRect, color.sequencer.selected, {

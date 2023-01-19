@@ -1,4 +1,5 @@
 import { rgb } from 'zic_node_ui';
+import { config } from './config';
 
 const baseColor = {
     background: rgb('#21252b'),
@@ -47,3 +48,10 @@ export const font = {
     bold: '/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
     regular: '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
 };
+
+export const unit = {
+    margin: 1,
+    height: 25,
+    halfScreen: config.screen.size.w * 0.5,
+    quarterScreen: config.screen.size.w * 0.25,
+}

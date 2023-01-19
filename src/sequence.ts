@@ -1,8 +1,6 @@
 import { readdir, readFile, writeFile } from 'fs/promises';
 import { config } from './config';
-import { getPatches } from './patch';
-import { getPattern, setPatternId } from './pattern';
-import { getTrack } from './track';
+import { setPatternId } from './pattern';
 
 export const playing = [4, 7, 8, 10];
 

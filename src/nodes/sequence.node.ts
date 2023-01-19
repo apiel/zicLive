@@ -8,13 +8,13 @@ import {
     setColor,
     Size,
 } from 'zic_node_ui';
-import { color, font } from '../style';
+import { color, font, unit } from '../style';
 import { Pattern } from '../pattern';
 import { patternPreviewNode } from './patternPreview.node';
 import { truncate } from '../util';
 
-export const margin = 1;
-export const height = 49;
+const { margin } = unit;
+const height = unit.height * 2;
 
 export function sequencePosition(id: number, size: Size, col: number, scrollY = 0): Point {
     return {
@@ -23,8 +23,8 @@ export function sequencePosition(id: number, size: Size, col: number, scrollY = 
     };
 }
 
-export function sequenceRect(id: number, width: number, col: number, scrollY = 0): Rect {
-    const size = { w: width - margin, h: height };
+export function sequenceRect(id: number, col: number, scrollY = 0): Rect {
+    const size = { w: unit.quarterScreen - margin, h: height - margin };
     return { position: sequencePosition(id, size, col, scrollY), size };
 }
 
@@ -41,13 +41,12 @@ interface Props {
 
 export function sequenceNode(
     id: number,
-    width: number,
     col: number,
     { titleColor, title, playing, detune, next, repeat, pattern, activeStep }: Props,
     scrollY = 0,
 ): Rect {
     setColor(playing ? color.sequencer.playing : color.foreground);
-    const { position, size } = sequenceRect(id, width, col, scrollY);
+    const { position, size } = sequenceRect(id, col, scrollY);
     drawFilledRect({ position, size });
 
     drawText(

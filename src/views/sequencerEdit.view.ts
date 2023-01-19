@@ -2,10 +2,10 @@ import { clear, Color, drawFilledRect, drawRect, drawText, Events, setColor } fr
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, EditHandler, SelectableOptions } from '../selector';
-import { color, font } from '../style';
+import { color, font, unit } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
-import { drawSelectableRect } from '../draw';
-import { height, margin, sequenceRect } from '../nodes/sequence.node';
+import { drawButton, drawField, drawSelectableRect } from '../draw';
+import { sequenceRect } from '../nodes/sequence.node';
 import {
     getSelectedSequenceId,
     loadSequence,
@@ -19,6 +19,8 @@ import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { PATTERN_COUNT } from 'zic_node';
 
+const { margin, height } = unit;
+
 const editRect = {
     position: { x: margin + config.screen.size.w / 2, y: margin },
     size: { w: config.screen.size.w / 2 - margin, h: config.screen.size.h },
@@ -26,64 +28,14 @@ const editRect = {
 
 let scrollY = 0;
 const col = 2;
-const width = config.screen.size.w / 4; // Only show halp screen, so divide by 4 instead of 2
-
-function drawField(
-    label: string,
-    value: string,
-    valueColor: Color,
-    row: number,
-    selectableOptions: SelectableOptions,
-    info?: string,
-) {
-    const h = (height + margin) / 2;
-    const rect = {
-        position: { x: editRect.position.x, y: editRect.position.y + row * h },
-        size: { w: editRect.size.w, h },
-    };
-
-    drawSelectableRect(rect, color.sequencer.selected, selectableOptions);
-    drawText(
-        label,
-        { x: rect.position.x + 2, y: rect.position.y + 2 },
-        { size: 14, color: color.info },
-    );
-    const labelRect = drawText(
-        value,
-        { x: rect.position.x + 80, y: rect.position.y + 2 },
-        { size: 14, color: valueColor },
-    );
-    if (info) {
-        drawText(
-            info,
-            { x: labelRect.position.x + labelRect.size.w + 2, y: rect.position.y + 6 },
-            { size: 10, color: color.info },
-        );
-    }
-}
-
-function drawButton(text: string, row: number, edit: EditHandler) {
-    const h = (height + margin) / 2;
-    const rect = {
-        position: { x: editRect.position.x, y: editRect.position.y + row * h },
-        size: { w: editRect.size.w, h },
-    };
-
-    drawSelectableRect(rect, color.sequencer.selected, { edit });
-    drawText(
-        text,
-        { x: rect.position.x + 80, y: rect.position.y + 2 },
-        { size: 14, color: color.info, font: font.bold },
-    );
-}
 
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(width, col, scrollY, setSelectedSequenceId);
+    sequencerNode(col, scrollY, setSelectedSequenceId);
 
     const selectedId = getSelectedSequenceId();
-    const selectedRect = sequenceRect(selectedId, width, col, scrollY);
+    const selectedRect = sequenceRect(selectedId, col, scrollY);
 
     setColor(color.secondarySelected);
     drawRect(selectedRect);
@@ -98,20 +50,36 @@ export async function sequencerEditView() {
     const patches = getPatches(track.type);
     const patch = getPatch(track.type, patchId);
     let row = 0;
-    drawField(`Sequence`, `#${selectedId + 1}`, getTrackColor(trackId), row++, {
-        edit: (direction) => {
-            setSelectedSequenceId(minmax(selectedId + direction, 0, sequences.length - 1));
+    drawField(
+        `Sequence`,
+        `#${selectedId + 1}`,
+        row++,
+        {
+            edit: (direction) => {
+                setSelectedSequenceId(minmax(selectedId + direction, 0, sequences.length - 1));
+            },
         },
-    });
-    drawField(`Track`, track.name, color.white, row++, {
-        edit: (direction) => {
-            sequences[selectedId].trackId = minmax(trackId + direction, 0, getTrackCount() - 1);
+        {
+            col: 2,
+            valueColor: getTrackColor(trackId),
         },
-    });
+    );
+    drawField(
+        `Track`,
+        track.name,
+        row++,
+        {
+            edit: (direction) => {
+                sequences[selectedId].trackId = minmax(trackId + direction, 0, getTrackCount() - 1);
+            },
+        },
+        {
+            col: 2,
+        },
+    );
     drawField(
         `Patch`,
         patch.name,
-        color.white,
         row++,
         {
             edit: (direction) => {
@@ -119,13 +87,14 @@ export async function sequencerEditView() {
             },
             steps: [1, 10],
         },
-        '#' + patchId.toString().padStart(3, '0'),
+        {
+            col: 2,
+            info: '#' + patchId.toString().padStart(3, '0'),
+        },
     );
     drawField(
         `Preset`,
         getPreset(track.type, patchId, presetId).name,
-        // color.white,
-        getTrackColor(trackId),
         row++,
         {
             edit: (direction) => {
@@ -137,30 +106,56 @@ export async function sequencerEditView() {
             },
             steps: [1, 10],
         },
-        '#' + presetId.toString().padStart(3, '0'),
-    );
-    drawField(`Pattern`, '#' + patternId.toString().padStart(3, '0'), color.white, row++, {
-        edit: (direction) => {
-            sequences[selectedId].patternId = minmax(patternId + direction, 0, PATTERN_COUNT - 1);
+        {
+            col: 2,
+            valueColor: getTrackColor(trackId),
+            info: '#' + presetId.toString().padStart(3, '0'),
         },
-        steps: [1, 10],
-    });
+    );
+    drawField(
+        `Pattern`,
+        '#' + patternId.toString().padStart(3, '0'),
+        row++,
+        {
+            edit: (direction) => {
+                sequences[selectedId].patternId = minmax(
+                    patternId + direction,
+                    0,
+                    PATTERN_COUNT - 1,
+                );
+            },
+            steps: [1, 10],
+        },
+        {
+            col: 2,
+        },
+    );
     drawField(
         `Detune`,
         detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
-        color.white,
         row++,
         {
             edit: (direction) => {
                 sequences[selectedId].detune = minmax(detune + direction, -12, 12);
             },
         },
-    );
-    drawField(`Repeat`, `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`, color.white, row++, {
-        edit: (direction) => {
-            sequences[selectedId].repeat = minmax(repeat + direction, 0, 16);
+        {
+            col: 2,
         },
-    });
+    );
+    drawField(
+        `Repeat`,
+        `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`,
+        row++,
+        {
+            edit: (direction) => {
+                sequences[selectedId].repeat = minmax(repeat + direction, 0, 16);
+            },
+        },
+        {
+            col: 2,
+        },
+    );
     drawField(
         `Next`,
         nextSequenceId
@@ -168,7 +163,6 @@ export async function sequencerEditView() {
                   getPreset(track.type, patchId, sequences[nextSequenceId].presetId).name
               }`
             : `---`,
-        color.white,
         row++,
         {
             edit: (direction) => {
@@ -182,12 +176,15 @@ export async function sequencerEditView() {
                 }
             },
         },
+        {
+            col: 2,
+        },
     );
-    drawButton('Reload', row++, () => loadSequence(selectedId));
-    // drawButton('Save', row++, () => console.log('save')); // Need to find a solution to fill the gaps
-    drawButton('Reload all', row++, loadSequences);
-    drawButton('Save all', row++, saveSequences);
-    // drawButton('Delete', row++, () => console.log('delete'));
+    drawButton('Reload', row++, () => loadSequence(selectedId), {col: 2});
+    // drawButton('Save', row++, () => console.log('save'), {col: 2}); // Need to find a solution to fill the gaps
+    drawButton('Reload all', row++, loadSequences, {col: 2});
+    drawButton('Save all', row++, saveSequences, {col: 2});
+    // drawButton('Delete', row++, () => console.log('delete'), {col: 2});
 }
 
 export async function sequencerEditEventHandler(events: Events) {

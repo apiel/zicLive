@@ -144,12 +144,11 @@ setInterval(() => {
 }, 150);
 
 const col = 4;
-const width = config.screen.size.w / col;
 
 demoSequence();
 function demoSequence() {
     for (let id = 0; id < 21; id++) {
-        sequenceNode(id, width, col, {...seqProps[id], activeStep: stepCounter % seqProps[id].pattern.stepCount});
+        sequenceNode(id, col, {...seqProps[id], activeStep: stepCounter % seqProps[id].pattern.stepCount});
     }
     render();
 }

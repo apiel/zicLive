@@ -16,6 +16,7 @@ interface Sequence {
     nextSequenceId?: number;
     patchId: number;
     presetId: number;
+    activeStep?: number;
 }
 
 export let sequences: Sequence[] = [];
@@ -24,10 +25,14 @@ export function getSequence(id: number) {
     return sequences[id];
 }
 
+export function getPlayingSequence(trackId: number) {
+    return sequences.find((s) => s.playing && s.trackId === trackId);
+}
+
 export function playSequence(sequence: Sequence, playing = true, next?: boolean) {
     if (playing) {
         // setPatternId(sequence.trackId, sequence.patternId);
-        const playingSeq = sequences.find((s) => s.playing && s.trackId === sequence.trackId);
+        const playingSeq = getPlayingSequence(sequence.trackId);
         if (playingSeq) {
             // FIXME need to find a way to keep it playing in the UI till the end of the pattern
             // if next is true

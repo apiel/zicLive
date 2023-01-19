@@ -1,10 +1,16 @@
 import { exit } from 'process';
-import { start, SynthPathIds, trackSetPath } from 'zic_node';
+import {
+    getAllSequencerStates,
+    setOnBeatCallback,
+    start,
+    SynthPathIds,
+    trackSetPath,
+} from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
-import { loadSequences, setSelectedSequenceId } from './sequence';
+import { getPlayingSequence, loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
 import { renderView, viewEventHandler } from './view';
 
@@ -26,6 +32,20 @@ trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
     await loadPatterns();
     await loadSequences();
     setSelectedSequenceId(0);
+    setOnBeatCallback(async () => {
+        const states = getAllSequencerStates();
+        let needRender = false;
+        for (let trackId = 0; trackId < states.length; trackId++) {
+            const { currentStep } = states[trackId];
+            const sequence = getPlayingSequence(trackId);
+            if (sequence) {
+                sequence.activeStep = currentStep;
+                needRender = true;
+            }
+        }
+        await renderView();
+        render();
+    });
     await renderView();
     render();
 })();

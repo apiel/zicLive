@@ -183,6 +183,8 @@ export async function sequencerEditView() {
     drawButton('Reload all', row++, loadSequences, { col: 2 });
     drawButton('Save all', row++, saveSequences, { col: 2 });
     // drawButton('Delete', row++, () => console.log('delete'), {col: 2});
+    // drawButton('Play/Stop', row++, saveSequences, { col: 2 });
+    // drawButton('Play/Stop now', row++, saveSequences, { col: 2 });
 }
 
 export async function sequencerEditEventHandler(events: Events) {

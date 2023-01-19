@@ -24,14 +24,22 @@ export function getSequence(id: number) {
     return sequences[id];
 }
 
-export function playSequence(sequence: Sequence) {
-    sequence.playing = true;
-    setSequencerState(sequence.trackId, sequence.patternId, sequence.detune, true);
+export function playSequence(sequence: Sequence, playing = true, next?: boolean) {
+    if (playing) {
+        // setPatternId(sequence.trackId, sequence.patternId);
+        const playingSeq = sequences.find((s) => s.playing && s.trackId === sequence.trackId);
+        if (playingSeq) {
+            // FIXME need to find a way to keep it playing in the UI till the end of the pattern
+            // if next is true
+            playingSeq.playing = false;
+        }
+    }
+    sequence.playing = playing;
+    setSequencerState(sequence.trackId, sequence.patternId, sequence.detune, playing, next);
 }
 
 export function toggleSequence(sequence: Sequence) {
-    sequence.playing = !sequence.playing;
-    setSequencerState(sequence.trackId, sequence.patternId, sequence.detune, sequence.playing, true);
+    playSequence(sequence, !sequence.playing, true);
 }
 
 export function initSequence(sequence: Sequence) {

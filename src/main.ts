@@ -18,10 +18,11 @@ open({ size: config.screen.size });
 start();
 
 // FIXME might need to remove this?
-trackSetPath(0, `${DATA_PATH}/patches/pd/001`);
-trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
-trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
-trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
+trackSetPath(0, `${DATA_PATH}/wavetables/0_test.wav`);
+trackSetPath(1, `${DATA_PATH}/patches/pd/001`);
+trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
+trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
+trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
 // trackSetPath(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);
 // trackSetPath(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo1);
 // trackSetPath(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo2);

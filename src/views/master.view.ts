@@ -1,4 +1,4 @@
-import { getBpm, setBpm } from 'zic_node';
+import { getBpm, getMasterVolume, setBpm, setMasterVolume } from 'zic_node';
 import { clear, Events } from 'zic_node_ui';
 import { config } from '../config';
 import { drawButton, drawField } from '../draw';
@@ -6,8 +6,6 @@ import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color } from '../style';
 import { minmax } from '../util';
-
-
 
 export async function masterView() {
     cleanSelectableItems();
@@ -19,18 +17,14 @@ export async function masterView() {
     //   - Mixer?
     //   - Scatter?
 
-
     let row = 0;
-    drawField(
-        `Volume`,
-        (100).toString(),
-        row,
-        {
-            edit: (direction) => {
-                console.log('edit volume', direction);
-            },
+    drawField(`Volume`, Math.round(getMasterVolume() * 100).toString(), row, {
+        edit: (direction) => {
+            const volume = minmax(getMasterVolume() + direction, 0, 1);
+            setMasterVolume(volume);
         },
-    );
+        steps: [0.01, 0.1],
+    });
     drawField(
         `BPM`,
         getBpm().toString(),
@@ -45,16 +39,11 @@ export async function masterView() {
         },
     );
 
-    drawField(
-        `Project id`,
-        `#000`,
-        row,
-        {
-            edit: (direction) => {
-                console.log('change project', direction);
-            },
+    drawField(`Project id`, `#000`, row, {
+        edit: (direction) => {
+            console.log('change project', direction);
         },
-    );
+    });
     drawField(
         `Name`,
         `Tek23!`,

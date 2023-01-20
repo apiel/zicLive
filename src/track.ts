@@ -20,16 +20,10 @@ export const getTrackColor = (id: number) =>
     tracks[id].color || color.tracks[id % color.tracks.length];
 
 export async function loadTracks() {
-    tracks = [];
     try {
         // Going through track folder is questionable as for the moment 
         // tracks are hardcoded in the app... However, would be great to make track assignement dynamic!
-        const names = await readdir(config.path.tracks);
-        for (const name of names) {
-            const track = JSON.parse((await readFile(`${config.path.tracks}/${name}`)).toString());
-            // track.id = parseInt(path.parse(name).name);
-            tracks.push(track);
-        }
+        tracks = JSON.parse((await readFile(config.path.tracks)).toString());
     } catch (error) {
         console.error(`Error while loading tracks`, error);
     }

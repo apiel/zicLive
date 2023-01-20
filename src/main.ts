@@ -10,7 +10,7 @@ import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
-import { getPlayingSequence, loadSequences, setSelectedSequenceId } from './sequence';
+import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
 import { renderView, viewEventHandler } from './view';
 
@@ -36,11 +36,18 @@ trackSetPath(1, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
         const states = getAllSequencerStates();
         let needRender = false;
         for (let trackId = 0; trackId < states.length; trackId++) {
-            const { currentStep } = states[trackId];
-            const sequence = getPlayingSequence(trackId);
-            if (sequence) {
-                sequence.activeStep = currentStep;
-                needRender = true;
+            const {
+                currentStep,
+                current: { dataId, playing },
+            } = states[trackId];
+            cleanActiveStep(trackId);
+            if (playing) {
+                const sequence = getSequence(dataId);
+                if (sequence) {
+                    sequence.activeStep = currentStep;
+                    // console.log('currentStep', currentStep);
+                    needRender = true;
+                }
             }
         }
         await renderView();

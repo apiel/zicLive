@@ -75,7 +75,7 @@ export function sequenceNode(
         pattern,
         playing,
     );
-    if (activeStep !== undefined && playing) {
+    if (activeStep !== undefined) {
         renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, pattern, activeStep);
     }
 

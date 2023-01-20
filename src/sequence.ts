@@ -2,7 +2,7 @@ import { readdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { setSequencerState } from 'zic_node';
 import { config } from './config';
-import { getPattern, setPatternId } from './pattern';
+import { setPatternId } from './pattern';
 
 export const playing = [4, 7, 8, 10];
 
@@ -10,6 +10,8 @@ interface Sequence {
     id: number;
     trackId: number;
     playing: boolean;
+    // playingNext: boolean;
+    // stoppingNext: boolean;
     detune: number;
     repeat: number;
     patternId: number;
@@ -29,18 +31,26 @@ export function getPlayingSequence(trackId: number) {
     return sequences.find((s) => s.playing && s.trackId === trackId);
 }
 
+export function cleanActiveStep(trackId: number) {
+    const seqs = sequences.filter((s) => s.trackId === trackId && s.activeStep !== undefined);
+    for (const seq of seqs) {
+        seq.activeStep = undefined;
+    }
+}
+
 export function playSequence(sequence: Sequence, playing = true, next?: boolean) {
     if (playing) {
-        // setPatternId(sequence.trackId, sequence.patternId);
         const playingSeq = getPlayingSequence(sequence.trackId);
         if (playingSeq) {
-            // FIXME need to find a way to keep it playing in the UI till the end of the pattern
-            // if next is true
             playingSeq.playing = false;
         }
     }
     sequence.playing = playing;
-    setSequencerState(sequence.trackId, sequence.patternId, sequence.detune, playing, next);
+    setSequencerState(sequence.trackId, sequence.patternId, playing, {
+        next,
+        detune: sequence.detune,
+        dataId: sequence.id,
+    });
 }
 
 export function toggleSequence(sequence: Sequence) {
@@ -60,6 +70,7 @@ export async function loadSequence(id: number) {
                 await readFile(`${config.path.sequences}/${id.toString().padStart(3, '0')}.json`)
             ).toString(),
         );
+        sequence.id = id;
         sequences.push(sequence);
         initSequence(sequence);
     } catch (error) {
@@ -105,6 +116,8 @@ export function newSequence() {
         id: sequences.length,
         trackId: 0,
         playing: false,
+        // playingNext: false,
+        // stoppingNext: false,
         detune: 0,
         repeat: 0,
         patternId: 0,

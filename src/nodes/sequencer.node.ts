@@ -28,7 +28,6 @@ export function sequencerNode(
             title: getPatch(track.engine, patchId).name,
             pattern: getPattern(patternId),
             next,
-            // activeStep: stepCounter % seqProps[id].pattern.stepCount
         };
         drawSelectableRect(sequenceNode(id, col, props, scrollY), color.sequencer.selected, {
             edit: () => onEdit(id),

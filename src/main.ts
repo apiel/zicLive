@@ -19,7 +19,7 @@ start();
 
 // FIXME might need to remove this?
 trackSetPath(0, `${DATA_PATH}/wavetables/0_test.wav`);
-trackSetPath(1, `${DATA_PATH}/patches/pd/001`);
+trackSetPath(1, `${DATA_PATH}/patches/pd/_pd/poly`);
 trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
 trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
 trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);

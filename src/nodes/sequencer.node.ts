@@ -1,7 +1,7 @@
 import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
 import { sequenceNode, sequenceRect } from './sequence.node';
 import { drawSelectableRect } from '../draw';
-import { getPreset } from '../patch';
+import { getPatch } from '../patch';
 import { getPattern } from '../pattern';
 import { newSequence, sequences } from '../sequence';
 import { color, font } from '../style';
@@ -14,18 +14,18 @@ export function sequencerNode(
     onSelected: (id: number) => void = () => {},
 ) {
     for (let id = 0; id < sequences.length; id++) {
-        const { trackId, patchId, presetId, patternId, nextSequenceId, ...seq } = sequences[id];
+        const { trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[id];
         let next;
         if (nextSequenceId !== undefined) {
             // const nextSeq = sequences[nextSequenceId];
-            // next = `${seq.nextSequenceId} ${getPreset(nextSeq.patchId, nextSeq.presetId).name}`;
+            // next = `${seq.nextSequenceId} ${getPatch(nextSeq.patchId).name}`;
             next = nextSequenceId.toString();
         }
         const track = getTrack(trackId);
         const props = {
             ...seq,
             titleColor: getTrackColor(trackId),
-            title: getPreset(track.type, patchId, presetId).name,
+            title: getPatch(track.engine, patchId).name,
             pattern: getPattern(patternId),
             next,
             // activeStep: stepCounter % seqProps[id].pattern.stepCount

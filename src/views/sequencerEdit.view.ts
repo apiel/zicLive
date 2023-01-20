@@ -13,7 +13,7 @@ import {
     sequences,
     setSelectedSequenceId,
 } from '../sequence';
-import { getPatch, getPatches, getPreset } from '../patch';
+import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { PATTERN_COUNT } from 'zic_node';
@@ -40,12 +40,12 @@ export async function sequencerEditView() {
         size: { w: config.screen.size.w / 2 - margin, h: config.screen.size.h },
     });
 
-    const { trackId, patchId, presetId, patternId, detune, repeat, nextSequenceId } =
+    const { trackId, patchId, patternId, detune, repeat, nextSequenceId } =
         sequences[selectedId];
 
     const track = getTrack(trackId);
-    const patches = getPatches(track.type);
-    const patch = getPatch(track.type, patchId);
+    const patches = getPatches(track.engine);
+    const patch = getPatch(track.engine, patchId);
     let row = 0;
     drawField(
         `Sequence`,
@@ -87,26 +87,6 @@ export async function sequencerEditView() {
         {
             col: 2,
             info: '#' + patchId.toString().padStart(3, '0'),
-        },
-    );
-    drawField(
-        `Preset`,
-        getPreset(track.type, patchId, presetId).name,
-        row++,
-        {
-            edit: (direction) => {
-                sequences[selectedId].presetId = minmax(
-                    presetId + direction,
-                    0,
-                    patch.presets.length - 1,
-                );
-            },
-            steps: [1, 10],
-        },
-        {
-            col: 2,
-            valueColor: getTrackColor(trackId),
-            info: '#' + presetId.toString().padStart(3, '0'),
         },
     );
     drawField(
@@ -157,7 +137,7 @@ export async function sequencerEditView() {
         `Next`,
         nextSequenceId
             ? `${nextSequenceId + 1} ${
-                  getPreset(track.type, patchId, sequences[nextSequenceId].presetId).name
+                  getPatch(track.engine, patchId).name
               }`
             : `---`,
         row++,

@@ -3,66 +3,34 @@ import path from 'path';
 import { config } from './config';
 import { minmax } from './util';
 
-export interface Preset {
-    id: number;
-    name: string;
-}
-
 export interface Patch {
     id: number;
     name: string;
-    presets: Preset[];
 }
 
-const patches: { [name: string]: Patch[] } = {};
+const patches: { [engine: string]: Patch[] } = {};
 
-export const getPatches = (type: string) => patches[type];
+export const getPatches = (engine: string) => patches[engine];
 
-export const getPatch = (type: string, patchId: number) => {
-    const _patches = getPatches(type);
+export const getPatch = (engine: string, patchId: number) => {
+    const _patches = getPatches(engine);
     const id = minmax(patchId, 0, _patches.length - 1);
     return _patches[id];
 }
 
-export const getPreset = (type: string, patchId: number, presetId: number) => {
-    const _patch = getPatch(type, patchId);
-    const id = minmax(presetId, 0, _patch.presets.length - 1);
-    return _patch.presets[id];
-}
-
-async function loadPresets(patchPath: string) {
-    const presets: Preset[] = [];
-    try {
-        const presetnames = await readdir(`${patchPath}/presets`);
-        for (const presetname of presetnames) {
-            const preset = JSON.parse(
-                (await readFile(`${patchPath}/presets/${presetname}`)).toString(),
-            );
-            preset.id = parseInt(path.parse(presetname).name);
-            presets.push(preset);
-        }
-    } catch (error) {
-        console.error(`Error while loading preset for ${patchPath}`, error);
-    }
-    return presets;
-}
-
-async function loadPatchesForType(pathTypePath: string) {
+async function loadPatchesForEngine(enginePath: string) {
     const patchesForType: Patch[] = [];
     try {
-        const patchnames = await readdir(pathTypePath);
+        const patchnames = await readdir(enginePath);
         for (const patchname of patchnames) {
-            const patchPath = `${pathTypePath}/${patchname}`;
-            const isDirectory = (await lstat(patchPath)).isDirectory();
-            if (isDirectory) {
-                const patch = JSON.parse((await readFile(`${patchPath}/patch.json`)).toString());
-                patch.id = parseInt(patchname);
-                patch.presets = await loadPresets(patchPath);
+            if (patchname[0] !== '_') {
+                const patch = JSON.parse((await readFile(`${enginePath}/${patchname}`)).toString());
+                patch.id = parseInt(path.parse(patchname).name);
                 patchesForType.push(patch);
             }
         }
     } catch (error) {
-        console.error(`Error while loading patches for ${pathTypePath}`, error);
+        console.error(`Error while loading patches for ${enginePath}`, error);
     }
     return patchesForType;
 }
@@ -71,13 +39,13 @@ export async function loadPatches() {
     try {
         const names = await readdir(config.path.patches);
         for (const name of names) {
-            const pathTypePath = `${config.path.patches}/${name}`;
-            const isDirectory = (await lstat(pathTypePath)).isDirectory();
+            const enginePath = `${config.path.patches}/${name}`;
+            const isDirectory = (await lstat(enginePath)).isDirectory();
             if (isDirectory) {
-                patches[name] = await loadPatchesForType(pathTypePath);
+                patches[name] = await loadPatchesForEngine(enginePath);
             }
         }
     } catch (error) {
-        console.error(`Error while loading patches`, error);
+        console.error(`Error while loading patche engines`, error);
     }
 }

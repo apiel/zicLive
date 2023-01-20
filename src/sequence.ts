@@ -69,20 +69,11 @@ export async function loadSequences() {
     }
 }
 
-export async function saveSequence(sequence: Sequence) {
-    try {
-        await writeFile(
-            `${config.path.sequences}/${sequence.id.toString().padStart(3, '0')}.json`,
-            JSON.stringify(sequence),
-        );
-    } catch (error) {
-        console.error(`Error while saving sequence ${sequence.id}`, error);
-    }
-}
-
 export async function saveSequences() {
-    for (const sequence of sequences) {
-        await saveSequence(sequence);
+    try {
+        await writeFile(config.path.sequences, JSON.stringify(sequences));
+    } catch (error) {
+        console.error(`Error while saving sequences`, error);
     }
 }
 
@@ -91,8 +82,6 @@ export function newSequence() {
         id: sequences.length,
         trackId: 0,
         playing: false,
-        // playingNext: false,
-        // stoppingNext: false,
         detune: 0,
         repeat: 0,
         patternId: 0,

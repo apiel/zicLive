@@ -9,6 +9,6 @@ export const config = {
         patterns: `${DATA_PATH}/patterns`,
         patches: `${DATA_PATH}/patches`,
         tracks: `${DATA_PATH}/projects/000/tracks`,
-        sequences: `${DATA_PATH}/projects/000/sequences`,
+        sequences: `${DATA_PATH}/projects/000/sequences.json`,
     }
 };

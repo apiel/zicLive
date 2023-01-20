@@ -1,5 +1,4 @@
-import { readdir, readFile, writeFile } from 'fs/promises';
-import path from 'path';
+import { readFile, writeFile } from 'fs/promises';
 import { setSequencerState } from 'zic_node';
 import { config } from './config';
 import { setPatternId } from './pattern';
@@ -57,37 +56,13 @@ export function toggleSequence(sequence: Sequence) {
     playSequence(sequence, !sequence.playing, true);
 }
 
-export function initSequence(sequence: Sequence) {
-    if (sequence.playing) {
-        playSequence(sequence);
-    }
-}
-
-export async function loadSequence(id: number) {
-    try {
-        const sequence = JSON.parse(
-            (
-                await readFile(`${config.path.sequences}/${id.toString().padStart(3, '0')}.json`)
-            ).toString(),
-        );
-        sequence.id = id;
-        sequences.push(sequence);
-        initSequence(sequence);
-    } catch (error) {
-        console.error(`Error while loading sequence ${id}`, error);
-    }
-}
-
 export async function loadSequences() {
-    sequences = [];
     try {
-        const names = await readdir(config.path.sequences);
-        for (const name of names) {
-            // const sequence = JSON.parse(
-            //     (await readFile(`${config.path.sequences}/${name}`)).toString(),
-            // );
-            // sequences.push(sequence);
-            await loadSequence(parseInt(path.parse(name).name));
+        sequences = JSON.parse((await readFile(config.path.sequences)).toString());
+        for (const sequence of sequences) {
+            if (sequence.playing) {
+                playSequence(sequence);
+            }
         }
     } catch (error) {
         console.error(`Error while loading sequences`, error);

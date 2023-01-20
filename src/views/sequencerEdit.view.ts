@@ -8,7 +8,6 @@ import { drawButton, drawField } from '../draw';
 import { sequenceRect } from '../nodes/sequence.node';
 import {
     getSelectedSequenceId,
-    loadSequence,
     loadSequences,
     saveSequences,
     sequences,
@@ -178,8 +177,9 @@ export async function sequencerEditView() {
             col: 2,
         },
     );
-    drawButton('Reload', row++, () => loadSequence(selectedId), { col: 2 });
+    // drawButton('Reload', row++, () => loadSequence(selectedId), { col: 2 });
     // drawButton('Save', row++, () => console.log('save'), {col: 2}); // Need to find a solution to fill the gaps
+    // Might want to move this in master view...
     drawButton('Reload all', row++, loadSequences, { col: 2 });
     drawButton('Save all', row++, saveSequences, { col: 2 });
     // drawButton('Delete', row++, () => console.log('delete'), {col: 2});

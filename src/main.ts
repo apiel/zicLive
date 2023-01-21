@@ -4,7 +4,7 @@ import {
     setOnBeatCallback,
     start,
     SynthPathIds,
-    trackSetPath,
+    trackSetString,
 } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
@@ -18,14 +18,14 @@ open({ size: config.screen.size });
 start();
 
 // FIXME might need to remove this?
-trackSetPath(0, `${DATA_PATH}/wavetables/0_test.wav`);
-trackSetPath(1, `${DATA_PATH}/patches/pd/_pd/poly`);
-trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
-trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
-trackSetPath(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
-// trackSetPath(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);
-// trackSetPath(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo1);
-// trackSetPath(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo2);
+trackSetString(0, `${DATA_PATH}/wavetables/0_test.wav`);
+trackSetString(1, `${DATA_PATH}/patches/pd/_pd/poly`);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
+// trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);
+// trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo1);
+// trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo2);
 
 (async function () {
     await loadTracks();

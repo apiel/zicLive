@@ -3,7 +3,7 @@ import { eventMenu } from './events';
 import { helpEventHandler, helpView } from './views/help.view';
 import { masterEventHandler, masterView } from './views/master.view';
 import { patternEventHandler, patternView } from './views/pattern.view';
-import { presetEventHandler, presetView } from './views/preset.view';
+import { patchEventHandler, patchView } from './views/patch.view';
 import { projectEventHandler, projectView } from './views/project.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
@@ -36,7 +36,7 @@ export const renderView = () => {
         case View.Pattern:
             return patternView();
         case View.Preset:
-            return presetView();
+            return patchView();
         case View.Master:
             return masterView();
         case View.Project:
@@ -60,7 +60,7 @@ export const viewEventHandler = (events: Events) => {
         case View.Pattern:
             return patternEventHandler(events);
         case View.Preset:
-            return presetEventHandler(events);
+            return patchEventHandler(events);
         case View.Master:
             return masterEventHandler(events);
         case View.Project:

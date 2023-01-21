@@ -95,6 +95,11 @@ let selectedSequenceId = 0;
 export function getSelectedSequenceId() {
     return selectedSequenceId;
 }
+
+export function getSelectedSequence() {
+    return sequences[selectedSequenceId];
+}
+
 export function setSelectedSequenceId(id: number) {
     selectedSequenceId = id;
     const sequence = sequences[id];

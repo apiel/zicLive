@@ -1,6 +1,6 @@
-import { drawField } from '../../../dist/draw';
+import { drawField } from '../draw';
 
-export function patchEditor() {
+export default function() {
     let row = 0;
     drawField(`Volume`, Math.round(1 * 100).toString(), row, {
         edit: (direction) => {

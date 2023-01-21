@@ -2,24 +2,15 @@ import { lstat, readdir, readFile } from 'fs/promises';
 import path from 'path';
 import { config } from './config';
 import { minmax } from './util';
-
-export interface Patch {
-    id: number;
-    name: string;
-}
-
-const patches: { [engine: string]: Patch[] } = {};
-
-export const getPatches = (engine: string) => patches[engine];
-
-export const getPatch = (engine: string, patchId: number) => {
+const patches = {};
+export const getPatches = (engine) => patches[engine];
+export const getPatch = (engine, patchId) => {
     const _patches = getPatches(engine);
     const id = minmax(patchId, 0, _patches.length - 1);
     return _patches[id];
-}
-
-async function loadPatchesForEngine(enginePath: string) {
-    const patchesForType: Patch[] = [];
+};
+async function loadPatchesForEngine(enginePath) {
+    const patchesForType = [];
     try {
         const patchnames = await readdir(enginePath);
         for (const patchname of patchnames) {
@@ -29,12 +20,12 @@ async function loadPatchesForEngine(enginePath: string) {
                 patchesForType.push(patch);
             }
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error(`Error while loading patches for ${enginePath}`, error);
     }
     return patchesForType;
 }
-
 export async function loadPatches() {
     try {
         const names = await readdir(config.path.patches);
@@ -45,7 +36,8 @@ export async function loadPatches() {
                 patches[name] = await loadPatchesForEngine(enginePath);
             }
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error(`Error while loading patche engines`, error);
     }
 }

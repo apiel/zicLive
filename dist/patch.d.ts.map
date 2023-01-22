@@ -1,1 +1,0 @@
-{"version":3,"file":"patch.d.ts","sourceRoot":"","sources":["../src/patch.ts"],"names":[],"mappings":"AAKA,MAAM,WAAW,KAAK;IAClB,EAAE,EAAE,MAAM,CAAC;IACX,IAAI,EAAE,MAAM,CAAC;CAChB;AAID,eAAO,MAAM,UAAU,WAAY,MAAM,YAAoB,CAAC;AAE9D,eAAO,MAAM,QAAQ,WAAY,MAAM,WAAW,MAAM,UAIvD,CAAA;AAmBD,wBAAsB,WAAW,kBAahC"}

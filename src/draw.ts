@@ -1,4 +1,4 @@
-import { Color, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
+import { Color, drawFilledRect, drawPoint, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
 import { EditHandler, pushSelectableItem, SelectableOptions } from './selector';
 import { color, font, unit } from './style';
 
@@ -86,4 +86,26 @@ export function drawButton(text: string, row: number, edit: EditHandler, options
         { x: rect.position.x + 80, y: rect.position.y + 4 },
         { size: 14, color: color.info, font: font.bold },
     );
+}
+
+export function drawWavetable(wavetable: number[], row = 0) {
+    setColor(color.foreground);
+    const rowHeight = 3;
+    const rect = {
+        position: { x: unit.margin + unit.halfScreen, y: unit.margin + row * unit.height},
+        size: {
+            w: unit.halfScreen - unit.margin * 2,
+            h: unit.height * rowHeight - unit.margin * rowHeight,
+        },
+    };
+    drawFilledRect(rect);
+    setColor(color.chart);
+    const f = wavetable.length / rect.size.w;
+    for (let i = 0; i < rect.size.w; i++) {
+        const sample = wavetable[Math.round(i * f)];
+        drawPoint({
+            x: rect.position.x + i,
+            y: rect.position.y + (rect.size.h - sample * rect.size.h) * 0.5,
+        });
+    }
 }

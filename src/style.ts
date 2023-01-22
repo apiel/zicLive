@@ -10,6 +10,7 @@ const baseColor = {
     secondaryInfo: { r: 100, g: 100, b: 100 },
     selected: { r: 150, g: 150, b: 150 },
     secondarySelected: { r: 100, g: 100, b: 100 },
+    chart: rgb('#595f6b'),
 };
 
 export const color = {
@@ -18,7 +19,7 @@ export const color = {
         selected: baseColor.selected,
         playing: rgb('#42454A'),
         pattern: {
-            playing: rgb('#595f6b'),
+            playing: baseColor.chart,
             waiting: rgb('#3f444e'),
         },
         info: baseColor.info,

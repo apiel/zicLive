@@ -35,6 +35,7 @@ export function drawSelectableText(
         color.secondarySelected,
         selectableOptions,
     );
+    return rect;
 }
 
 export interface FieldOptions {
@@ -91,21 +92,22 @@ export function drawFieldDual(
     value1: string,
     value2: string,
     row: number,
-    selectableOptions: SelectableOptions,
+    selectableOptions1: SelectableOptions,
+    selectableOptions2: SelectableOptions,
     options: FieldDualOptions = {},
 ) {
     const { info, info2, valueColor = color.white } = options;
     const rect = getFiledRect(row, options);
-    drawSelectableRect(rect, color.sequencer.selected, selectableOptions);
     drawText(
         label,
         { x: rect.position.x + 2, y: rect.position.y + 2 },
         { size: 14, color: color.info },
     );
-    const labelRect = drawText(
+    const labelRect = drawSelectableText(
         value1,
         { x: rect.position.x + 80, y: rect.position.y + 2 },
         { size: 14, color: valueColor },
+        selectableOptions1
     );
     if (info) {
         drawText(
@@ -114,10 +116,11 @@ export function drawFieldDual(
             { size: 10, color: color.info },
         );
     }
-    const labelRect2 = drawText(
+    const labelRect2 = drawSelectableText(
         value2,
         { x: rect.position.x + 140, y: rect.position.y + 2 },
         { size: 14, color: valueColor },
+        selectableOptions2
     );
     if (info2) {
         drawText(

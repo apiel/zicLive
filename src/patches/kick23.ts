@@ -1,6 +1,6 @@
 import { getWavetable } from 'zic_node';
 import { DATA_PATH } from '../config';
-import { drawField, drawWavetable } from '../draw';
+import { drawEnvelope, drawField, drawWavetable } from '../draw';
 
 export default function () {
     drawWavetable(getWavetable(`${DATA_PATH}/wavetables/0_test.wav`));
@@ -26,6 +26,16 @@ export default function () {
         },
         steps: [0.01, 0.1],
     });
+
+    const envelopAmp: [number, number][] = [
+        [0, 0],
+        [1, 0.01],
+        [0.3, 0.4],
+        [0.0, 1.0],
+        [0.0, 1.0],
+        [0.0, 1.0],
+    ];
+    drawEnvelope(envelopAmp, row);
 
     // drawField(`Volume`, Math.round(1 * 100).toString(), row, {
     //     edit: (direction) => {

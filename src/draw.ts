@@ -1,4 +1,15 @@
-import { Color, drawFilledRect, drawPoint, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
+import {
+    Color,
+    drawFilledRect,
+    drawLine,
+    drawPoint,
+    drawRect,
+    drawText,
+    Point,
+    Rect,
+    setColor,
+    TextOptions,
+} from 'zic_node_ui';
 import { EditHandler, pushSelectableItem, SelectableOptions } from './selector';
 import { color, font, unit } from './style';
 
@@ -73,7 +84,12 @@ export interface ButtonOptions {
     scrollY?: number;
 }
 
-export function drawButton(text: string, row: number, edit: EditHandler, options: ButtonOptions = {}) {
+export function drawButton(
+    text: string,
+    row: number,
+    edit: EditHandler,
+    options: ButtonOptions = {},
+) {
     const { col = 1, size = 1, scrollY = 0 } = options;
     const rect = {
         position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
@@ -92,7 +108,7 @@ export function drawWavetable(wavetable: number[], row = 0) {
     setColor(color.foreground);
     const rowHeight = 3;
     const rect = {
-        position: { x: unit.margin + unit.halfScreen, y: unit.margin + row * unit.height},
+        position: { x: unit.margin + unit.halfScreen, y: unit.margin + row * unit.height },
         size: {
             w: unit.halfScreen - unit.margin * 2,
             h: unit.height * rowHeight - unit.margin * rowHeight,
@@ -107,5 +123,33 @@ export function drawWavetable(wavetable: number[], row = 0) {
             x: rect.position.x + i,
             y: rect.position.y + (rect.size.h - sample * rect.size.h) * 0.5,
         });
+    }
+}
+
+export function drawEnvelope(envelope: [number, number][], row = 0) {
+    setColor(color.foreground);
+    const rowHeight = 3;
+    const rect = {
+        position: { x: unit.margin + unit.halfScreen, y: unit.margin + row * unit.height },
+        size: {
+            w: unit.halfScreen - unit.margin * 2,
+            h: unit.height * rowHeight - unit.margin * rowHeight,
+        },
+    };
+    drawFilledRect(rect);
+    setColor(color.chart);
+    for (let i = 0; i < envelope.length - 1; i++) {
+        const [value1, time1] = envelope[i];
+        const [value2, time2] = envelope[i + 1];
+        drawLine(
+            {
+                x: rect.position.x + time1 * rect.size.w,
+                y: rect.position.y + (1 - value1) * rect.size.h,
+            },
+            {
+                x: rect.position.x + time2 * rect.size.w,
+                y: rect.position.y + (1 - value2) * rect.size.h,
+            },
+        );
     }
 }

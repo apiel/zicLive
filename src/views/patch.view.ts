@@ -26,7 +26,7 @@ export async function patchView() {
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'kick23':
-            kick23();
+            kick23(patch);
             break;
     }
 }

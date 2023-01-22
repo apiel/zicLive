@@ -1,25 +1,29 @@
 import { getWavetable } from 'zic_node';
 import { DATA_PATH } from '../config';
 import { drawEnvelope, drawField, drawFieldDual, drawWavetable } from '../draw';
+import { Patch } from '../patch';
 import { minmax } from '../util';
 
-export default function () {
-    const envelopFreq: [number, number][] = [
-        [1.0, 0.0],
-        [1.0, 0.0],
-        [0.26, 0.03],
-        [0.24, 0.35],
-        [0.22, 0.4],
-        [0.0, 1.0],
-    ];
-    const envelopAmp: [number, number][] = [
-        [0, 0],
-        [1, 0.01],
-        [0.3, 0.4],
-        [0.0, 1.0],
-        [0.0, 1.0],
-        [0.0, 1.0],
-    ];
+const envelopFreq: [number, number][] = [
+    [1.0, 0.0],
+    [1.0, 0.0],
+    [0.26, 0.03],
+    [0.24, 0.35],
+    [0.22, 0.4],
+    [0.0, 1.0],
+];
+const envelopAmp: [number, number][] = [
+    [0, 0],
+    [1, 0.01],
+    [0.3, 0.4],
+    [0.0, 1.0],
+    [0.0, 1.0],
+    [0.0, 1.0],
+];
+
+// For float and string let's not use voices!!!! but uint16_t
+
+export default function (patch: Patch) {
     let row = 0;
     drawWavetable(getWavetable(`${DATA_PATH}/wavetables/0_test.wav`), { row, col: 2 });
     drawField(`Wavetable`, `0_test.wav`, row++, {
@@ -69,8 +73,8 @@ export default function () {
     drawEnvelope(envelopAmp, { row, col: 2 });
     drawFieldDual(
         `AmpMod1`,
-        (envelopAmp[2][0] * 100).toString(),
-        (envelopAmp[2][1] * 100).toString(),
+        Math.round(envelopAmp[2][0] * 100).toString(),
+        Math.round(envelopAmp[2][1] * 100).toString(),
         row++,
         {
             edit: (direction) => {
@@ -88,8 +92,8 @@ export default function () {
     );
     drawFieldDual(
         `AmpMod2`,
-        (envelopAmp[3][0] * 100).toString(),
-        (envelopAmp[3][1] * 100).toString(),
+        Math.round(envelopAmp[3][0] * 100).toString(),
+        Math.round(envelopAmp[3][1] * 100).toString(),
         row++,
         {
             edit: (direction) => {
@@ -107,8 +111,8 @@ export default function () {
     );
     drawFieldDual(
         `AmpMod3`,
-        (envelopAmp[4][0] * 100).toString(),
-        (envelopAmp[4][1] * 100).toString(),
+        Math.round(envelopAmp[4][0] * 100).toString(),
+        Math.round(envelopAmp[4][1] * 100).toString(),
         row++,
         {
             edit: (direction) => {
@@ -128,8 +132,8 @@ export default function () {
     drawEnvelope(envelopFreq, { row, col: 2 });
     drawFieldDual(
         `FrqMod1`,
-        (envelopFreq[2][0] * 100).toString(),
-        (envelopFreq[2][1] * 100).toString(),
+        Math.round(envelopFreq[2][0] * 100).toString(),
+        Math.round(envelopFreq[2][1] * 100).toString(),
         row++,
         {
             edit: (direction) => {
@@ -147,8 +151,8 @@ export default function () {
     );
     drawFieldDual(
         `FrqMod2`,
-        (envelopFreq[3][0] * 100).toString(),
-        (envelopFreq[3][1] * 100).toString(),
+        Math.round(envelopFreq[3][0] * 100).toString(),
+        Math.round(envelopFreq[3][1] * 100).toString(),
         row++,
         {
             edit: (direction) => {
@@ -166,8 +170,8 @@ export default function () {
     );
     drawFieldDual(
         `FrqMod3`,
-        (envelopFreq[4][0] * 100).toString(),
-        (envelopFreq[4][1] * 100).toString(),
+        Math.round(envelopFreq[4][0] * 100).toString(),
+        Math.round(envelopFreq[4][1] * 100).toString(),
         row++,
         {
             edit: (direction) => {

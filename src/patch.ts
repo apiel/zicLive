@@ -49,3 +49,12 @@ export async function loadPatches() {
         console.error(`Error while loading patche engines`, error);
     }
 }
+
+export function patchSetString(engine: string, patchId: number, value: string, stringId: number, voice: number) {
+}
+
+export function patchSetNumber(engine: string, patchId: number, value: number, numberId: number, voice: number) {
+}
+
+export function patchSetCc(engine: string, patchId: number, value: number, ccId: number, voice: number) {
+}

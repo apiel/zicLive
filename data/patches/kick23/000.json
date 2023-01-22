@@ -1,1 +1,23 @@
-{ "id": 0, "name": "Kick23" }
+{
+    "id": 0,
+    "name": "Kick23",
+    "cc": [],
+    "float": [
+        { "value": 0.3, "floatId": 4 },
+        { "value": 0.4, "floatId": 5 },
+        { "value": 0.0, "floatId": 6 },
+        { "value": 1.0, "floatId": 7 },
+        { "value": 0.0, "floatId": 8 },
+        { "value": 1.0, "floatId": 9 },
+
+        { "value": 0.26, "floatId": 10 },
+        { "value": 0.03, "floatId": 11 },
+        { "value": 0.24, "floatId": 12 },
+        { "value": 0.35, "floatId": 13 },
+        { "value": 0.22, "floatId": 14 },
+        { "value": 0.4, "floatId": 15 }
+    ],
+    "str": [
+        { "value": "./data/wavetables/0_test.wav" }
+    ]
+}

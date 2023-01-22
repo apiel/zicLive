@@ -1,6 +1,6 @@
 import { getWavetable } from 'zic_node';
 import { DATA_PATH } from '../config';
-import { drawEnvelope, drawField, drawWavetable } from '../draw';
+import { drawEnvelope, drawField, drawFieldDual, drawWavetable } from '../draw';
 
 export default function () {
     let row = 0;
@@ -27,6 +27,29 @@ export default function () {
         steps: [0.01, 0.1],
     });
 
+
+    drawField(`Volume`, Math.round(1 * 100).toString(), row, {
+        edit: (direction) => {
+            // const volume = minmax(getMasterVolume() + direction, 0, 1);
+            // setMasterVolume(volume);
+        },
+        steps: [0.01, 0.1],
+    });
+    drawField(
+        `Duration`,
+        (500).toString(),
+        row++,
+        {
+            edit: (direction) => {
+                // setBpm(minmax(getBpm() + direction, 10, 250));
+            },
+        },
+        {
+            col: 2,
+            info: `ms`,
+        },
+    );
+
     const envelopAmp: [number, number][] = [
         [0, 0],
         [1, 0.01],
@@ -36,27 +59,27 @@ export default function () {
         [0.0, 1.0],
     ];
     drawEnvelope(envelopAmp, { row, col: 2 });
-    drawField(`AmpMod1`, `30% 300ms`, row++, {
+    drawFieldDual(`AmpMod1`, `30`, `40`, row++, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
         },
         steps: [0.01, 0.1],
-    });
-    drawField(`AmpMod2`, `0% 600ms`, row++, {
+    }, {info: '%', info2: '%t'});
+    drawFieldDual(`AmpMod2`, `0`, `100`, row++, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
         },
         steps: [0.01, 0.1],
-    });
-    drawField(`AmpMod3`, `0% 600ms`, row++, {
+    }, {info: '%', info2: '%t'});
+    drawFieldDual(`AmpMod3`, `0`, `100`, row++, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
         },
         steps: [0.01, 0.1],
-    });
+    }, {info: '%', info2: '%t'});
 
     const envelopFreq: [number, number][] = [
         [1.0, 0.0],
@@ -67,47 +90,25 @@ export default function () {
         [0.0, 1.0],
     ];
     drawEnvelope(envelopFreq, { row, col: 2 });
-    drawField(`FrqMod1`, `26% 300ms`, row++, {
+    drawFieldDual(`FrqMod1`, `26`, `3`, row++, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
         },
         steps: [0.01, 0.1],
-    });
-    drawField(`FrqMod2`, `24% 350ms`, row++, {
+    }, {info: '%', info2: '%t'});
+    drawFieldDual(`FrqMod2`, `24`, `35`, row++, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
         },
         steps: [0.01, 0.1],
-    });
-    drawField(`FrqMod3`, `22% 400ms`, row++, {
+    }, {info: '%', info2: '%t'});
+    drawFieldDual(`FrqMod3`, `22`, `40`, row++, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
         },
         steps: [0.01, 0.1],
-    });
-
-    // drawField(`Volume`, Math.round(1 * 100).toString(), row, {
-    //     edit: (direction) => {
-    //         // const volume = minmax(getMasterVolume() + direction, 0, 1);
-    //         // setMasterVolume(volume);
-    //     },
-    //     steps: [0.01, 0.1],
-    // });
-    // drawField(
-    //     `Duration`,
-    //     (500).toString(),
-    //     row++,
-    //     {
-    //         edit: (direction) => {
-    //             // setBpm(minmax(getBpm() + direction, 10, 250));
-    //         },
-    //     },
-    //     {
-    //         col: 2,
-    //         info: `ms`,
-    //     },
-    // );
+    }, {info: '%', info2: '%t'});
 }

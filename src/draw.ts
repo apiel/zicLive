@@ -45,6 +45,14 @@ export interface FieldOptions {
     scrollY?: number;
 }
 
+function getFiledRect(row: number, options: FieldOptions) {
+    const { col = 1, size = 1, scrollY = 0 } = options;
+    return {
+        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
+        size: { w: unit.halfScreen * size, h: unit.height },
+    };
+}
+
 export function drawField(
     label: string,
     value: string,
@@ -52,12 +60,8 @@ export function drawField(
     selectableOptions: SelectableOptions,
     options: FieldOptions = {},
 ) {
-    const { col = 1, size = 1, info, valueColor = color.white, scrollY = 0 } = options;
-    const rect = {
-        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
-        size: { w: unit.halfScreen * size, h: unit.height },
-    };
-
+    const { info, valueColor = color.white } = options;
+    const rect = getFiledRect(row, options);
     drawSelectableRect(rect, color.sequencer.selected, selectableOptions);
     drawText(
         label,
@@ -73,6 +77,52 @@ export function drawField(
         drawText(
             info,
             { x: labelRect.position.x + labelRect.size.w + 2, y: rect.position.y + 6 },
+            { size: 10, color: color.info },
+        );
+    }
+}
+
+interface FieldDualOptions extends FieldOptions {
+    info2?: string;
+}
+
+export function drawFieldDual(
+    label: string,
+    value1: string,
+    value2: string,
+    row: number,
+    selectableOptions: SelectableOptions,
+    options: FieldDualOptions = {},
+) {
+    const { info, info2, valueColor = color.white } = options;
+    const rect = getFiledRect(row, options);
+    drawSelectableRect(rect, color.sequencer.selected, selectableOptions);
+    drawText(
+        label,
+        { x: rect.position.x + 2, y: rect.position.y + 2 },
+        { size: 14, color: color.info },
+    );
+    const labelRect = drawText(
+        value1,
+        { x: rect.position.x + 80, y: rect.position.y + 2 },
+        { size: 14, color: valueColor },
+    );
+    if (info) {
+        drawText(
+            info,
+            { x: labelRect.position.x + labelRect.size.w + 2, y: rect.position.y + 6 },
+            { size: 10, color: color.info },
+        );
+    }
+    const labelRect2 = drawText(
+        value2,
+        { x: rect.position.x + 140, y: rect.position.y + 2 },
+        { size: 14, color: valueColor },
+    );
+    if (info2) {
+        drawText(
+            info2,
+            { x: labelRect2.position.x + labelRect2.size.w + 2, y: rect.position.y + 6 },
             { size: 10, color: color.info },
         );
     }

@@ -104,16 +104,29 @@ export function drawButton(
     );
 }
 
-export function drawWavetable(wavetable: number[], row = 0) {
-    setColor(color.foreground);
+interface ChartOptions {
+    row?: number;
+    scrollY?: number;
+    col?: 1 | 2;
+}
+
+function getChartRect({ row = 0, scrollY = 0, col = 1 }: ChartOptions) {
     const rowHeight = 3;
-    const rect = {
-        position: { x: unit.margin + unit.halfScreen, y: unit.margin + row * unit.height },
+    return {
+        position: {
+            x: unit.margin + unit.halfScreen * (col - 1),
+            y: scrollY + unit.margin + row * unit.height + unit.extraMargin,
+        },
         size: {
-            w: unit.halfScreen - unit.margin * 2,
-            h: unit.height * rowHeight - unit.margin * rowHeight,
+            w: unit.halfScreen - unit.margin * 2 - unit.extraMargin * 2,
+            h: unit.height * rowHeight - unit.margin * rowHeight - unit.extraMargin * 2,
         },
     };
+}
+
+export function drawWavetable(wavetable: number[], options: ChartOptions = {}) {
+    setColor(color.foreground);
+    const rect = getChartRect(options);
     drawFilledRect(rect);
     setColor(color.chart);
     const f = wavetable.length / rect.size.w;
@@ -126,16 +139,9 @@ export function drawWavetable(wavetable: number[], row = 0) {
     }
 }
 
-export function drawEnvelope(envelope: [number, number][], row = 0) {
+export function drawEnvelope(envelope: [number, number][], options: ChartOptions = {}) {
     setColor(color.foreground);
-    const rowHeight = 3;
-    const rect = {
-        position: { x: unit.margin + unit.halfScreen, y: unit.margin + row * unit.height },
-        size: {
-            w: unit.halfScreen - unit.margin * 2,
-            h: unit.height * rowHeight - unit.margin * rowHeight,
-        },
-    };
+    const rect = getChartRect(options);
     drawFilledRect(rect);
     setColor(color.chart);
     for (let i = 0; i < envelope.length - 1; i++) {

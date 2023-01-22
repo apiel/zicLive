@@ -52,6 +52,7 @@ export const font = {
 
 export const unit = {
     margin: 1,
+    extraMargin: 5,
     height: 25,
     halfScreen: config.screen.size.w * 0.5,
     quarterScreen: config.screen.size.w * 0.25,

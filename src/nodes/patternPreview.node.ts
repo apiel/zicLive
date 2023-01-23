@@ -12,8 +12,7 @@ export function patternPreviewNode(position: Point, size: Size, pattern: Pattern
 
     if (noteRange === 0) {
         for (let step = 0; step < pattern.stepCount; step++) {
-            const voices = steps[step];
-            for (let voice = 0; voice < voices.length; voice++) {
+            if (steps[step].length) {
                 const rect = {
                     position: {
                         x: position.x + step * stepWidth,

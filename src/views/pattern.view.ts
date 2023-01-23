@@ -101,7 +101,7 @@ export async function patternView() {
                             } else {
                                 step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
                             }
-                        } else if (direction === 1) {
+                        } else if (direction === 1) { // If no already existing step, create one if direction is positive
                             const previousStep = pattern.steps
                                 .slice(0, stepIndex)
                                 .reverse()

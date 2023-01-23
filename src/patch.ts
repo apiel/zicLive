@@ -6,6 +6,9 @@ import { minmax } from './util';
 export interface Patch {
     id: number;
     name: string;
+    float: { [id: string]: number },
+    str: { [id: string]: string },
+    cc: { [num: string]: { [voice: string]: number } },
 }
 
 const patches: { [engine: string]: Patch[] } = {};

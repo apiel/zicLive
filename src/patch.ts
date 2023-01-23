@@ -6,9 +6,12 @@ import { minmax } from './util';
 export interface Patch {
     id: number;
     name: string;
-    float: { [id: string]: number },
-    str: { [id: string]: string },
-    cc: { [num: string]: { [voice: string]: number } },
+    number: { [id: string]: number };
+    str: { [id: string]: string };
+    cc: { [num: string]: { [voice: string]: number } };
+    setString: (stringId: number, value: string) => void;
+    setNumber: (floatId: number, value: number) => void;
+    setCc: (ccId: number, value: number, voice: number) => void;
 }
 
 const patches: { [engine: string]: Patch[] } = {};
@@ -19,7 +22,7 @@ export const getPatch = (engine: string, patchId: number) => {
     const _patches = getPatches(engine);
     const id = minmax(patchId, 0, _patches.length - 1);
     return _patches[id];
-}
+};
 
 async function loadPatchesForEngine(enginePath: string) {
     const patchesForType: Patch[] = [];
@@ -29,6 +32,9 @@ async function loadPatchesForEngine(enginePath: string) {
             if (patchname[0] !== '_' && patchname !== 'tsconfig.json') {
                 const patch = JSON.parse((await readFile(`${enginePath}/${patchname}`)).toString());
                 patch.id = parseInt(path.parse(patchname).name);
+                patch.setString = (stringId: number, value: string) => (patch.str[stringId] = value);
+                patch.setNumber = (floatId: number, value: number) => (patch.number[floatId] = value);
+                patch.setCc = (ccId: number, value: number, voice: number) => {};
                 patchesForType.push(patch);
             }
         }
@@ -51,13 +57,4 @@ export async function loadPatches() {
     } catch (error) {
         console.error(`Error while loading patche engines`, error);
     }
-}
-
-export function patchSetString(engine: string, patchId: number, value: string, stringId: number, voice: number) {
-}
-
-export function patchSetNumber(engine: string, patchId: number, value: number, numberId: number, voice: number) {
-}
-
-export function patchSetCc(engine: string, patchId: number, value: number, ccId: number, voice: number) {
 }

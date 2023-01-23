@@ -24,6 +24,10 @@ export const getPatch = (engine: string, patchId: number) => {
     return _patches[id];
 };
 
+const setString = (patch: Patch) => (stringId: number, value: string) => (patch.str[stringId] = value);
+const setNumber = (patch: Patch) => (floatId: number, value: number) => (patch.number[floatId] = value);
+const setCc = (patch: Patch) => (ccId: number, value: number, voice: number) => (patch.cc[ccId][voice] = value);
+
 async function loadPatchesForEngine(enginePath: string) {
     const patchesForType: Patch[] = [];
     try {
@@ -32,9 +36,9 @@ async function loadPatchesForEngine(enginePath: string) {
             if (patchname[0] !== '_' && patchname !== 'tsconfig.json') {
                 const patch = JSON.parse((await readFile(`${enginePath}/${patchname}`)).toString());
                 patch.id = parseInt(path.parse(patchname).name);
-                patch.setString = (stringId: number, value: string) => (patch.str[stringId] = value);
-                patch.setNumber = (floatId: number, value: number) => (patch.number[floatId] = value);
-                patch.setCc = (ccId: number, value: number, voice: number) => {};
+                patch.setString = setString(patch);
+                patch.setNumber = setNumber(patch);
+                patch.setCc = setCc(patch);
                 patchesForType.push(patch);
             }
         }

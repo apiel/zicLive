@@ -21,8 +21,6 @@ const envelopAmp: [number, number][] = [
     [0.0, 1.0],
 ];
 
-// For float and string let's not use voices!!!! but uint16_t
-
 export default function (patch: Patch) {
     let row = 0;
     drawWavetable(getWavetable(`${DATA_PATH}/wavetables/0_test.wav`), { row, col: 2 });

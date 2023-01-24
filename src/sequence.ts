@@ -16,7 +16,7 @@ interface Sequence {
     patternId: number;
     nextSequenceId?: number;
     patchId: number;
-    presetId: number;
+    // presetId: number;
     activeStep?: number;
 }
 
@@ -28,6 +28,10 @@ export function getSequence(id: number) {
 
 export function getPlayingSequence(trackId: number) {
     return sequences.find((s) => s.playing && s.trackId === trackId);
+}
+
+export function getPlayingSequencesForPatch(patchId: number) {
+    return sequences.filter((s) => s.playing && s.patchId === patchId);
 }
 
 export function cleanActiveStep(trackId: number) {
@@ -87,7 +91,7 @@ export function newSequence() {
         patternId: 0,
         nextSequenceId: undefined,
         patchId: 0,
-        presetId: 0,
+        // presetId: 0,
     });
 }
 

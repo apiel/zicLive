@@ -32,7 +32,7 @@ export default function (patch: Patch) {
         steps: [0.01, 0.1],
     });
 
-    drawField(`Volume`, Math.round(1 * 100).toString(), row, {
+    drawField(`Volume`, patch.number[fId.Volume].toString(), row, {
         edit: (direction) => {
             // const volume = minmax(getMasterVolume() + direction, 0, 1);
             // setMasterVolume(volume);
@@ -41,7 +41,7 @@ export default function (patch: Patch) {
     });
     drawField(
         `Duration`,
-        (500).toString(),
+        patch.number[fId.Duration].toString(),
         row++,
         {
             edit: (direction) => {
@@ -54,13 +54,41 @@ export default function (patch: Patch) {
         },
     );
 
+    drawField(
+        `Filter`,
+        patch.number[fId.filterCutoff].toString(),
+        row,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.filterCutoff, minmax(patch.number[fId.filterCutoff] + direction, 200, 8000));
+            },
+            steps: [10, 100],
+        },
+        { info: 'hz' },
+    );
+    drawField(
+        `Resonance`,
+        ` ${patch.number[fId.filterResonance]}`,
+        row++,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.filterResonance, minmax(patch.number[fId.filterResonance] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        {
+            col: 2,
+            info: `%`,
+        },
+    );
+
     drawEnvelope(
         [
             [0, 0],
             [1, 0.01], // Force to have a very short ramp up to avoid clicks
             [patch.number[fId.envAmp1], patch.number[fId.envAmp1Time]],
             [patch.number[fId.envAmp2], patch.number[fId.envAmp2Time]],
-            [patch.number[fId.envAmp2], patch.number[fId.envAmp3Time]],
+            [patch.number[fId.envAmp3], patch.number[fId.envAmp3Time]],
             [0.0, 1.0],
         ],
         { row, col: 2 },

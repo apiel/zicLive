@@ -1,6 +1,8 @@
 import { lstat, readdir, readFile } from 'fs/promises';
 import path from 'path';
+import { trackSetNumber } from 'zic_node';
 import { config } from './config';
+import { getPlayingSequencesForPatch } from './sequence';
 import { minmax } from './util';
 
 export interface Patch {
@@ -25,7 +27,14 @@ export const getPatch = (engine: string, patchId: number) => {
 };
 
 const setString = (patch: Patch) => (stringId: number, value: string) => (patch.str[stringId] = value);
-const setNumber = (patch: Patch) => (floatId: number, value: number) => (patch.number[floatId] = value);
+const setNumber = (patch: Patch) => (floatId: number, value: number) => {
+    patch.number[floatId] = value;
+
+    const sequences = getPlayingSequencesForPatch(patch.id);
+    for(const sequence of sequences) {
+        trackSetNumber(sequence.trackId, value, floatId);
+    }
+}
 const setCc = (patch: Patch) => (ccId: number, value: number, voice: number) => (patch.cc[ccId][voice] = value);
 
 async function loadPatchesForEngine(enginePath: string) {

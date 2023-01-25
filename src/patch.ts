@@ -1,6 +1,6 @@
 import { lstat, readdir, readFile } from 'fs/promises';
 import path from 'path';
-import { trackSetNumber } from 'zic_node';
+import { trackSetNumber, trackSetString } from 'zic_node';
 import { config } from './config';
 import { getPlayingSequencesForPatch } from './sequence';
 import { minmax } from './util';

@@ -64,11 +64,7 @@ export function drawField(
     const { info, valueColor = color.white } = options;
     const rect = getFiledRect(row, options);
     drawSelectableRect(rect, color.sequencer.selected, selectableOptions);
-    drawText(
-        label,
-        { x: rect.position.x + 2, y: rect.position.y + 2 },
-        { size: 14, color: color.info },
-    );
+    drawText(label, { x: rect.position.x + 2, y: rect.position.y + 2 }, { size: 14, color: color.info });
     const labelRect = drawText(
         value,
         { x: rect.position.x + 80, y: rect.position.y + 2 },
@@ -98,16 +94,12 @@ export function drawFieldDual(
 ) {
     const { info, info2, valueColor = color.white } = options;
     const rect = getFiledRect(row, options);
-    drawText(
-        label,
-        { x: rect.position.x + 2, y: rect.position.y + 2 },
-        { size: 14, color: color.info },
-    );
+    drawText(label, { x: rect.position.x + 2, y: rect.position.y + 2 }, { size: 14, color: color.info });
     const labelRect = drawSelectableText(
         value1,
         { x: rect.position.x + 80, y: rect.position.y + 2 },
         { size: 14, color: valueColor },
-        selectableOptions1
+        selectableOptions1,
     );
     if (info) {
         drawText(
@@ -120,7 +112,7 @@ export function drawFieldDual(
         value2,
         { x: rect.position.x + 140, y: rect.position.y + 2 },
         { size: 14, color: valueColor },
-        selectableOptions2
+        selectableOptions2,
     );
     if (info2) {
         drawText(
@@ -137,12 +129,7 @@ export interface ButtonOptions {
     scrollY?: number;
 }
 
-export function drawButton(
-    text: string,
-    row: number,
-    edit: EditHandler,
-    options: ButtonOptions = {},
-) {
+export function drawButton(text: string, row: number, edit: EditHandler, options: ButtonOptions = {}) {
     const { col = 1, size = 1, scrollY = 0 } = options;
     const rect = {
         position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
@@ -183,12 +170,21 @@ export function drawWavetable(wavetable: number[], options: ChartOptions = {}) {
     drawFilledRect(rect);
     setColor(color.chart);
     const f = wavetable.length / rect.size.w;
+    let prevPoint: Point | undefined;
     for (let i = 0; i < rect.size.w; i++) {
         const sample = wavetable[Math.round(i * f)];
-        drawPoint({
+        // drawPoint({
+        //     x: rect.position.x + i,
+        //     y: rect.position.y + (rect.size.h - sample * rect.size.h) * 0.5,
+        // });
+        const point = {
             x: rect.position.x + i,
             y: rect.position.y + (rect.size.h - sample * rect.size.h) * 0.5,
-        });
+        };
+        if (prevPoint) {
+            drawLine(prevPoint, point);
+        }
+        prevPoint = point;
     }
 }
 

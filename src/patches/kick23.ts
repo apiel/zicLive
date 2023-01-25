@@ -7,38 +7,60 @@ import { minmax } from '../util';
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
 
-export default function (patch: Patch) {
+export default function (patch: Patch, scrollY: number) {
     let row = 0;
-    drawWavetable(getWavetable(patch.str[sId.Wavetable]), { row, col: 2 });
-    drawField(`Wavetable`, path.parse(patch.str[sId.Wavetable]).name, row++, {
-        edit: (direction) => {
-            // const volume = minmax(getMasterVolume() + direction, 0, 1);
-            // setMasterVolume(volume);
+    drawWavetable(getWavetable(patch.str[sId.Wavetable], patch.number[fId.Morph]), { row, col: 2, scrollY });
+    drawField(
+        `Wavetable`,
+        path.parse(patch.str[sId.Wavetable]).name,
+        row++,
+        {
+            edit: (direction) => {
+                // const volume = minmax(getMasterVolume() + direction, 0, 1);
+                // setMasterVolume(volume);
+            },
+            steps: [0.01, 0.1],
         },
-        steps: [0.01, 0.1],
-    });
-    drawField(`Morph`, `0`, row++, {
-        edit: (direction) => {
-            // const volume = minmax(getMasterVolume() + direction, 0, 1);
-            // setMasterVolume(volume);
+        { scrollY },
+    );
+    drawField(
+        `Morph`,
+        `${patch.number[fId.Morph]}/64`, // TODO get wavetable count from zic_node
+        row++,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Morph, minmax(patch.number[fId.Morph] + direction, 0, 64));
+            },
         },
-        steps: [0.01, 0.1],
-    });
-    drawField(`Frequency`, `400`, row++, {
-        edit: (direction) => {
-            // const volume = minmax(getMasterVolume() + direction, 0, 1);
-            // setMasterVolume(volume);
+        { scrollY },
+    );
+    drawField(
+        `Frequency`,
+        `400`,
+        row++,
+        {
+            edit: (direction) => {
+                // const volume = minmax(getMasterVolume() + direction, 0, 1);
+                // setMasterVolume(volume);
+            },
+            steps: [0.01, 0.1],
         },
-        steps: [0.01, 0.1],
-    });
+        { scrollY },
+    );
 
-    drawField(`Volume`, patch.number[fId.Volume].toString(), row, {
-        edit: (direction) => {
-            // const volume = minmax(getMasterVolume() + direction, 0, 1);
-            // setMasterVolume(volume);
+    drawField(
+        `Volume`,
+        patch.number[fId.Volume].toString(),
+        row,
+        {
+            edit: (direction) => {
+                // const volume = minmax(getMasterVolume() + direction, 0, 1);
+                // setMasterVolume(volume);
+            },
+            steps: [0.01, 0.1],
         },
-        steps: [0.01, 0.1],
-    });
+        { scrollY },
+    );
     drawField(
         `Duration`,
         patch.number[fId.Duration].toString(),
@@ -51,6 +73,7 @@ export default function (patch: Patch) {
         {
             col: 2,
             info: `ms (t)`,
+            scrollY,
         },
     );
 
@@ -64,21 +87,22 @@ export default function (patch: Patch) {
             },
             steps: [10, 100],
         },
-        { info: 'hz' },
+        { info: 'hz', scrollY },
     );
     drawField(
         `Resonance`,
-        ` ${patch.number[fId.filterResonance]}`,
+        ` ${Math.round(patch.number[fId.filterResonance]* 100)}`,
         row++,
         {
             edit: (direction) => {
                 patch.setNumber(fId.filterResonance, minmax(patch.number[fId.filterResonance] + direction, 0, 1));
             },
-            steps: [0.01, 0.1],
+            steps: [0.01, 0.05],
         },
         {
             col: 2,
             info: `%`,
+            scrollY,
         },
     );
 
@@ -91,7 +115,7 @@ export default function (patch: Patch) {
             [patch.number[fId.envAmp3], patch.number[fId.envAmp3Time]],
             [0.0, 1.0],
         ],
-        { row, col: 2 },
+        { row, col: 2, scrollY },
     );
     drawFieldDual(
         `AmpMod1`,
@@ -113,7 +137,7 @@ export default function (patch: Patch) {
             },
             steps: [0.01, 0.1],
         },
-        { info: '%', info2: '%t' },
+        { info: '%', info2: '%t', scrollY },
     );
     drawFieldDual(
         `AmpMod2`,
@@ -139,7 +163,7 @@ export default function (patch: Patch) {
             },
             steps: [0.01, 0.1],
         },
-        { info: '%', info2: '%t' },
+        { info: '%', info2: '%t', scrollY },
     );
     drawFieldDual(
         `AmpMod3`,
@@ -161,7 +185,7 @@ export default function (patch: Patch) {
             },
             steps: [0.01, 0.1],
         },
-        { info: '%', info2: '%t' },
+        { info: '%', info2: '%t', scrollY },
     );
 
     drawEnvelope(
@@ -172,7 +196,7 @@ export default function (patch: Patch) {
             [patch.number[fId.envFreq3], patch.number[fId.envFreq3Time]],
             [0.0, 1.0],
         ],
-        { row, col: 2 },
+        { row, col: 2, scrollY },
     );
     drawFieldDual(
         `FrqMod1`,
@@ -194,7 +218,7 @@ export default function (patch: Patch) {
             },
             steps: [0.01, 0.1],
         },
-        { info: '%', info2: '%t' },
+        { info: '%', info2: '%t', scrollY },
     );
     drawFieldDual(
         `FrqMod2`,
@@ -220,7 +244,7 @@ export default function (patch: Patch) {
             },
             steps: [0.01, 0.1],
         },
-        { info: '%', info2: '%t' },
+        { info: '%', info2: '%t', scrollY },
     );
     drawFieldDual(
         `FrqMod3`,
@@ -242,19 +266,20 @@ export default function (patch: Patch) {
             },
             steps: [0.01, 0.1],
         },
-        { info: '%', info2: '%t' },
+        { info: '%', info2: '%t', scrollY },
     );
 
-    drawField(
-        `Filter`,
-        patch.number[fId.filterCutoff].toString(),
-        row,
+    drawFieldDual(
+        ``,
+        `Save`,
+        `Reload`,
+        row++,
         {
-            edit: (direction) => {
-                patch.setNumber(fId.filterCutoff, minmax(patch.number[fId.filterCutoff] + direction, 200, 8000));
-            },
-            steps: [10, 100],
+            edit: () => {},
         },
-        { info: 'hz' },
+        {
+            edit: () => {},
+        },
+        { scrollY },
     );
 }

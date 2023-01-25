@@ -1,9 +1,10 @@
 import { clear, drawText, Events } from 'zic_node_ui';
+import { View } from '../def';
 import { drawSelectableText } from '../draw';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color, font } from '../style';
-import { renderView, setView, View } from '../view';
+import { renderView, setView } from '../view';
 
 export async function helpView() {
     cleanSelectableItems();

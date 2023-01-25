@@ -30,7 +30,10 @@ export async function sequencerEditView() {
     const selectedRect = sequenceRect(selectedId, col, scrollY);
 
     setColor(color.secondarySelected);
-    drawRect(selectedRect);
+    drawRect({
+        ...selectedRect,
+        size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
+    });
 
     setColor(color.foreground);
     drawFilledRect({

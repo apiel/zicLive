@@ -1,6 +1,5 @@
 import { getBpm, getMasterVolume, setBpm, setMasterVolume } from 'zic_node';
 import { clear, Events } from 'zic_node_ui';
-import { config } from '../config';
 import { drawButton, drawField } from '../draw';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';

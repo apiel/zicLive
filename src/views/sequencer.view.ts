@@ -1,10 +1,11 @@
 import { clear, Events } from 'zic_node_ui';
 import { config } from '../config';
 import { eventSelector, getEditMode } from '../events';
-import { cleanSelectableItems } from '../selector';
+import { cleanSelectableItems, forceSelectedItem } from '../selector';
 import { color } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
 import { getSequence, setSelectedSequenceId, toggleSequence } from '../sequence';
+import { View } from '../def';
 
 let scrollY = 0;
 const col = 4;
@@ -16,7 +17,10 @@ export async function sequencerView() {
         col,
         scrollY,
         (id) => toggleSequence(getSequence(id)),
-        setSelectedSequenceId,
+        (id) => {
+            setSelectedSequenceId(id);
+            forceSelectedItem(View.SequencerEdit, id);
+        },
     );
 }
 

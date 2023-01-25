@@ -1,6 +1,7 @@
 import { Events } from 'zic_node_ui';
+import { View } from './def';
 import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } from './selector';
-import { getView, setView, View } from './view';
+import { getView, setView } from './view';
 
 const KEY_UP = 82;
 const KEY_DOWN = 81;
@@ -131,7 +132,7 @@ export async function getEditMode(events: Events) {
     if (keyState.edit && isEventEditRelease(events)) {
         const item = getSlectedItem();
         keyState.edit = false;
-        if (item.options && item.options.edit) {
+        if (item?.options?.edit) {
             await item.options.edit(0);
             return { edit: false, refreshScreen: true };
         }

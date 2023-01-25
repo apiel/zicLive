@@ -7,16 +7,7 @@ import { patchEventHandler, patchView } from './views/patch.view';
 import { projectEventHandler, projectView } from './views/project.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
-
-export enum View {
-    Sequencer,
-    SequencerEdit,
-    Pattern,
-    Preset, // Patch preset (patch connot be changed as they done programmatically, but setting of the patch can be saved as preset)
-    Master, // Master Volume, Tempo, FX, etc... (mixer?, scatter?)
-    Project,
-    Help,
-}
+import { View } from './def';
 
 let view: View = View.Sequencer;
 

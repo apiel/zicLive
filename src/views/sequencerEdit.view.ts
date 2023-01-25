@@ -1,22 +1,17 @@
 import { clear, drawFilledRect, drawRect, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
-import { cleanSelectableItems } from '../selector';
+import { cleanSelectableItems, forceSelectedItem } from '../selector';
 import { color, unit } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
 import { drawButton, drawField } from '../draw';
 import { sequenceRect } from '../nodes/sequence.node';
-import {
-    getSelectedSequenceId,
-    loadSequences,
-    saveSequences,
-    sequences,
-    setSelectedSequenceId,
-} from '../sequence';
+import { getSelectedSequenceId, loadSequences, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { PATTERN_COUNT } from 'zic_node';
+import { View } from '../def';
 
 const { margin } = unit;
 
@@ -26,7 +21,10 @@ const col = 2;
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(col, scrollY, setSelectedSequenceId);
+    sequencerNode(col, scrollY, (id) => {
+        setSelectedSequenceId(id);
+        forceSelectedItem(View.Sequencer, id);
+    });
 
     const selectedId = getSelectedSequenceId();
     const selectedRect = sequenceRect(selectedId, col, scrollY);
@@ -40,8 +38,7 @@ export async function sequencerEditView() {
         size: { w: config.screen.size.w / 2 - margin, h: config.screen.size.h },
     });
 
-    const { trackId, patchId, patternId, detune, repeat, nextSequenceId } =
-        sequences[selectedId];
+    const { trackId, patchId, patternId, detune, repeat, nextSequenceId } = sequences[selectedId];
 
     const track = getTrack(trackId);
     const patches = getPatches(track.engine);
@@ -53,7 +50,9 @@ export async function sequencerEditView() {
         row++,
         {
             edit: (direction) => {
-                setSelectedSequenceId(minmax(selectedId + direction, 0, sequences.length - 1));
+                const id = minmax(selectedId + direction, 0, sequences.length - 1);
+                setSelectedSequenceId(id);
+                forceSelectedItem(View.Sequencer, id);
             },
         },
         {
@@ -95,11 +94,7 @@ export async function sequencerEditView() {
         row++,
         {
             edit: (direction) => {
-                sequences[selectedId].patternId = minmax(
-                    patternId + direction,
-                    0,
-                    PATTERN_COUNT - 1,
-                );
+                sequences[selectedId].patternId = minmax(patternId + direction, 0, PATTERN_COUNT - 1);
             },
             steps: [1, 10],
         },
@@ -135,18 +130,12 @@ export async function sequencerEditView() {
     );
     drawField(
         `Next`,
-        nextSequenceId
-            ? `${nextSequenceId + 1} ${
-                  getPatch(track.engine, patchId).name
-              }`
-            : `---`,
+        nextSequenceId ? `${nextSequenceId + 1} ${getPatch(track.engine, patchId).name}` : `---`,
         row++,
         {
             edit: (direction) => {
                 if (direction !== 0) {
-                    const ids = sequences
-                        .filter((s) => s.trackId === trackId && s.id !== selectedId)
-                        .map((s) => s.id);
+                    const ids = sequences.filter((s) => s.trackId === trackId && s.id !== selectedId).map((s) => s.id);
                     let idx = nextSequenceId !== undefined ? ids.indexOf(nextSequenceId) : -1;
                     idx = minmax(idx + direction, -1, ids.length - 1);
                     sequences[selectedId].nextSequenceId = idx === -1 ? undefined : ids[idx];

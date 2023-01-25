@@ -244,4 +244,17 @@ export default function (patch: Patch) {
         },
         { info: '%', info2: '%t' },
     );
+
+    drawField(
+        `Filter`,
+        patch.number[fId.filterCutoff].toString(),
+        row,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.filterCutoff, minmax(patch.number[fId.filterCutoff] + direction, 200, 8000));
+            },
+            steps: [10, 100],
+        },
+        { info: 'hz' },
+    );
 }

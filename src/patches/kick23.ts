@@ -1,5 +1,5 @@
 import path from 'path';
-import { getWavetable, Kick23 } from 'zic_node';
+import { getWavetable, Kick23, Wavetable } from 'zic_node';
 import { drawEnvelope, drawField, drawFieldDual, drawWavetable } from '../draw';
 import { Patch } from '../patch';
 import { minmax } from '../util';
@@ -7,9 +7,18 @@ import { minmax } from '../util';
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
 
+let wavetable: Wavetable;
+let lastWavetable = '';
+let lastMorph = 0;
+
 export default function (patch: Patch, scrollY: number) {
     let row = 0;
-    drawWavetable(getWavetable(patch.strings[sId.Wavetable], patch.floats[fId.Morph]), { row, col: 2, scrollY });
+    if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
+        lastWavetable = patch.strings[sId.Wavetable];
+        lastMorph = patch.floats[fId.Morph];
+        wavetable = getWavetable(lastWavetable, lastMorph);
+    }
+    drawWavetable(wavetable.data, { row, col: 2, scrollY });
     drawField(
         `Wavetable`,
         path.parse(patch.strings[sId.Wavetable]).name,
@@ -25,7 +34,7 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Morph`,
-        `${patch.floats[fId.Morph].toFixed(1)}/64`, // TODO get wavetable count from zic_node
+        `${patch.floats[fId.Morph].toFixed(1)}/${wavetable.wavetableCount}`,
         row++,
         {
             edit: (direction) => {
@@ -33,7 +42,7 @@ export default function (patch: Patch, scrollY: number) {
             },
             steps: [0.1, 1],
         },
-        { scrollY },
+        { scrollY, info: `${wavetable.wavetableSampleCount} samples` },
     );
     drawField(
         `Frequency`,
@@ -91,7 +100,7 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Resonance`,
-        ` ${Math.round(patch.floats[fId.filterResonance]* 100)}`,
+        ` ${Math.round(patch.floats[fId.filterResonance] * 100)}`,
         row++,
         {
             edit: (direction) => {

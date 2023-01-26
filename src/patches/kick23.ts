@@ -1,8 +1,8 @@
 import path from 'path';
 import { getWavetable, Kick23, Wavetable } from 'zic_node';
 import { drawEnvelope, drawField, drawFieldDual, drawWavetable } from '../draw';
-import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
-import { color } from '../style';
+import { getNextWaveTable } from '../helpers/getNextWavetable';
+import { loadPatchId, Patch, savePatch } from '../patch';
 import { minmax } from '../util';
 
 const fId = Kick23.FloatId;
@@ -25,11 +25,10 @@ export default function (patch: Patch, scrollY: number) {
         path.parse(patch.strings[sId.Wavetable]).name,
         row++,
         {
-            edit: (direction) => {
-                // const volume = minmax(getMasterVolume() + direction, 0, 1);
-                // setMasterVolume(volume);
+            edit: async (direction) => {
+               patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
             },
-            steps: [0.01, 0.1],
+            steps: [1, 10],
         },
         { scrollY },
     );

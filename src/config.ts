@@ -10,5 +10,6 @@ export const config = {
         patches: `${DATA_PATH}/patches`,
         tracks: `${DATA_PATH}/projects/000/tracks.json`,
         sequences: `${DATA_PATH}/projects/000/sequences.json`,
+        wavetables: `${DATA_PATH}/wavetables`,
     }
 };

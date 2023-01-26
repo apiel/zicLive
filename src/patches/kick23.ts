@@ -25,37 +25,36 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Morph`,
-        `${patch.floats[fId.Morph]}/64`, // TODO get wavetable count from zic_node
+        `${patch.floats[fId.Morph].toFixed(1)}/64`, // TODO get wavetable count from zic_node
         row++,
         {
             edit: (direction) => {
                 patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction, 0, 64));
             },
+            steps: [0.1, 1],
         },
         { scrollY },
     );
     drawField(
         `Frequency`,
-        `400`,
+        patch.floats[fId.Frequency].toString(),
         row++,
         {
             edit: (direction) => {
-                // const volume = minmax(getMasterVolume() + direction, 0, 1);
-                // setMasterVolume(volume);
+                patch.setNumber(fId.Frequency, minmax(patch.floats[fId.Frequency] + direction, 10, 2000));
             },
-            steps: [0.01, 0.1],
+            steps: [1, 10],
         },
         { scrollY },
     );
 
     drawField(
         `Volume`,
-        patch.floats[fId.Volume].toString(),
+        Math.round(patch.floats[fId.Volume] * 100).toString(),
         row,
         {
             edit: (direction) => {
-                // const volume = minmax(getMasterVolume() + direction, 0, 1);
-                // setMasterVolume(volume);
+                patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -67,8 +66,9 @@ export default function (patch: Patch, scrollY: number) {
         row++,
         {
             edit: (direction) => {
-                // setBpm(minmax(getBpm() + direction, 10, 250));
+                patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction, 10, 5000));
             },
+            steps: [1, 10],
         },
         {
             col: 2,

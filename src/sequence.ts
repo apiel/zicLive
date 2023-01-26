@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
-import { setSequencerState } from 'zic_node';
+import { getSequencerStates, setSequencerState } from 'zic_node';
 import { config } from './config';
 import { getPatch } from './patch';
 import { setPatternId } from './pattern';
@@ -57,7 +57,7 @@ export function playSequence(sequence: Sequence, playing = true, next?: boolean)
         next,
         detune: sequence.detune,
         dataId: sequence.id,
-        // patch: { floats, strings, cc },
+        patch: { floats, strings, cc, id: sequence.patchId },
     });
 }
 

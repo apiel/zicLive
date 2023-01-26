@@ -8,9 +8,9 @@ import { minmax } from './util';
 export interface Patch {
     id: number;
     name: string;
-    number: { [id: string]: number };
-    str: { [id: string]: string };
-    cc: { [num: string]: { [voice: string]: number } };
+    floats: { [id: number]: number };
+    strings: { [id: number]: string };
+    cc: { [id: number]: number };
     setString: (stringId: number, value: string) => void;
     setNumber: (floatId: number, value: number) => void;
     setCc: (ccId: number, value: number, voice: number) => void;
@@ -26,16 +26,16 @@ export const getPatch = (engine: string, patchId: number) => {
     return _patches[id];
 };
 
-const setString = (patch: Patch) => (stringId: number, value: string) => (patch.str[stringId] = value);
+const setString = (patch: Patch) => (stringId: number, value: string) => (patch.strings[stringId] = value);
 const setNumber = (patch: Patch) => (floatId: number, value: number) => {
-    patch.number[floatId] = value;
+    patch.floats[floatId] = value;
 
     const sequences = getPlayingSequencesForPatch(patch.id);
     for(const sequence of sequences) {
         trackSetNumber(sequence.trackId, value, floatId);
     }
 }
-const setCc = (patch: Patch) => (ccId: number, value: number, voice: number) => (patch.cc[ccId][voice] = value);
+const setCc = (patch: Patch) => (ccId: number, value: number, voice: number) => (patch.cc[ccId] = value);
 
 async function loadPatchesForEngine(enginePath: string) {
     const patchesForType: Patch[] = [];

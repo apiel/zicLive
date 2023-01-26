@@ -2,7 +2,7 @@
     "id": 0,
     "name": "Kick23",
     "cc": {},
-    "number": {
+    "floats": {
         "0": 1.0,
         "1": 0.0,
         "2": 500,
@@ -22,5 +22,5 @@
         "16": 5000,
         "17": 0
     },
-    "str": { "0": "./data/wavetables/0_test.wav" }
+    "strings": { "0": "./data/wavetables/0_test.wav" }
 }

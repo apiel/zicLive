@@ -9,10 +9,10 @@ const sId = Kick23.StringId;
 
 export default function (patch: Patch, scrollY: number) {
     let row = 0;
-    drawWavetable(getWavetable(patch.str[sId.Wavetable], patch.number[fId.Morph]), { row, col: 2, scrollY });
+    drawWavetable(getWavetable(patch.strings[sId.Wavetable], patch.floats[fId.Morph]), { row, col: 2, scrollY });
     drawField(
         `Wavetable`,
-        path.parse(patch.str[sId.Wavetable]).name,
+        path.parse(patch.strings[sId.Wavetable]).name,
         row++,
         {
             edit: (direction) => {
@@ -25,11 +25,11 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Morph`,
-        `${patch.number[fId.Morph]}/64`, // TODO get wavetable count from zic_node
+        `${patch.floats[fId.Morph]}/64`, // TODO get wavetable count from zic_node
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.Morph, minmax(patch.number[fId.Morph] + direction, 0, 64));
+                patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction, 0, 64));
             },
         },
         { scrollY },
@@ -50,7 +50,7 @@ export default function (patch: Patch, scrollY: number) {
 
     drawField(
         `Volume`,
-        patch.number[fId.Volume].toString(),
+        patch.floats[fId.Volume].toString(),
         row,
         {
             edit: (direction) => {
@@ -63,7 +63,7 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Duration`,
-        patch.number[fId.Duration].toString(),
+        patch.floats[fId.Duration].toString(),
         row++,
         {
             edit: (direction) => {
@@ -79,11 +79,11 @@ export default function (patch: Patch, scrollY: number) {
 
     drawField(
         `Filter`,
-        patch.number[fId.filterCutoff].toString(),
+        patch.floats[fId.filterCutoff].toString(),
         row,
         {
             edit: (direction) => {
-                patch.setNumber(fId.filterCutoff, minmax(patch.number[fId.filterCutoff] + direction, 200, 8000));
+                patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction, 200, 8000));
             },
             steps: [10, 100],
         },
@@ -91,11 +91,11 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Resonance`,
-        ` ${Math.round(patch.number[fId.filterResonance]* 100)}`,
+        ` ${Math.round(patch.floats[fId.filterResonance]* 100)}`,
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.filterResonance, minmax(patch.number[fId.filterResonance] + direction, 0, 1));
+                patch.setNumber(fId.filterResonance, minmax(patch.floats[fId.filterResonance] + direction, 0, 1));
             },
             steps: [0.01, 0.05],
         },
@@ -110,21 +110,21 @@ export default function (patch: Patch, scrollY: number) {
         [
             [0, 0],
             [1, 0.01], // Force to have a very short ramp up to avoid clicks
-            [patch.number[fId.envAmp1], patch.number[fId.envAmp1Time]],
-            [patch.number[fId.envAmp2], patch.number[fId.envAmp2Time]],
-            [patch.number[fId.envAmp3], patch.number[fId.envAmp3Time]],
+            [patch.floats[fId.envAmp1], patch.floats[fId.envAmp1Time]],
+            [patch.floats[fId.envAmp2], patch.floats[fId.envAmp2Time]],
+            [patch.floats[fId.envAmp3], patch.floats[fId.envAmp3Time]],
             [0.0, 1.0],
         ],
         { row, col: 2, scrollY },
     );
     drawFieldDual(
         `AmpMod1`,
-        Math.round(patch.number[fId.envAmp1] * 100).toString(),
-        Math.round(patch.number[fId.envAmp1Time] * 100).toString(),
+        Math.round(patch.floats[fId.envAmp1] * 100).toString(),
+        Math.round(patch.floats[fId.envAmp1Time] * 100).toString(),
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.envAmp1, minmax(patch.number[fId.envAmp1] + direction, 0, 1));
+                patch.setNumber(fId.envAmp1, minmax(patch.floats[fId.envAmp1] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -132,7 +132,7 @@ export default function (patch: Patch, scrollY: number) {
             edit: (direction) => {
                 patch.setNumber(
                     fId.envAmp1Time,
-                    minmax(patch.number[fId.envAmp1Time] + direction, 0, patch.number[fId.envAmp2Time]),
+                    minmax(patch.floats[fId.envAmp1Time] + direction, 0, patch.floats[fId.envAmp2Time]),
                 );
             },
             steps: [0.01, 0.1],
@@ -141,12 +141,12 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawFieldDual(
         `AmpMod2`,
-        Math.round(patch.number[fId.envAmp2] * 100).toString(),
-        Math.round(patch.number[fId.envAmp2Time] * 100).toString(),
+        Math.round(patch.floats[fId.envAmp2] * 100).toString(),
+        Math.round(patch.floats[fId.envAmp2Time] * 100).toString(),
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.envAmp2, minmax(patch.number[fId.envAmp2] + direction, 0, 1));
+                patch.setNumber(fId.envAmp2, minmax(patch.floats[fId.envAmp2] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -155,9 +155,9 @@ export default function (patch: Patch, scrollY: number) {
                 patch.setNumber(
                     fId.envAmp2Time,
                     minmax(
-                        patch.number[fId.envAmp2Time] + direction,
-                        patch.number[fId.envAmp1Time],
-                        patch.number[fId.envAmp3Time],
+                        patch.floats[fId.envAmp2Time] + direction,
+                        patch.floats[fId.envAmp1Time],
+                        patch.floats[fId.envAmp3Time],
                     ),
                 );
             },
@@ -167,12 +167,12 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawFieldDual(
         `AmpMod3`,
-        Math.round(patch.number[fId.envAmp3] * 100).toString(),
-        Math.round(patch.number[fId.envAmp3Time] * 100).toString(),
+        Math.round(patch.floats[fId.envAmp3] * 100).toString(),
+        Math.round(patch.floats[fId.envAmp3Time] * 100).toString(),
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.envAmp3, minmax(patch.number[fId.envAmp3] + direction, 0, 1));
+                patch.setNumber(fId.envAmp3, minmax(patch.floats[fId.envAmp3] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -180,7 +180,7 @@ export default function (patch: Patch, scrollY: number) {
             edit: (direction) => {
                 patch.setNumber(
                     fId.envAmp3Time,
-                    minmax(patch.number[fId.envAmp3Time] + direction, patch.number[fId.envAmp2Time], 1),
+                    minmax(patch.floats[fId.envAmp3Time] + direction, patch.floats[fId.envAmp2Time], 1),
                 );
             },
             steps: [0.01, 0.1],
@@ -191,21 +191,21 @@ export default function (patch: Patch, scrollY: number) {
     drawEnvelope(
         [
             [1.0, 0.0],
-            [patch.number[fId.envFreq1], patch.number[fId.envFreq1Time]],
-            [patch.number[fId.envFreq2], patch.number[fId.envFreq2Time]],
-            [patch.number[fId.envFreq3], patch.number[fId.envFreq3Time]],
+            [patch.floats[fId.envFreq1], patch.floats[fId.envFreq1Time]],
+            [patch.floats[fId.envFreq2], patch.floats[fId.envFreq2Time]],
+            [patch.floats[fId.envFreq3], patch.floats[fId.envFreq3Time]],
             [0.0, 1.0],
         ],
         { row, col: 2, scrollY },
     );
     drawFieldDual(
         `FrqMod1`,
-        Math.round(patch.number[fId.envFreq1] * 100).toString(),
-        Math.round(patch.number[fId.envFreq1Time] * 100).toString(),
+        Math.round(patch.floats[fId.envFreq1] * 100).toString(),
+        Math.round(patch.floats[fId.envFreq1Time] * 100).toString(),
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.envFreq1, minmax(patch.number[fId.envFreq1] + direction, 0, 1));
+                patch.setNumber(fId.envFreq1, minmax(patch.floats[fId.envFreq1] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -213,7 +213,7 @@ export default function (patch: Patch, scrollY: number) {
             edit: (direction) => {
                 patch.setNumber(
                     fId.envFreq1Time,
-                    minmax(patch.number[fId.envFreq1Time] + direction, 0, patch.number[fId.envFreq2Time]),
+                    minmax(patch.floats[fId.envFreq1Time] + direction, 0, patch.floats[fId.envFreq2Time]),
                 );
             },
             steps: [0.01, 0.1],
@@ -222,12 +222,12 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawFieldDual(
         `FrqMod2`,
-        Math.round(patch.number[fId.envFreq2] * 100).toString(),
-        Math.round(patch.number[fId.envFreq2Time] * 100).toString(),
+        Math.round(patch.floats[fId.envFreq2] * 100).toString(),
+        Math.round(patch.floats[fId.envFreq2Time] * 100).toString(),
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.envFreq2, minmax(patch.number[fId.envFreq2] + direction, 0, 1));
+                patch.setNumber(fId.envFreq2, minmax(patch.floats[fId.envFreq2] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -236,9 +236,9 @@ export default function (patch: Patch, scrollY: number) {
                 patch.setNumber(
                     fId.envFreq2Time,
                     minmax(
-                        patch.number[fId.envFreq2Time] + direction,
-                        patch.number[fId.envFreq1Time],
-                        patch.number[fId.envFreq3Time],
+                        patch.floats[fId.envFreq2Time] + direction,
+                        patch.floats[fId.envFreq1Time],
+                        patch.floats[fId.envFreq3Time],
                     ),
                 );
             },
@@ -248,12 +248,12 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawFieldDual(
         `FrqMod3`,
-        Math.round(patch.number[fId.envFreq3] * 100).toString(),
-        Math.round(patch.number[fId.envFreq3Time] * 100).toString(),
+        Math.round(patch.floats[fId.envFreq3] * 100).toString(),
+        Math.round(patch.floats[fId.envFreq3Time] * 100).toString(),
         row++,
         {
             edit: (direction) => {
-                patch.setNumber(fId.envFreq3, minmax(patch.number[fId.envFreq3] + direction, 0, 1));
+                patch.setNumber(fId.envFreq3, minmax(patch.floats[fId.envFreq3] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
@@ -261,7 +261,7 @@ export default function (patch: Patch, scrollY: number) {
             edit: (direction) => {
                 patch.setNumber(
                     fId.envFreq3Time,
-                    minmax(patch.number[fId.envFreq3Time] + direction, patch.number[fId.envFreq2Time], 1),
+                    minmax(patch.floats[fId.envFreq3Time] + direction, patch.floats[fId.envFreq2Time], 1),
                 );
             },
             steps: [0.01, 0.1],

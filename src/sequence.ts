@@ -1,8 +1,9 @@
 import { readFile, writeFile } from 'fs/promises';
 import { setSequencerState } from 'zic_node';
 import { config } from './config';
-import { applyPatchIdToTrack } from './helpers/applyPatchToTrack';
+import { getPatch } from './patch';
 import { setPatternId } from './pattern';
+import { getTrack } from './track';
 
 export const playing = [4, 7, 8, 10];
 
@@ -48,17 +49,15 @@ export function playSequence(sequence: Sequence, playing = true, next?: boolean)
         if (playingSeq) {
             playingSeq.playing = false;
         }
-        // Most likely not necessary!
-        // if (!next) {
-        //     applyPatchIdToTrack(sequence.patchId, sequence.trackId);
-        //     console.log(`apply patch to track`, sequence);
-        // }
     }
     sequence.playing = playing;
+    const {engine} = getTrack(sequence.trackId);
+    const { floats, strings, cc } = getPatch(engine, sequence.patchId);
     setSequencerState(sequence.trackId, sequence.patternId, playing, {
         next,
         detune: sequence.detune,
         dataId: sequence.id,
+        // patch: { floats, strings, cc },
     });
 }
 

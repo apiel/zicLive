@@ -11,14 +11,11 @@ interface Sequence {
     id: number;
     trackId: number;
     playing: boolean;
-    // playingNext: boolean;
-    // stoppingNext: boolean;
     detune: number;
     repeat: number;
     patternId: number;
     nextSequenceId?: number;
     patchId: number;
-    // presetId: number;
     activeStep?: number;
 }
 
@@ -96,7 +93,6 @@ export function newSequence() {
         patternId: 0,
         nextSequenceId: undefined,
         patchId: 0,
-        // presetId: 0,
     });
 }
 

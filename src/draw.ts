@@ -81,6 +81,7 @@ export function drawField(
 
 interface FieldDualOptions extends FieldOptions {
     info2?: string;
+    valueColor2?: Color;
 }
 
 export function drawFieldDual(
@@ -92,7 +93,7 @@ export function drawFieldDual(
     selectableOptions2: SelectableOptions,
     options: FieldDualOptions = {},
 ) {
-    const { info, info2, valueColor = color.white } = options;
+    const { info, info2, valueColor = color.white, valueColor2 = color.white } = options;
     const rect = getFiledRect(row, options);
     drawText(label, { x: rect.position.x + 2, y: rect.position.y + 2 }, { size: 14, color: color.info });
     const labelRect = drawSelectableText(
@@ -111,7 +112,7 @@ export function drawFieldDual(
     const labelRect2 = drawSelectableText(
         value2,
         { x: rect.position.x + 140, y: rect.position.y + 2 },
-        { size: 14, color: valueColor },
+        { size: 14, color: valueColor2 },
         selectableOptions2,
     );
     if (info2) {

@@ -1,7 +1,7 @@
 import path from 'path';
 import { getWavetable, Kick23, Wavetable } from 'zic_node';
 import { drawEnvelope, drawField, drawFieldDual, drawWavetable } from '../draw';
-import { Patch } from '../patch';
+import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
 import { minmax } from '../util';
 
 const fId = Kick23.FloatId;
@@ -280,15 +280,30 @@ export default function (patch: Patch, scrollY: number) {
 
     drawFieldDual(
         ``,
-        `Save`,
         `Reload`,
-        row++,
+        `Save`,
+        row,
         {
-            edit: () => {},
+            edit: () => loadPatchId('kick23', patch.id),
         },
         {
-            edit: () => {},
+            edit: () => savePatch('kick23', patch.id),
         },
         { scrollY },
+    );
+
+    drawFieldDual(
+        ``,
+        `Save as`,
+        ` `,
+        row++,
+
+        {
+            edit: () => savePatchAs('kick23', patch.id, 123),
+        },
+        {
+            edit: () => savePatch('kick23', patch.id),
+        },
+        { scrollY, col: 2 },
     );
 }

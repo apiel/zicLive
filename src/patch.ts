@@ -1,8 +1,8 @@
-import { lstat, readdir, readFile } from 'fs/promises';
+import { lstat, readdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
-import { trackSetNumber, trackSetString } from 'zic_node';
+import { trackCc, trackSetNumber, trackSetString } from 'zic_node';
 import { config } from './config';
-import { getPlayingSequencesForPatch } from './sequence';
+import { getPlayingSequencesForPatch, playSequence } from './sequence';
 import { minmax } from './util';
 
 export interface Patch {
@@ -37,17 +37,22 @@ const setNumber = (patch: Patch) => (floatId: number, value: number) => {
 }
 const setCc = (patch: Patch) => (ccId: number, value: number, voice: number) => (patch.cc[ccId] = value);
 
+async function loadPatchForEngine(enginePath: string, patchname: string) {
+    const patch = JSON.parse((await readFile(`${enginePath}/${patchname}`)).toString());
+    patch.id = parseInt(path.parse(patchname).name);
+    patch.setString = setString(patch);
+    patch.setNumber = setNumber(patch);
+    patch.setCc = setCc(patch);
+    return patch;
+}
+
 async function loadPatchesForEngine(enginePath: string) {
     const patchesForType: Patch[] = [];
     try {
         const patchnames = await readdir(enginePath);
         for (const patchname of patchnames) {
             if (patchname[0] !== '_' && patchname !== 'tsconfig.json') {
-                const patch = JSON.parse((await readFile(`${enginePath}/${patchname}`)).toString());
-                patch.id = parseInt(path.parse(patchname).name);
-                patch.setString = setString(patch);
-                patch.setNumber = setNumber(patch);
-                patch.setCc = setCc(patch);
+                const patch = await loadPatchForEngine(enginePath, patchname);
                 patchesForType.push(patch);
             }
         }
@@ -55,6 +60,44 @@ async function loadPatchesForEngine(enginePath: string) {
         console.error(`Error while loading patches for ${enginePath}`, error);
     }
     return patchesForType;
+}
+
+export async function loadPatchId(engine: string, patchId: number) {
+    const enginePath = `${config.path.patches}/${engine}`;
+    const patchname = `${patchId.toString().padStart(3, '0')}.json`;
+    const patch = await loadPatchForEngine(enginePath, patchname);
+    patches[engine][patchId] = patch;
+    const sequences = getPlayingSequencesForPatch(patch.id);
+    for(const sequence of sequences) {
+        for(const id in patch.floats) {
+            trackSetNumber(sequence.trackId, patch.floats[id], Number(id));
+        }
+        for(const id in patch.strings) {
+            trackSetString(sequence.trackId, patch.strings[id], Number(id));
+        }
+        for(const id in patch.cc) {
+            trackCc(sequence.trackId, patch.cc[id], Number(id));
+        }
+    }
+}
+
+export function savePatch(engine: string, patchId: number) {
+    const enginePath = `${config.path.patches}/${engine}`;
+    const patchname = `${patchId.toString().padStart(3, '0')}.json`;
+    const patch = patches[engine][patchId];
+    return writeFile(`${enginePath}/${patchname}`, JSON.stringify(patch, null, 2))
+}
+
+export async function savePatchAs(engine: string, patchId: number, as: number) {
+    const enginePath = `${config.path.patches}/${engine}`;
+    const patchname = `${as.toString().padStart(3, '0')}.json`;
+    const patch = patches[engine][patchId];
+    await writeFile(`${enginePath}/${patchname}`, JSON.stringify(patch, null, 2));
+    await loadPatchId(engine, patchId);
+    const sequences = getPlayingSequencesForPatch(patch.id);
+    for(const sequence of sequences) {
+        sequence.patchId = as;
+    }
 }
 
 export async function loadPatches() {

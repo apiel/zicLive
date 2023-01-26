@@ -279,6 +279,26 @@ export default function (patch: Patch, scrollY: number) {
     );
 
     drawFieldDual(
+        `Distortion`,
+        patch.floats[fId.distortion].toString(),
+        patch.floats[fId.distortionRange].toString(),
+        row++,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.distortion, minmax(patch.floats[fId.distortion] + direction, 0, 100));
+            },
+            steps: [1, 10],
+        },
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.distortionRange, minmax(patch.floats[fId.distortionRange] + direction, 10, 120));
+            },
+            steps: [1, 10],
+        },
+        { scrollY },
+    );
+
+    drawFieldDual(
         ``,
         `Reload`,
         `Save`,

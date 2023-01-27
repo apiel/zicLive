@@ -1,15 +1,4 @@
-import {
-    Color,
-    drawFilledRect,
-    drawLine,
-    drawPoint,
-    drawRect,
-    drawText,
-    Point,
-    Rect,
-    setColor,
-    TextOptions,
-} from 'zic_node_ui';
+import { Color, drawFilledRect, drawLine, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
 import { EditHandler, pushSelectableItem, SelectableOptions } from './selector';
 import { color, font, unit } from './style';
 
@@ -208,4 +197,41 @@ export function drawEnvelope(envelope: [number, number][], options: ChartOptions
             },
         );
     }
+}
+
+interface KeyboardOptions extends ChartOptions {}
+
+export function drawKeyboard(options: KeyboardOptions = {}) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_#$+@!~: ";
+    const countPerRow = 13;
+    const { position, size } = getChartRect(options);
+    for (let c = 0; c < chars.length; c++) {
+        drawSelectableText(
+            chars[c],
+            {
+                x: position.x + ((c % countPerRow) * size.w) / countPerRow,
+                y: position.y + (Math.floor(c / countPerRow) * unit.height),
+            },
+            { size: 14, color: color.info },
+            {},
+        );
+    }
+    drawSelectableText(
+        "DEL",
+        {
+            x: position.x + 120,
+            y: position.y + 3 * unit.height,
+        },
+        { size: 14, color: color.info },
+        {},
+    );
+    drawSelectableText(
+        "OK",
+        {
+            x: position.x + 160,
+            y: position.y + 3 * unit.height,
+        },
+        { size: 14, color: color.info },
+        {},
+    );
 }

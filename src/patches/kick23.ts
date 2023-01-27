@@ -1,6 +1,6 @@
 import path from 'path';
 import { getWavetable, Kick23, Wavetable } from 'zic_node';
-import { drawEnvelope, drawField, drawFieldDual, drawWavetable } from '../draw';
+import { drawEnvelope, drawField, drawFieldDual, drawKeyboard, drawWavetable } from '../draw';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
 import { loadPatchId, Patch, savePatch } from '../patch';
 import { minmax } from '../util';
@@ -327,4 +327,6 @@ export default function (patch: Patch, scrollY: number) {
             scrollY,
         },
     );
+
+    drawKeyboard({ row, col: 2, scrollY });
 }

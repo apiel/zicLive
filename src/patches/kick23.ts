@@ -11,6 +11,7 @@ const sId = Kick23.StringId;
 let wavetable: Wavetable;
 let lastWavetable = '';
 let lastMorph = 0;
+let showKeyboard = false;
 
 export default function (patch: Patch, scrollY: number) {
     let row = 0;
@@ -26,7 +27,7 @@ export default function (patch: Patch, scrollY: number) {
         row++,
         {
             edit: async (direction) => {
-               patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
+                patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
             },
             steps: [1, 10],
         },
@@ -318,9 +319,7 @@ export default function (patch: Patch, scrollY: number) {
         `Kick23`,
         row++,
         {
-            edit: () => {
-                console.log('Show alphabetic editor');
-            },
+            edit: () => (showKeyboard = !showKeyboard),
         },
         {
             col: 2,
@@ -328,5 +327,7 @@ export default function (patch: Patch, scrollY: number) {
         },
     );
 
-    drawKeyboard({ row, col: 2, scrollY });
+    if (showKeyboard) {
+        drawKeyboard({ row, col: 2, scrollY, done: 'SAVE' });
+    }
 }

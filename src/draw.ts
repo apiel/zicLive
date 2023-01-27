@@ -199,9 +199,12 @@ export function drawEnvelope(envelope: [number, number][], options: ChartOptions
     }
 }
 
-interface KeyboardOptions extends ChartOptions {}
+interface KeyboardOptions extends ChartOptions {
+    done?: string;
+}
 
 export function drawKeyboard(options: KeyboardOptions = {}) {
+    const { done = "OK" } = options;
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_#$+@!~: ";
     const countPerRow = 13;
     const { position, size } = getChartRect(options);
@@ -226,7 +229,7 @@ export function drawKeyboard(options: KeyboardOptions = {}) {
         {},
     );
     drawSelectableText(
-        "OK",
+        done,
         {
             x: position.x + 160,
             y: position.y + 3 * unit.height,

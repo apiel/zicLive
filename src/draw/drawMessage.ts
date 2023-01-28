@@ -27,10 +27,8 @@ export function drawMessage(_message: string, type: Message = Message.Info) {
 
 export function renderMessage() {
     if (messageType !== Message.None) {
-        setColor(color.message.background);
+        setColor(color.message[messageType]);
         drawFilledRect({ position: { x: 0, y: 0 }, size: { w: config.screen.size.w, h: unit.height - 5 } });
-        drawText(message, { x: 10, y: 1 }, { color: color.message.text[messageType] });
-        setColor(color.message.text[messageType]);
-        drawFilledRect({ position: { x: 0, y: unit.height - 5 }, size: { w: config.screen.size.w, h: 2 } });
+        drawText(message, { x: 10, y: 1 }, { color: color.white });
     }
 }

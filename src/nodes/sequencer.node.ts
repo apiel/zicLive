@@ -1,6 +1,6 @@
 import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
 import { sequenceNode, sequenceRect } from './sequence.node';
-import { drawSelectableRect } from '../draw';
+import { drawSelectableRect } from '../draw/drawSelectable';
 import { getPatch } from '../patch';
 import { getPattern } from '../pattern';
 import { newSequence, sequences } from '../sequence';

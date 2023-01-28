@@ -1,12 +1,15 @@
 import path from 'path';
 import { getWavetable, Kick23, Wavetable } from 'zic_node';
 import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
-import { drawEnvelope, drawField, drawFieldDual, drawKeyboard, drawWavetable } from '../draw';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
 import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
 import { color, unit } from '../style';
 import { minmax } from '../util';
 import { config } from '../config';
+import { drawWavetable } from '../draw/drawWavetable';
+import { drawField, drawFieldDual } from '../draw/drawField';
+import { drawEnvelope } from '../draw/drawEnvelope';
+import { drawKeyboard } from '../draw/drawKeyboard';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -326,13 +329,14 @@ export default function (patch: Patch, scrollY: number) {
         { scrollY },
     );
 
-    // TODO implement input field
     drawField(
         `Save as`,
         saveAs,
         row++,
         {
-            edit: () => {},
+            edit: () => {
+                savePatchAs('kick23', patch, saveAs);
+            },
         },
         {
             col: 2,
@@ -355,16 +359,16 @@ export default function (patch: Patch, scrollY: number) {
     //     { scrollY },
     // );
 
-    drawKeyboard((char) => {
-        if (char === 'DEL') {
-            saveAs = saveAs.slice(0, -1);
-        } else if (char === 'DONE') {
-            // savePatch('kick23', saveAs);
-            savePatchAs('kick23', patch, saveAs);
-        } else {
-            saveAs += char;
-        }
-    }, { row, col: 2, scrollY, done: 'SAVE' });
-
-
+    drawKeyboard(
+        (char) => {
+            if (char === 'DEL') {
+                saveAs = saveAs.slice(0, -1);
+            } else if (char === 'DONE') {
+                savePatchAs('kick23', patch, saveAs);
+            } else {
+                saveAs += char;
+            }
+        },
+        { row, col: 2, scrollY, done: 'SAVE' },
+    );
 }

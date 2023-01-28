@@ -6,7 +6,7 @@ import { getPattern, reloadPattern, savePattern, setPatternId, STEP_CONDITIONS }
 import { color, font } from '../style';
 import { cleanSelectableItems } from '../selector';
 import { eventEdit, eventSelector, getEditMode } from '../events';
-import { drawSelectableText } from '../draw';
+import { drawSelectableText } from '../draw/drawSelectable';
 import { minmax } from '../util';
 import { MAX_VOICES_IN_PATTERN, NOTE_END, NOTE_START } from 'zic_node';
 

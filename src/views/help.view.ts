@@ -1,6 +1,6 @@
 import { clear, drawText, Events } from 'zic_node_ui';
 import { View } from '../def';
-import { drawSelectableText } from '../draw';
+import { drawSelectableText } from '../draw/drawSelectable';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color, font } from '../style';

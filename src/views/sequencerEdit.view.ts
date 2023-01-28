@@ -4,7 +4,6 @@ import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem } from '../selector';
 import { color, unit } from '../style';
 import { sequencerNode } from '../nodes/sequencer.node';
-import { drawButton, drawField } from '../draw';
 import { sequenceRect } from '../nodes/sequence.node';
 import { getSelectedSequenceId, loadSequences, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
 import { getPatch, getPatches } from '../patch';
@@ -12,6 +11,8 @@ import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
+import { drawField } from '../draw/drawField';
+import { drawButton } from '../draw/drawButton';
 
 const { margin } = unit;
 

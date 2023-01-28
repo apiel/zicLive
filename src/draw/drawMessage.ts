@@ -32,3 +32,19 @@ export function renderMessage() {
         drawText(message, { x: 10, y: 1 }, { color: color.white });
     }
 }
+
+export function withSuccess<T = void>(message: string, fn: (...args: any[]) => Promise<T>) {
+    return async (...args: any[]) => {
+        const result = await fn(...args);
+        drawMessage(message, Message.Success);
+        return result;
+    }
+}
+
+export function withInfo<T = void>(message: string, fn: (...args: any[]) => Promise<T>) {
+    return async (...args: any[]) => {
+        const result = await fn(...args);
+        drawMessage(message);
+        return result;
+    }
+}

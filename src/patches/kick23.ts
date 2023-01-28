@@ -10,7 +10,7 @@ import { drawWavetable } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
 import { drawKeyboard } from '../draw/drawKeyboard';
-import { drawMessage, Message } from '../draw/drawMessage';
+import { drawMessage, Message, withInfo, withSuccess } from '../draw/drawMessage';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -322,13 +322,10 @@ export default function (patch: Patch, scrollY: number) {
         `Save`,
         row,
         {
-            edit: () => loadPatchId('kick23', patch.id),
+            edit: withInfo('Loaded', () => loadPatchId('kick23', patch.id)),
         },
         {
-            edit: async () => {
-                await savePatch('kick23', patch.id);
-                drawMessage(`Saved`, Message.Success);
-            }
+            edit: withSuccess('Saved', () => savePatch('kick23', patch.id)),
         },
         { scrollY },
     );

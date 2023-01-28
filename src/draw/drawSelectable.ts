@@ -1,6 +1,6 @@
-import { Color, drawFilledRect, drawLine, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
-import { EditHandler, pushSelectableItem, SelectableOptions } from '../selector';
-import { color, font, unit } from '../style';
+import { Color, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
+import { pushSelectableItem, SelectableOptions } from '../selector';
+import { color } from '../style';
 
 export function drawSelectableRect(rect: Rect, rectColor: Color, options: SelectableOptions) {
     if (pushSelectableItem(rect.position, options)) {

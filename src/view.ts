@@ -8,6 +8,7 @@ import { projectEventHandler, projectView } from './views/project.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
 import { View } from './def';
+import { renderMessage } from './draw/drawMessage';
 
 let view: View = View.Sequencer;
 
@@ -18,7 +19,7 @@ export const setView = (newView: View) => {
     return true;
 };
 
-export const renderView = () => {
+function _renderView() {
     switch (view) {
         case View.Sequencer:
             return sequencerView();
@@ -36,6 +37,11 @@ export const renderView = () => {
             return helpView();
     }
     return sequencerView();
+}
+
+export const renderView = async () => {
+    await _renderView();
+    renderMessage();
 };
 
 export const viewEventHandler = (events: Events) => {

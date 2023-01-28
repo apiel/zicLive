@@ -38,6 +38,15 @@ export const color = {
         rgb('#fd7e14'),
         rgb('#6c757d'),
     ],
+    message: {
+        // background: rgb('#191919'),
+        background: rgb('#2f3645'),
+        text: [
+            baseColor.info,
+            rgb('#198754'),
+            rgb('#dc3545'),
+        ],
+    }
 };
 
 export const font = {

@@ -1,9 +1,12 @@
 import path from 'path';
 import { getWavetable, Kick23, Wavetable } from 'zic_node';
+import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
 import { drawEnvelope, drawField, drawFieldDual, drawKeyboard, drawWavetable } from '../draw';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
-import { loadPatchId, Patch, savePatch } from '../patch';
+import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
+import { color, unit } from '../style';
 import { minmax } from '../util';
+import { config } from '../config';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -11,9 +14,19 @@ const sId = Kick23.StringId;
 let wavetable: Wavetable;
 let lastWavetable = '';
 let lastMorph = 0;
-let showKeyboard = false;
+let saveAs = '';
+
+export function kick23Init(patch: Patch) {
+    saveAs = patch.name;
+}
 
 export default function (patch: Patch, scrollY: number) {
+    // setColor(color.header);
+    // drawFilledRect({ position: { x: 0, y: scrollY }, size: { w: config.screen.size.w, h: unit.height - 5 } });
+    // drawText(`Kick23`, { x: 10, y: 1 + scrollY });
+    // drawText(patch.name, { x: 80, y: 1 + scrollY }, { color: color.info });
+    // let row = 1;
+
     let row = 0;
     if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
         lastWavetable = patch.strings[sId.Wavetable];
@@ -55,36 +68,7 @@ export default function (patch: Patch, scrollY: number) {
             },
             steps: [1, 10],
         },
-        { scrollY },
-    );
-
-    drawField(
-        `Volume`,
-        Math.round(patch.floats[fId.Volume] * 100).toString(),
-        row,
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
-            },
-            steps: [0.01, 0.1],
-        },
-        { scrollY },
-    );
-    drawField(
-        `Duration`,
-        patch.floats[fId.Duration].toString(),
-        row++,
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction, 10, 5000));
-            },
-            steps: [1, 10],
-        },
-        {
-            col: 2,
-            info: `ms (t)`,
-            scrollY,
-        },
+        { scrollY, info: `hz` },
     );
 
     drawField(
@@ -112,6 +96,35 @@ export default function (patch: Patch, scrollY: number) {
         {
             col: 2,
             info: `%`,
+            scrollY,
+        },
+    );
+
+    drawField(
+        `Volume`,
+        Math.round(patch.floats[fId.Volume] * 100).toString(),
+        row,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY },
+    );
+    drawField(
+        `Duration`,
+        patch.floats[fId.Duration].toString(),
+        row++,
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction, 10, 5000));
+            },
+            steps: [1, 10],
+        },
+        {
+            col: 2,
+            info: `ms (t)`,
             scrollY,
         },
     );
@@ -316,10 +329,10 @@ export default function (patch: Patch, scrollY: number) {
     // TODO implement input field
     drawField(
         `Save as`,
-        `Kick23`,
+        saveAs,
         row++,
         {
-            edit: () => (showKeyboard = !showKeyboard),
+            edit: () => {},
         },
         {
             col: 2,
@@ -327,7 +340,31 @@ export default function (patch: Patch, scrollY: number) {
         },
     );
 
-    if (showKeyboard) {
-        drawKeyboard({ row, col: 2, scrollY, done: 'SAVE' });
-    }
+    // drawFieldDual(
+    //     ``,
+    //     `Delete`,
+    //     `Rename`, // ?
+    //     row,
+    //     {
+    //         // TODO implement delete. If patch used, they should be replaced with default patch
+    //         edit: () => console.log('Delete to be implemented...'),
+    //     },
+    //     {
+    //         // edit: () => savePatch('kick23', patch.id),
+    //     },
+    //     { scrollY },
+    // );
+
+    drawKeyboard((char) => {
+        if (char === 'DEL') {
+            saveAs = saveAs.slice(0, -1);
+        } else if (char === 'DONE') {
+            // savePatch('kick23', saveAs);
+            savePatchAs('kick23', patch, saveAs);
+        } else {
+            saveAs += char;
+        }
+    }, { row, col: 2, scrollY, done: 'SAVE' });
+
+
 }

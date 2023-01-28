@@ -4,6 +4,7 @@ import { config } from './config';
 const baseColor = {
     background: rgb('#21252b'),
     foreground: rgb('#2b2c2e'),
+    header: rgb('#2f3645'),
     primary: rgb('#0d6efd'), // #3761a1
     white: { r: 255, g: 255, b: 255 },
     info: { r: 150, g: 150, b: 150 },

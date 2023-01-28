@@ -3,12 +3,13 @@ import { getPatch } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import { getTrack } from '../track';
-import kick23 from '../patches/kick23';
+import kick23, { kick23Init } from '../patches/kick23';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { config } from '../config';
 
 let scrollY = 0;
+let currentPatchId = -1;
 
 export async function patchView() {
     cleanSelectableItems();
@@ -17,6 +18,16 @@ export async function patchView() {
     const { trackId, patchId } = getSelectedSequence();
     const { engine } = getTrack(trackId);
     const patch = getPatch(engine, patchId);
+
+    if (currentPatchId !== patchId) {
+        scrollY = 0;
+        currentPatchId = patchId;
+        switch (engine) {
+            case 'kick23':
+                kick23Init(patch);
+                break;
+        }
+    }
 
     switch (engine) {
         case 'zicSynth':

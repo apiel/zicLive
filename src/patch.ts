@@ -2,7 +2,7 @@ import { lstat, readdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { trackCc, trackSetNumber, trackSetString } from 'zic_node';
 import { config } from './config';
-import { getPlayingSequencesForPatch, playSequence } from './sequence';
+import { getPlayingSequencesForPatch, getSequencesForPatchId, playSequence } from './sequence';
 import { minmax } from './util';
 
 export interface Patch {
@@ -102,16 +102,27 @@ export function savePatch(engine: string, patchId: number) {
     return writeFile(`${enginePath}/${patchname}`, JSON.stringify(patch, null, 2))
 }
 
-export async function savePatchAs(engine: string, patchId: number, as: number) {
-    const enginePath = `${config.path.patches}/${engine}`;
-    const patchname = `${as.toString().padStart(3, '0')}.json`;
-    const patch = patches[engine][patchId];
-    await writeFile(`${enginePath}/${patchname}`, JSON.stringify(patch, null, 2));
-    await loadPatchId(engine, patchId);
-    const sequences = getPlayingSequencesForPatch(patch.id);
-    for(const sequence of sequences) {
-        sequence.patchId = as;
+export async function savePatchAs(engine: string, patch: Patch, as: string) {
+    const currentId = patch.id;
+    const isUnique = patches[engine].every(p => p.name !== as);
+    if (!isUnique) {
+        // TODO: show error
+        throw new Error(`Patch name ${as} is not unique`);
     }
+    let nextId = patches[engine].findIndex(p => p.name === '');
+    if (nextId === -1) {
+        nextId = patches[engine].length;
+    }
+    patch.name = as;
+    patch.id = nextId;
+    patches[engine][nextId] = patch;
+    await savePatch(engine, nextId);
+    const sequences = getSequencesForPatchId(currentId);
+    for(const sequence of sequences) {
+        sequence.patchId = nextId;
+    }
+    // Reload patch
+    await loadPatchId(engine, currentId);
 }
 
 export async function loadPatches() {

@@ -33,6 +33,10 @@ export function getPlayingSequencesForPatch(patchId: number) {
     return sequences.filter((s) => s.playing && s.patchId === patchId);
 }
 
+export function getSequencesForPatchId(patchId: number) {
+    return sequences.filter((s) => s.patchId === patchId);
+}
+
 export function cleanActiveStep(trackId: number) {
     const seqs = sequences.filter((s) => s.trackId === trackId && s.activeStep !== undefined);
     for (const seq of seqs) {

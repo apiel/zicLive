@@ -203,30 +203,35 @@ interface KeyboardOptions extends ChartOptions {
     done?: string;
 }
 
-export function drawKeyboard(options: KeyboardOptions = {}) {
-    const { done = "OK" } = options;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_#$+@!~: ";
+export function drawKeyboard(edit: (char: string) => void, options: KeyboardOptions = {}) {
+    const { done = 'OK' } = options;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-_#$+@!~:';
     const countPerRow = 13;
     const { position, size } = getChartRect(options);
+    position.y -= 3;
     for (let c = 0; c < chars.length; c++) {
         drawSelectableText(
             chars[c],
             {
                 x: position.x + ((c % countPerRow) * size.w) / countPerRow,
-                y: position.y + (Math.floor(c / countPerRow) * unit.height),
+                y: position.y + Math.floor(c / countPerRow) * unit.height,
             },
             { size: 14, color: color.info },
-            {},
+            {
+                edit: () => edit(chars[c]),
+            },
         );
     }
     drawSelectableText(
-        "DEL",
+        'DEL',
         {
             x: position.x + 120,
             y: position.y + 3 * unit.height,
         },
         { size: 14, color: color.info },
-        {},
+        {
+            edit: () => edit('DEL'),
+        },
     );
     drawSelectableText(
         done,
@@ -235,6 +240,8 @@ export function drawKeyboard(options: KeyboardOptions = {}) {
             y: position.y + 3 * unit.height,
         },
         { size: 14, color: color.info },
-        {},
+        {
+            edit: () => edit('DONE'),
+        },
     );
 }

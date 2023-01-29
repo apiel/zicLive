@@ -15,7 +15,7 @@ export function sequencePosition(id: number, size: Size, col: number, scrollY = 
     };
 }
 
-const sequenceWidth = (config.screen.col === 1 ? unit.halfScreen : unit.quarterScreen) - margin;
+const sequenceWidth = (config.screen.size.w / config.sequence.col) - margin;
 
 export function sequenceRect(id: number, col: number, scrollY = 0): Rect {
     const size = { w: sequenceWidth, h: height - margin };

@@ -4,7 +4,6 @@ import { helpEventHandler, helpView } from './views/help.view';
 import { masterEventHandler, masterView } from './views/master.view';
 import { patternEventHandler, patternView } from './views/pattern.view';
 import { patchEventHandler, patchView } from './views/patch.view';
-import { projectEventHandler, projectView } from './views/project.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
 import { View } from './def';
@@ -31,8 +30,6 @@ function _renderView() {
             return patchView();
         case View.Master:
             return masterView();
-        case View.Project:
-            return projectView();
         case View.Help:
             return helpView();
     }
@@ -66,8 +63,6 @@ export const viewEventHandler = (events: Events) => {
                 return patchEventHandler(events);
             case View.Master:
                 return masterEventHandler(events);
-            case View.Project:
-                return projectEventHandler(events);
             case View.Help:
                 return helpEventHandler(events);
         }

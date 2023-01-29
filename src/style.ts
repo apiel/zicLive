@@ -57,5 +57,6 @@ export const unit = {
     extraMargin: 5,
     height: 25,
     halfScreen: config.screen.size.w * 0.5,
+    thirdScreen: config.screen.size.w / 3,
     quarterScreen: config.screen.size.w * 0.25,
 };

@@ -1,11 +1,15 @@
 import { getBpm, getMasterVolume, setBpm, setMasterVolume } from 'zic_node';
 import { clear, Events } from 'zic_node_ui';
+import { config } from '../config';
 import { drawButton } from '../draw/drawButton';
 import { drawField } from '../draw/drawField';
+import { rowNext, rowReset } from '../draw/rowNext';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color } from '../style';
 import { minmax } from '../util';
+
+const col = config.screen.col;
 
 export async function masterView() {
     cleanSelectableItems();
@@ -17,8 +21,8 @@ export async function masterView() {
     //   - Mixer?
     //   - Scatter?
 
-    let row = 0;
-    drawField(`Volume`, Math.round(getMasterVolume() * 100).toString(), row, {
+    rowReset();
+    drawField(`Volume`, Math.round(getMasterVolume() * 100).toString(), rowNext(1), {
         edit: (direction) => {
             const volume = minmax(getMasterVolume() + direction, 0, 1);
             setMasterVolume(volume);
@@ -28,18 +32,18 @@ export async function masterView() {
     drawField(
         `BPM`,
         getBpm().toString(),
-        row++,
+        rowNext(2),
         {
             edit: (direction) => {
                 setBpm(minmax(getBpm() + direction, 10, 250));
             },
         },
         {
-            col: 2,
+            col,
         },
     );
 
-    drawField(`Project id`, `#000`, row, {
+    drawField(`Project id`, `#000`, rowNext(1), {
         edit: (direction) => {
             console.log('change project', direction);
         },
@@ -47,19 +51,19 @@ export async function masterView() {
     drawField(
         `Name`,
         `Tek23!`,
-        row++,
+        rowNext(2),
         {
             edit: (direction) => {
                 console.log('edit project name', direction);
             },
         },
         {
-            col: 2,
+            col,
         },
     );
 
-    drawButton('Save', row, () => console.log('save project'));
-    drawButton('Reload', row++, () => console.log('reload project'), { col: 2 });
+    drawButton('Save', rowNext(1), () => console.log('save project'));
+    drawButton('Reload', rowNext(2), () => console.log('reload project'), { col });
 }
 
 export async function masterEventHandler(events: Events) {

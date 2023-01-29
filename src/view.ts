@@ -8,7 +8,7 @@ import { projectEventHandler, projectView } from './views/project.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
 import { View } from './def';
-import { renderMessage } from './draw/drawMessage';
+import { drawMessage, Message, renderMessage } from './draw/drawMessage';
 
 let view: View = View.Sequencer;
 
@@ -40,29 +40,39 @@ function _renderView() {
 }
 
 export const renderView = async () => {
-    await _renderView();
-    renderMessage();
+    try {
+        await _renderView();
+        renderMessage();
+    } catch (error) {
+        console.error(error);
+        drawMessage((error as any).message, Message.Error);
+    }
 };
 
 export const viewEventHandler = (events: Events) => {
-    if (eventMenu(events)) {
-        renderView();
-        return true;
-    }
-    switch (view) {
-        case View.Sequencer:
-            return sequencerEventHandler(events);
-        case View.SequencerEdit:
-            return sequencerEditEventHandler(events);
-        case View.Pattern:
-            return patternEventHandler(events);
-        case View.Preset:
-            return patchEventHandler(events);
-        case View.Master:
-            return masterEventHandler(events);
-        case View.Project:
-            return projectEventHandler(events);
-        case View.Help:
-            return helpEventHandler(events);
+    try {
+        if (eventMenu(events)) {
+            renderView();
+            return true;
+        }
+        switch (view) {
+            case View.Sequencer:
+                return sequencerEventHandler(events);
+            case View.SequencerEdit:
+                return sequencerEditEventHandler(events);
+            case View.Pattern:
+                return patternEventHandler(events);
+            case View.Preset:
+                return patchEventHandler(events);
+            case View.Master:
+                return masterEventHandler(events);
+            case View.Project:
+                return projectEventHandler(events);
+            case View.Help:
+                return helpEventHandler(events);
+        }
+    } catch (error) {
+        console.error(error);
+        drawMessage((error as any).message, Message.Error);
     }
 };

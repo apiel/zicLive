@@ -2,6 +2,8 @@ import { drawText } from 'zic_node_ui';
 import { drawSelectableRect } from './drawSelectable';
 import { EditHandler } from '../selector';
 import { color, font, unit } from '../style';
+import { getColPosition } from './getDrawRect';
+import { config } from '../config';
 
 export interface ButtonOptions {
     col?: 1 | 2;
@@ -11,9 +13,10 @@ export interface ButtonOptions {
 
 export function drawButton(text: string, row: number, edit: EditHandler, options: ButtonOptions = {}) {
     const { col = 1, size = 1, scrollY = 0 } = options;
+    // TODO can this be generic?
     const rect = {
-        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
-        size: { w: unit.halfScreen * size, h: unit.height },
+        position: { x: getColPosition(col), y: row * unit.height + unit.margin + scrollY },
+        size: { w: config.screen.col === 1 ? config.screen.size.w : unit.halfScreen * size, h: unit.height },
     };
 
     drawSelectableRect(rect, color.sequencer.selected, { edit });

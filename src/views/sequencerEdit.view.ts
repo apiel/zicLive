@@ -13,33 +13,37 @@ import { PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
 import { drawField } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
+import { getColPosition } from '../draw/getDrawRect';
 
 const { margin } = unit;
 
 let scrollY = 0;
-const col = 2;
+const col = config.screen.col;
 
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(col, scrollY, (id) => {
-        setSelectedSequenceId(id);
-        forceSelectedItem(View.Sequencer, id);
-    });
 
     const selectedId = getSelectedSequenceId();
-    const selectedRect = sequenceRect(selectedId, col, scrollY);
 
-    setColor(color.secondarySelected);
-    drawRect({
-        ...selectedRect,
-        size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
-    });
+    if (col === 2) {
+        sequencerNode(col, scrollY, (id) => {
+            setSelectedSequenceId(id);
+            forceSelectedItem(View.Sequencer, id);
+        });
+
+        setColor(color.secondarySelected);
+        const selectedRect = sequenceRect(selectedId, col, scrollY);
+        drawRect({
+            ...selectedRect,
+            size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
+        });
+    }
 
     setColor(color.foreground);
     drawFilledRect({
-        position: { x: margin + config.screen.size.w / 2, y: margin },
-        size: { w: config.screen.size.w / 2 - margin, h: config.screen.size.h },
+        position: { x: getColPosition(col), y: margin },
+        size: { w: config.screen.size.w / col - margin, h: config.screen.size.h },
     });
 
     const { trackId, patchId, patternId, detune, repeat, nextSequenceId } = sequences[selectedId];
@@ -60,7 +64,7 @@ export async function sequencerEditView() {
             },
         },
         {
-            col: 2,
+            col,
             valueColor: getTrackColor(trackId),
         },
     );
@@ -74,7 +78,7 @@ export async function sequencerEditView() {
             },
         },
         {
-            col: 2,
+            col,
         },
     );
     drawField(
@@ -88,7 +92,7 @@ export async function sequencerEditView() {
             steps: [1, 10],
         },
         {
-            col: 2,
+            col,
             info: '#' + patchId.toString().padStart(3, '0'),
         },
     );
@@ -103,7 +107,7 @@ export async function sequencerEditView() {
             steps: [1, 10],
         },
         {
-            col: 2,
+            col,
         },
     );
     drawField(
@@ -116,7 +120,7 @@ export async function sequencerEditView() {
             },
         },
         {
-            col: 2,
+            col,
         },
     );
     drawField(
@@ -129,7 +133,7 @@ export async function sequencerEditView() {
             },
         },
         {
-            col: 2,
+            col,
         },
     );
     drawField(
@@ -147,17 +151,17 @@ export async function sequencerEditView() {
             },
         },
         {
-            col: 2,
+            col,
         },
     );
-    // drawButton('Reload', row++, () => loadSequence(selectedId), { col: 2 });
-    // drawButton('Save', row++, () => console.log('save'), {col: 2}); // Need to find a solution to fill the gaps
+    // drawButton('Reload', row++, () => loadSequence(selectedId), { col });
+    // drawButton('Save', row++, () => console.log('save'), {col}); // Need to find a solution to fill the gaps
     // Might want to move this in master view...
-    drawButton('Reload all', row++, loadSequences, { col: 2 });
-    drawButton('Save all', row++, saveSequences, { col: 2 });
-    // drawButton('Delete', row++, () => console.log('delete'), {col: 2});
-    // drawButton('Play/Stop', row++, saveSequences, { col: 2 });
-    // drawButton('Play/Stop now', row++, saveSequences, { col: 2 });
+    drawButton('Reload all', row++, loadSequences, { col });
+    drawButton('Save all', row++, saveSequences, { col });
+    // drawButton('Delete', row++, () => console.log('delete'), {col});
+    // drawButton('Play/Stop', row++, saveSequences, { col });
+    // drawButton('Play/Stop now', row++, saveSequences, { col });
 }
 
 export async function sequencerEditEventHandler(events: Events) {

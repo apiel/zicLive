@@ -1,5 +1,9 @@
 import { unit } from '../style';
 
+export function getColPosition(col: number) {
+    return unit.halfScreen * (col - 1);
+}
+
 export interface DrawOptions {
     row?: number;
     scrollY?: number;
@@ -10,7 +14,7 @@ export function getDrawRect({ row = 0, scrollY = 0, col = 1 }: DrawOptions) {
     const rowHeight = 3;
     return {
         position: {
-            x: unit.margin + unit.halfScreen * (col - 1),
+            x: unit.margin + getColPosition(col),
             y: scrollY + unit.margin + row * unit.height + unit.extraMargin,
         },
         size: {

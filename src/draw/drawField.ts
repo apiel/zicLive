@@ -1,7 +1,8 @@
-import { Color, drawFilledRect, drawLine, drawRect, drawText, Point, Rect, setColor, TextOptions } from 'zic_node_ui';
+import { Color, drawText } from 'zic_node_ui';
 import { drawSelectableRect, drawSelectableText } from './drawSelectable';
-import { EditHandler, pushSelectableItem, SelectableOptions } from '../selector';
-import { color, font, unit } from '../style';
+import { SelectableOptions } from '../selector';
+import { color, unit } from '../style';
+import { config } from '../config';
 
 export interface FieldOptions {
     col?: 1 | 2;
@@ -11,11 +12,12 @@ export interface FieldOptions {
     scrollY?: number;
 }
 
+// TODO can this be generic?
 function getFieldRect(row: number, options: FieldOptions) {
     const { col = 1, size = 1, scrollY = 0 } = options;
     return {
-        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + unit.margin + scrollY },
-        size: { w: unit.halfScreen * size, h: unit.height },
+        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + scrollY },
+        size: { w: config.screen.col === 1 ? config.screen.size.w : unit.halfScreen * size, h: unit.height },
     };
 }
 

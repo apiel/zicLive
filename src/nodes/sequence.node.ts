@@ -1,17 +1,9 @@
-import {
-    Color,
-    drawFilledRect,
-    drawLine,
-    drawText,
-    Point,
-    Rect,
-    setColor,
-    Size,
-} from 'zic_node_ui';
+import { Color, drawFilledRect, drawLine, drawText, Point, Rect, setColor, Size } from 'zic_node_ui';
 import { color, font, unit } from '../style';
 import { Pattern } from '../pattern';
 import { patternPreviewNode } from './patternPreview.node';
 import { truncate } from '../util';
+import { config } from '../config';
 
 const { margin } = unit;
 const height = unit.height * 2;
@@ -23,8 +15,10 @@ export function sequencePosition(id: number, size: Size, col: number, scrollY = 
     };
 }
 
+const sequenceWidth = (config.screen.col === 1 ? unit.halfScreen : unit.quarterScreen) - margin;
+
 export function sequenceRect(id: number, col: number, scrollY = 0): Rect {
-    const size = { w: unit.quarterScreen - margin, h: height - margin };
+    const size = { w: sequenceWidth, h: height - margin };
     return { position: sequencePosition(id, size, col, scrollY), size };
 }
 
@@ -49,11 +43,7 @@ export function sequenceNode(
     const { position, size } = sequenceRect(id, col, scrollY);
     drawFilledRect({ position, size });
 
-    drawText(
-        `${id + 1}`,
-        { x: position.x + 2, y: position.y + 1 },
-        { color: titleColor, size: 10, font: font.bold },
-    );
+    drawText(`${id + 1}`, { x: position.x + 2, y: position.y + 1 }, { color: titleColor, size: 10, font: font.bold });
 
     drawText(
         `${title}`,
@@ -62,19 +52,12 @@ export function sequenceNode(
     );
 
     drawText(
-        `${detune < 0 ? detune : `+${detune}`} x${repeat}${
-            next !== undefined ? ` >${truncate(next, 10)}` : ''
-        }`,
+        `${detune < 0 ? detune : `+${detune}`} x${repeat}${next !== undefined ? ` >${truncate(next, 10)}` : ''}`,
         { x: position.x + 2, y: position.y + 37 },
         { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
-    patternPreviewNode(
-        { x: position.x + 2, y: position.y + 15 },
-        { w: size.w, h: size.h - 30 },
-        pattern,
-        playing,
-    );
+    patternPreviewNode({ x: position.x + 2, y: position.y + 15 }, { w: size.w, h: size.h - 30 }, pattern, playing);
     if (activeStep !== undefined) {
         renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, pattern, activeStep);
     }

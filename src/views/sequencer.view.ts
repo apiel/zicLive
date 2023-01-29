@@ -8,7 +8,7 @@ import { getSequence, setSelectedSequenceId, toggleSequence } from '../sequence'
 import { View } from '../def';
 
 let scrollY = 0;
-const col = 4;
+const col = config.screen.col === 1 ? 2 : 4;
 
 export async function sequencerView() {
     cleanSelectableItems();

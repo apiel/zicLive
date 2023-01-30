@@ -14,7 +14,7 @@ There is different kinds of synth engine, a basic wavetable synth, a drum kick, 
 ```sh
 sudo apt-get install libsdl2-ttf-dev libsdl2-ttf-2.0-0 libsdl2-dev
 
-# TODO fix recursive git repo
+# TODO #15 fix recursive git repo
 # TODO add nodejs addon in repo and update package.json
 git clone --recursive https://github.com/apiel/zicLive.git
 cd zicLive

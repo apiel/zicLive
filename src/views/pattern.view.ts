@@ -16,8 +16,6 @@ const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 
-// TODO make note a little bit bigger to solve navigation issue?? might work from top to bottom, but not from bottom to top??
-
 export async function patternView() {
     const pattern = getPattern();
     const idStr = pattern.id.toString().padStart(3, '0');

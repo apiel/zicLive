@@ -11,6 +11,6 @@ export async function getNextWaveTable(direction: number, currentWaveTable: stri
         return names[0];
     }
     const nextIndex = minmax(index + direction, 0, names.length - 1);
-    // TODO if direction > 1 get next letter        
+    // TODO #3 search wavetable: if direction > 1 get next letter
     return path.join(config.path.wavetables, names[nextIndex]);
 }

@@ -358,7 +358,7 @@ export default function (patch: Patch, scrollY: number) {
     //     `Rename`, // ?
     //     row,
     //     {
-    //         // TODO implement delete. If patch used, they should be replaced with default patch
+    //         // TODO #4 patch delete. If patch used, they should be replaced with default patch
     //         edit: () => console.log('Delete to be implemented...'),
     //     },
     //     {
@@ -374,7 +374,7 @@ export default function (patch: Patch, scrollY: number) {
             } else if (char === 'DONE') {
                 savePatchAs('kick23', patch, saveAs);
             } else {
-                // TODO set max length
+                // TODO #5 saveAs set max length
                 saveAs += char;
             }
         },

@@ -106,7 +106,7 @@ export async function savePatchAs(engine: string, patch: Patch, as: string) {
     const currentId = patch.id;
     const isUnique = patches[engine].every(p => p.name !== as);
     if (!isUnique) {
-        // TODO: show error message "Patch name is not unique" @apiel
+        // TODO show error message "Patch name is not unique"
         throw new Error(`Patch name ${as} is not unique`);
     }
     let nextId = patches[engine].findIndex(p => p.name === '');

@@ -51,7 +51,13 @@ export function cleanSelectableItems() {
 }
 
 // TODO need some refactoring
-export function findNextSelectableItem(direction: Direction, findByColumnFirst = true) {
+/**
+ * 
+ * @param direction 
+ * @param findByColumnFirst max distance to search for a selectable item
+ * @returns 
+ */
+export function findNextSelectableItem(direction: Direction, findByColumnFirst = 0) {
     const view = getView();
     try {
         const current = getSlectedItem();
@@ -64,8 +70,10 @@ export function findNextSelectableItem(direction: Direction, findByColumnFirst =
                     if (
                         item.position.x === current.position.x &&
                         item.position.y < current.position.y &&
+                        current.position.y - item.position.y <= findByColumnFirst &&
                         (!next || item.position.y > next.position.y)
                     ) {
+                        // console.log(current.position.y- item.position.y, findByColumnFirst, item.position.y, current.position.y);
                         next = item;
                         nextIndex = parseInt(index);
                     }
@@ -77,8 +85,10 @@ export function findNextSelectableItem(direction: Direction, findByColumnFirst =
                         item.position.y < 10000000 &&
                         item.position.x === current.position.x &&
                         item.position.y > current.position.y &&
+                        item.position.y - current.position.y <= findByColumnFirst &&
                         (!next || item.position.y < next.position.y)
                     ) {
+                        // console.log(item.position.y - current.position.y, findByColumnFirst, item.position.y, current.position.y);
                         // item.position.y < 10000000 are item with negative pos, might find better fix!
                         next = item;
                         nextIndex = parseInt(index);

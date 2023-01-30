@@ -200,7 +200,7 @@ export async function patternEventHandler(events: Events) {
         }
         return false;
     } else {
-        const item = eventSelector(events);
+        const item = eventSelector(events, 40);
         if (item) {
             if (item.position.y > config.screen.size.h - 40) {
                 scrollY -= 40;

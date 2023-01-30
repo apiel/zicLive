@@ -30,7 +30,7 @@ export async function sequencerEventHandler(events: Events) {
         await sequencerView();
         return true;
     }
-    const item = eventSelector(events);
+    const item = eventSelector(events, 50);
     if (item) {
         if (item.position.y > config.screen.size.h - 50) {
             scrollY -= 50;

@@ -11,6 +11,7 @@ import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
 import { drawKeyboard } from '../draw/drawKeyboard';
 import { drawMessage, Message, withInfo, withSuccess } from '../draw/drawMessage';
+import { rowGetAndAdd, rowGet, rowNext, rowReset } from '../draw/rowNext';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -24,6 +25,14 @@ export function kick23Init(patch: Patch) {
     saveAs = patch.name;
 }
 
+const col = config.screen.col;
+
+const add = config.screen.col === 1 ? 3 : 1;
+const rowAddGraph =
+    config.screen.col === 1
+        ? () => rowGetAndAdd(add)
+        : () => rowGet();
+
 export default function (patch: Patch, scrollY: number) {
     // setColor(color.header);
     // drawFilledRect({ position: { x: 0, y: scrollY }, size: { w: config.screen.size.w, h: unit.height - 5 } });
@@ -31,17 +40,17 @@ export default function (patch: Patch, scrollY: number) {
     // drawText(patch.name, { x: 80, y: 1 + scrollY }, { color: color.info });
     // let row = 1;
 
-    let row = 0;
+    rowReset();
     if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
         lastWavetable = patch.strings[sId.Wavetable];
         lastMorph = patch.floats[fId.Morph];
         wavetable = getWavetable(lastWavetable, lastMorph);
     }
-    drawWavetable(wavetable.data, { row, col: 2, scrollY });
+    drawWavetable(wavetable.data, { row: rowAddGraph(), col, scrollY });
     drawField(
         `Wavetable`,
         path.parse(patch.strings[sId.Wavetable]).name,
-        row++,
+        rowGetAndAdd(1),
         {
             edit: async (direction) => {
                 patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
@@ -53,7 +62,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Morph`,
         `${patch.floats[fId.Morph].toFixed(1)}/${wavetable.wavetableCount}`,
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction, 0, 64));
@@ -65,7 +74,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Frequency`,
         patch.floats[fId.Frequency].toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Frequency, minmax(patch.floats[fId.Frequency] + direction, 10, 2000));
@@ -78,7 +87,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Filter`,
         patch.floats[fId.filterCutoff].toString(),
-        row,
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction, 200, 8000));
@@ -90,7 +99,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Resonance`,
         ` ${Math.round(patch.floats[fId.filterResonance] * 100)}`,
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.filterResonance, minmax(patch.floats[fId.filterResonance] + direction, 0, 1));
@@ -98,7 +107,7 @@ export default function (patch: Patch, scrollY: number) {
             steps: [0.01, 0.05],
         },
         {
-            col: 2,
+            col,
             info: `%`,
             scrollY,
         },
@@ -107,7 +116,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Volume`,
         Math.round(patch.floats[fId.Volume] * 100).toString(),
-        row,
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
@@ -119,7 +128,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Duration`,
         patch.floats[fId.Duration].toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction, 10, 5000));
@@ -127,7 +136,7 @@ export default function (patch: Patch, scrollY: number) {
             steps: [1, 10],
         },
         {
-            col: 2,
+            col,
             info: `ms (t)`,
             scrollY,
         },
@@ -142,13 +151,13 @@ export default function (patch: Patch, scrollY: number) {
             [patch.floats[fId.envAmp3], patch.floats[fId.envAmp3Time]],
             [0.0, 1.0],
         ],
-        { row, col: 2, scrollY },
+        { row: rowAddGraph(), col, scrollY },
     );
     drawFieldDual(
         `AmpMod1`,
         Math.round(patch.floats[fId.envAmp1] * 100).toString(),
         Math.round(patch.floats[fId.envAmp1Time] * 100).toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAmp1, minmax(patch.floats[fId.envAmp1] + direction, 0, 1));
@@ -170,7 +179,7 @@ export default function (patch: Patch, scrollY: number) {
         `AmpMod2`,
         Math.round(patch.floats[fId.envAmp2] * 100).toString(),
         Math.round(patch.floats[fId.envAmp2Time] * 100).toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAmp2, minmax(patch.floats[fId.envAmp2] + direction, 0, 1));
@@ -196,7 +205,7 @@ export default function (patch: Patch, scrollY: number) {
         `AmpMod3`,
         Math.round(patch.floats[fId.envAmp3] * 100).toString(),
         Math.round(patch.floats[fId.envAmp3Time] * 100).toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAmp3, minmax(patch.floats[fId.envAmp3] + direction, 0, 1));
@@ -223,13 +232,13 @@ export default function (patch: Patch, scrollY: number) {
             [patch.floats[fId.envFreq3], patch.floats[fId.envFreq3Time]],
             [0.0, 1.0],
         ],
-        { row, col: 2, scrollY },
+        { row: rowAddGraph(), col, scrollY },
     );
     drawFieldDual(
         `FrqMod1`,
         Math.round(patch.floats[fId.envFreq1] * 100).toString(),
         Math.round(patch.floats[fId.envFreq1Time] * 100).toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envFreq1, minmax(patch.floats[fId.envFreq1] + direction, 0, 1));
@@ -251,7 +260,7 @@ export default function (patch: Patch, scrollY: number) {
         `FrqMod2`,
         Math.round(patch.floats[fId.envFreq2] * 100).toString(),
         Math.round(patch.floats[fId.envFreq2Time] * 100).toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envFreq2, minmax(patch.floats[fId.envFreq2] + direction, 0, 1));
@@ -277,7 +286,7 @@ export default function (patch: Patch, scrollY: number) {
         `FrqMod3`,
         Math.round(patch.floats[fId.envFreq3] * 100).toString(),
         Math.round(patch.floats[fId.envFreq3Time] * 100).toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envFreq3, minmax(patch.floats[fId.envFreq3] + direction, 0, 1));
@@ -300,7 +309,7 @@ export default function (patch: Patch, scrollY: number) {
         `Distortion`,
         patch.floats[fId.distortion].toString(),
         patch.floats[fId.distortionRange].toString(),
-        row++,
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.distortion, minmax(patch.floats[fId.distortion] + direction, 0, 100));
@@ -320,7 +329,7 @@ export default function (patch: Patch, scrollY: number) {
         ``,
         `Reload`,
         `Save`,
-        row,
+        rowNext(1),
         {
             edit: withInfo('Loaded', () => loadPatchId('kick23', patch.id)),
         },
@@ -333,14 +342,14 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Save as`,
         saveAs,
-        row++,
+        rowGetAndAdd(1),
         {
             edit: () => {
                 savePatchAs('kick23', patch, saveAs);
             },
         },
         {
-            col: 2,
+            col,
             scrollY,
         },
     );
@@ -367,9 +376,10 @@ export default function (patch: Patch, scrollY: number) {
             } else if (char === 'DONE') {
                 savePatchAs('kick23', patch, saveAs);
             } else {
+                // TODO set max length
                 saveAs += char;
             }
         },
-        { row, col: 2, scrollY, done: 'SAVE' },
+        { row: rowNext(1), col, scrollY, done: 'SAVE' },
     );
 }

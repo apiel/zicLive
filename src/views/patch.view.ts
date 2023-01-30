@@ -61,13 +61,13 @@ export async function patchEventHandler(events: Events) {
     } else {
         const item = eventSelector(events, false);
         if (item) {
-            if (item.position.x < config.screen.size.w / 2) {
+            // if (item.position.x < config.screen.size.w / 2) {
                 if (item.position.y > config.screen.size.h - 50) {
                     scrollY -= 50;
                 } else if (item.position.y < 40 && scrollY < 0) {
                     scrollY += 50;
                 }
-            }
+            // }
             await patchView();
             return true;
         }

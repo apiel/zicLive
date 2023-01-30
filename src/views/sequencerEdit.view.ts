@@ -20,6 +20,8 @@ const { margin } = unit;
 let scrollY = 0;
 const col = config.screen.col;
 
+// TODO in small screen size there could still be 1 sequences column on side or one row on top
+
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);

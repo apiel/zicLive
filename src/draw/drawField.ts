@@ -16,7 +16,7 @@ export interface FieldOptions {
 function getFieldRect(row: number, options: FieldOptions) {
     const { col = 1, size = 1, scrollY = 0 } = options;
     return {
-        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + scrollY },
+        position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + scrollY  + unit.margin }, // need to keep margin for selection
         size: { w: config.screen.col === 1 ? config.screen.size.w : unit.halfScreen * size, h: unit.height },
     };
 }

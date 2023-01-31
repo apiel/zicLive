@@ -8,6 +8,7 @@ on:
 jobs:
     add-to-project:
         name: Add issue to project
+        # this is not the branch, but the working environment, like dev, prod...
         environment: main
         runs-on: ubuntu-latest
         steps:

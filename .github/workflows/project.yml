@@ -9,9 +9,9 @@ jobs:
     add-to-project:
         name: Add issue to project
         runs-on: ubuntu-latest
-        env: ${{ secrets }}
         steps:
             - uses: actions/add-to-project@v0.4.0
+              env: ${{ secrets }}
               with:
                   project-url: https://github.com/users/apiel/projects/1
                   github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}

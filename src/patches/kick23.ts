@@ -31,6 +31,7 @@ const rowAddGraph =
         ? () => rowGetAndAdd(add)
         : () => rowGet();
 
+// FIXME #35 in patchView, selector sometime not visible when going up
 export default function (patch: Patch, scrollY: number) {
     // setColor(color.header);
     // drawFilledRect({ position: { x: 0, y: scrollY }, size: { w: config.screen.size.w, h: unit.height - 5 } });

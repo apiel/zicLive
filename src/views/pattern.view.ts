@@ -17,6 +17,7 @@ const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 const findByColumnFirst = config.screen.col !== 1;
 
+// FIXME #34 sometime view is hanging, might be some kind of infinite loop?? but why???
 export async function patternView() {
     const pattern = getPattern();
     const idStr = pattern.id.toString().padStart(3, '0');

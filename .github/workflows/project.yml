@@ -11,10 +11,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/add-to-project@v0.4.0
-              env: ${{ secrets }}
+              env:
+                  ADD_TO_PROJECT_PAT: ${{ secrets.ADD_TO_PROJECT_PAT }}
+                  github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
               with:
                   project-url: https://github.com/users/apiel/projects/1
-                  github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+                  github-token: ${{ SUPER_SECRET }}
 #                  github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
 #                  labeled: needs-triage
 #                  label-operator: NOT

@@ -13,6 +13,7 @@ import { View } from '../def';
 import { drawField } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
 import { getColPosition } from '../draw/getDrawRect';
+import { sequencesRowNode } from '../nodes/sequencesRow.node';
 
 const { margin } = unit;
 
@@ -26,6 +27,7 @@ export async function sequencerEditView() {
     clear(color.background);
 
     const selectedId = getSelectedSequenceId();
+    let row = 0;
 
     if (col === 2) {
         sequencesGridNode(col, scrollY, (id) => {
@@ -34,18 +36,22 @@ export async function sequencerEditView() {
         });
 
         setColor(color.secondarySelected);
-        const selectedRect = sequenceRect(selectedId, col, scrollY);
+        const selectedRect = sequenceRect(col)(selectedId, scrollY);
         drawRect({
             ...selectedRect,
             size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
         });
     } else {
-
+        row = 2;
+        sequencesRowNode(scrollY, (id) => {
+            setSelectedSequenceId(id);
+            forceSelectedItem(View.Sequencer, id);
+        });
     }
 
     setColor(color.foreground);
     drawFilledRect({
-        position: { x: getColPosition(col), y: margin },
+        position: { x: getColPosition(col), y: margin + row * unit.height },
         size: { w: config.screen.size.w / col - margin, h: config.screen.size.h },
     });
 
@@ -54,7 +60,6 @@ export async function sequencerEditView() {
     const track = getTrack(trackId);
     const patches = getPatches(track.engine);
     const patch = getPatch(track.engine, patchId);
-    let row = 0;
     drawField(
         `Sequence`,
         `#${selectedId + 1}`,

@@ -2,6 +2,7 @@ import { Rect } from 'zic_node_ui';
 import { unit } from '../style';
 import { config } from '../config';
 import { sequencesNode } from './sequences.node';
+import { sequences } from '../sequence';
 
 const { margin } = unit;
 const height = unit.height * 2;
@@ -24,5 +25,6 @@ export function sequencesRowNode(
     onEdit: (id: number) => void,
     onSelected: (id: number) => void = () => {},
 ) {
-    sequencesNode(scrollY, sequenceRect, onEdit, onSelected);
+    // TODO filter sequences and maybe no even select????
+    sequencesNode(sequences, scrollY, sequenceRect, onEdit, onSelected);
 }

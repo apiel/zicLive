@@ -1,13 +1,14 @@
-import { drawFilledRect, drawText, Point, Rect, setColor, Size } from 'zic_node_ui';
+import { drawFilledRect, drawText, Rect, setColor } from 'zic_node_ui';
 import { sequenceNode } from './sequence.node';
 import { drawSelectableRect } from '../draw/drawSelectable';
 import { getPatch } from '../patch';
 import { getPattern } from '../pattern';
-import { newSequence, sequences } from '../sequence';
+import { newSequence, Sequence } from '../sequence';
 import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
 
 export function sequencesNode(
+    sequences: Sequence[],
     scrollY: number,
     sequenceRect: (id: number, scrollY: number) => Rect,
     onEdit: (id: number) => void,

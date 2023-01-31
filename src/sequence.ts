@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
-import { getSequencerStates, setSequencerState } from 'zic_node';
+import { setSequencerState } from 'zic_node';
 import { config } from './config';
 import { getPatch } from './patch';
 import { setPatternId } from './pattern';
@@ -7,7 +7,7 @@ import { getTrack } from './track';
 
 export const playing = [4, 7, 8, 10];
 
-interface Sequence {
+export interface Sequence {
     id: number;
     trackId: number;
     playing: boolean;

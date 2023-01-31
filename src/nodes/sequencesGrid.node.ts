@@ -2,6 +2,7 @@ import { Rect } from 'zic_node_ui';
 import { unit } from '../style';
 import { config } from '../config';
 import { sequencesNode } from './sequences.node';
+import { sequences } from '../sequence';
 
 const { margin } = unit;
 const height = unit.height * 2;
@@ -25,5 +26,5 @@ export function sequencesGridNode(
     onEdit: (id: number) => void,
     onSelected: (id: number) => void = () => {},
 ) {
-    sequencesNode(scrollY, sequenceRect(col), onEdit, onSelected);
+    sequencesNode(sequences, scrollY, sequenceRect(col), onEdit, onSelected);
 }

@@ -79,7 +79,7 @@ function drawStep(pattern: Pattern, stepIndex: number) {
 
         const stepStr = {
             note: '---',
-            velocity: '----',
+            velocity: '---',
             condition: '---',
             tie: '--',
         };

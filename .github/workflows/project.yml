@@ -17,5 +17,3 @@ jobs:
                   project-url: https://github.com/users/apiel/projects/1
                   # github-token: ${{ env.ADD_TO_PROJECT_PAT }}
                  github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
-#                  labeled: needs-triage
-#                  label-operator: NOT

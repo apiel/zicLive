@@ -46,7 +46,7 @@ export function isEventEditRelease(events: Events) {
     return events.keysUp?.includes(KEY_EDIT);
 }
 
-export function eventSelector(events: Events, findCloseFromSameColumn = 0): SelectableItem | undefined {
+export function eventSelector(events: Events, findCloseFromSameColumn = false): SelectableItem | undefined {
     if (events.keysDown) {
         if (isEventUpPressed(events)) {
             return findNextSelectableItem(Direction.UP, findCloseFromSameColumn);

@@ -180,7 +180,7 @@ export async function sequencerEditEventHandler(events: Events) {
         }
         return false;
     } else {
-        const item = eventSelector(events, 50);
+        const item = eventSelector(events);
         if (item) {
             if (item.position.x < config.screen.size.w / 2) {
                 if (item.position.y > config.screen.size.h - 50) {

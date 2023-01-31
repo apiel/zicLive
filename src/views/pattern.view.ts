@@ -15,6 +15,7 @@ const margin = 1;
 const col = 4;
 const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
+const findByColumnFirst = config.screen.col !== 1;
 
 export async function patternView() {
     const pattern = getPattern();
@@ -200,7 +201,7 @@ export async function patternEventHandler(events: Events) {
         }
         return false;
     } else {
-        const item = eventSelector(events, 40);
+        const item = eventSelector(events, findByColumnFirst);
         if (item) {
             if (item.position.y > config.screen.size.h - 40) {
                 scrollY -= 40;

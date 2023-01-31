@@ -13,7 +13,7 @@ jobs:
             - uses: actions/add-to-project@v0.4.0
               with:
                   project-url: https://github.com/users/apiel/projects/1
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
 #                  github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
 #                  labeled: needs-triage
 #                  label-operator: NOT

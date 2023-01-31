@@ -46,8 +46,7 @@ export function isEventEditRelease(events: Events) {
     return events.keysUp?.includes(KEY_EDIT);
 }
 
-// TODO #2 findCloseFromSameColumn should be a number giving the max distance to search for a selectable item
-export function eventSelector(events: Events, findCloseFromSameColumn = true): SelectableItem | undefined {
+export function eventSelector(events: Events, findCloseFromSameColumn = false): SelectableItem | undefined {
     if (events.keysDown) {
         if (isEventUpPressed(events)) {
             return findNextSelectableItem(Direction.UP, findCloseFromSameColumn);

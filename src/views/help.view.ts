@@ -59,7 +59,7 @@ export async function helpEventHandler(events: Events) {
         await renderView();
         return true;
     }
-    const item = eventSelector(events, false);
+    const item = eventSelector(events);
     if (item) {
         await renderView();
         return true;

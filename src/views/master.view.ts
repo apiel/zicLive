@@ -6,7 +6,7 @@ import { drawField } from '../draw/drawField';
 import { rowNext, rowReset } from '../draw/rowNext';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
-import { color } from '../style';
+import { color, unit } from '../style';
 import { minmax } from '../util';
 
 const col = config.screen.col;

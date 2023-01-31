@@ -375,8 +375,9 @@ export default function (patch: Patch, scrollY: number) {
             } else if (char === 'DONE') {
                 savePatchAs('kick23', patch, saveAs);
             } else {
-                // TODO #5 saveAs set max length
-                saveAs += char;
+                if (saveAs.length < 10) {
+                    saveAs += char;
+                }
             }
         },
         { row: rowNext(1), col, scrollY, done: 'SAVE' },

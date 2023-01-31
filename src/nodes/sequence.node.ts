@@ -1,26 +1,8 @@
 import { Color, drawFilledRect, drawLine, drawText, Point, Rect, setColor, Size } from 'zic_node_ui';
-import { color, font, unit } from '../style';
+import { color, font } from '../style';
 import { Pattern } from '../pattern';
 import { patternPreviewNode } from './patternPreview.node';
 import { truncate } from '../util';
-import { config } from '../config';
-
-const { margin } = unit;
-const height = unit.height * 2;
-
-export function sequencePosition(id: number, size: Size, col: number, scrollY = 0): Point {
-    return {
-        x: margin + (margin + size.w) * (id % col),
-        y: scrollY + margin + (margin + size.h) * Math.floor(id / col),
-    };
-}
-
-const sequenceWidth = (config.screen.size.w / config.sequence.col) - margin;
-
-export function sequenceRect(id: number, col: number, scrollY = 0): Rect {
-    const size = { w: sequenceWidth, h: height - margin };
-    return { position: sequencePosition(id, size, col, scrollY), size };
-}
 
 interface Props {
     titleColor: Color;
@@ -35,12 +17,10 @@ interface Props {
 
 export function sequenceNode(
     id: number,
-    col: number,
+    { position, size }: Rect,
     { titleColor, title, playing, detune, next, repeat, pattern, activeStep }: Props,
-    scrollY = 0,
 ): Rect {
     setColor(playing ? color.sequencer.playing : color.foreground);
-    const { position, size } = sequenceRect(id, col, scrollY);
     drawFilledRect({ position, size });
 
     drawText(`${id + 1}`, { x: position.x + 2, y: position.y + 1 }, { color: titleColor, size: 10, font: font.bold });

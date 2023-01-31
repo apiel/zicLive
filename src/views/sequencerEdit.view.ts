@@ -3,8 +3,7 @@ import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem } from '../selector';
 import { color, unit } from '../style';
-import { sequencerNode } from '../nodes/sequencer.node';
-import { sequenceRect } from '../nodes/sequence.node';
+import { sequenceRect, sequencesGridNode } from '../nodes/sequencesGrid.node';
 import { getSelectedSequenceId, loadSequences, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
@@ -29,7 +28,7 @@ export async function sequencerEditView() {
     const selectedId = getSelectedSequenceId();
 
     if (col === 2) {
-        sequencerNode(col, scrollY, (id) => {
+        sequencesGridNode(col, scrollY, (id) => {
             setSelectedSequenceId(id);
             forceSelectedItem(View.Sequencer, id);
         });
@@ -40,6 +39,8 @@ export async function sequencerEditView() {
             ...selectedRect,
             size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
         });
+    } else {
+
     }
 
     setColor(color.foreground);

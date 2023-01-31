@@ -3,7 +3,7 @@ import { config } from '../config';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem } from '../selector';
 import { color } from '../style';
-import { sequencerNode } from '../nodes/sequencer.node';
+import { sequencesGridNode } from '../nodes/sequencesGrid.node';
 import { getSequence, setSelectedSequenceId, toggleSequence } from '../sequence';
 import { View } from '../def';
 
@@ -13,7 +13,7 @@ const col = config.sequence.col;
 export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencerNode(
+    sequencesGridNode(
         col,
         scrollY,
         (id) => toggleSequence(getSequence(id)),

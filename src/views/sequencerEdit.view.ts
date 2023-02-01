@@ -49,6 +49,7 @@ export async function sequencerEditView() {
         if (itemIndex < config.sequence.col) {
             const index = _sequences.findIndex((s) => s.id === selectedId);
             // FIXME add item
+            // FIXME scrollY
             if (index !== -1 && index != itemIndex) {
                 console.log({ index, itemIndex, length: _sequences.length });
                 forceSelectedItem(View.SequencerEdit, index);

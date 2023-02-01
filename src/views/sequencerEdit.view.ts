@@ -46,9 +46,11 @@ export async function sequencerEditView() {
     } else {
         const _sequences = selectedId > 0 ? sequences.slice(selectedId - 1) : sequences;
         const itemIndex = getSlectedIndex();
-        if (itemIndex < 3) {
+        if (itemIndex < config.sequence.col) {
             const index = _sequences.findIndex((s) => s.id === selectedId);
-            if (index != itemIndex) {
+            // FIXME add item
+            if (index !== -1 && index != itemIndex) {
+                console.log({ index, itemIndex, length: _sequences.length });
                 forceSelectedItem(View.SequencerEdit, index);
             }
         }

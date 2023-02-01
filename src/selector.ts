@@ -15,6 +15,7 @@ export interface SelectableOptions {
     onSelected?: () => void;
     edit?: EditHandler;
     steps?: [number, number]; // incrementation step for edit handler, first number is for left/right, second number is for up/down
+    priority?: boolean;
 }
 export interface SelectableItem {
     position: Point;
@@ -118,6 +119,10 @@ function findClosestUpDown(direction: Direction, current: SelectableItem) {
         if (nextRow.length === 1) {
             return nextRow[0].index;
         } else {
+            const priorityItem = nextRow.find((r) => r.item.options?.priority);
+            if (priorityItem) {
+                return priorityItem.index;
+            }
             let next = nextRow[0];
             let distance = Math.abs(next.item.position.x - current.position.x);
             for (let next2 of nextRow) {

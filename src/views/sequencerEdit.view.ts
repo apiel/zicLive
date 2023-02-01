@@ -30,10 +30,12 @@ export async function sequencerEditView() {
     let row = 0;
 
     if (col === 2) {
-        sequencesGridNode(col, scrollY, (id) => {
-            setSelectedSequenceId(id);
-            forceSelectedItem(View.Sequencer, id);
-        });
+        sequencesGridNode(col, scrollY, (id) => ({
+            edit: () => {
+                setSelectedSequenceId(id);
+                forceSelectedItem(View.Sequencer, id);
+            },
+        }));
 
         setColor(color.secondarySelected);
         const selectedRect = sequenceRect(col)(selectedId, scrollY);
@@ -42,11 +44,14 @@ export async function sequencerEditView() {
             size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
         });
     } else {
+        sequencesRowNode(scrollY, (id) => ({
+            onSelected: () => {
+                setSelectedSequenceId(id);
+                forceSelectedItem(View.Sequencer, id);
+            },
+            priority: id === selectedId,
+        }));
         row = 2;
-        sequencesRowNode(scrollY, (id) => {
-            setSelectedSequenceId(id);
-            forceSelectedItem(View.Sequencer, id);
-        });
     }
 
     setColor(color.foreground);
@@ -195,6 +200,7 @@ export async function sequencerEditEventHandler(events: Events) {
                     scrollY += 50;
                 }
             }
+            item.options?.onSelected?.();
             await sequencerEditView();
             return true;
         }

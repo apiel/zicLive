@@ -6,13 +6,13 @@ import { getPattern } from '../pattern';
 import { newSequence, Sequence } from '../sequence';
 import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
+import { SelectableOptions } from '../selector';
 
 export function sequencesNode(
     sequences: Sequence[],
     scrollY: number,
     sequenceRect: (id: number, scrollY: number) => Rect,
-    onEdit: (id: number) => void,
-    onSelected: (id: number) => void = () => {},
+    getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
 ) {
     for (let id = 0; id < sequences.length; id++) {
         const { trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[id];
@@ -32,10 +32,7 @@ export function sequencesNode(
         };
         const rect = sequenceRect(id, scrollY);
         sequenceNode(id, rect, props);
-        drawSelectableRect(rect, color.sequencer.selected, {
-            edit: () => onEdit(id),
-            onSelected: () => onSelected(id),
-        });
+        drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
     }
     const addRect = sequenceRect(sequences.length, scrollY);
     setColor(color.foreground);

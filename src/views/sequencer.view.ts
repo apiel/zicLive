@@ -13,15 +13,13 @@ const col = config.sequence.col;
 export async function sequencerView() {
     cleanSelectableItems();
     clear(color.background);
-    sequencesGridNode(
-        col,
-        scrollY,
-        (id) => toggleSequence(getSequence(id)),
-        (id) => {
+    sequencesGridNode(col, scrollY, (id) => ({
+        edit: () => toggleSequence(getSequence(id)),
+        onSelected: () => {
             setSelectedSequenceId(id);
             forceSelectedItem(View.SequencerEdit, id);
         },
-    );
+    }));
 }
 
 export async function sequencerEventHandler(events: Events) {

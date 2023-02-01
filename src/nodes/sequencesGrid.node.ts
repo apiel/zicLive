@@ -3,6 +3,7 @@ import { unit } from '../style';
 import { config } from '../config';
 import { sequencesNode } from './sequences.node';
 import { sequences } from '../sequence';
+import { SelectableOptions } from '../selector';
 
 const { margin } = unit;
 const height = unit.height * 2;
@@ -23,8 +24,7 @@ export const sequenceRect = (col: number) => (id: number, scrollY = 0): Rect => 
 export function sequencesGridNode(
     col: number,
     scrollY: number,
-    onEdit: (id: number) => void,
-    onSelected: (id: number) => void = () => {},
+    getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
 ) {
-    sequencesNode(sequences, scrollY, sequenceRect(col), onEdit, onSelected);
+    sequencesNode(sequences, scrollY, sequenceRect(col), getSelectableOptions);
 }

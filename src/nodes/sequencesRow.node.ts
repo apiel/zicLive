@@ -3,6 +3,7 @@ import { unit } from '../style';
 import { config } from '../config';
 import { sequencesNode } from './sequences.node';
 import { sequences } from '../sequence';
+import { SelectableOptions } from '../selector';
 
 const { margin } = unit;
 const height = unit.height * 2;
@@ -22,9 +23,8 @@ export function sequenceRect(id: number, scrollY = 0): Rect {
 
 export function sequencesRowNode(
     scrollY: number,
-    onEdit: (id: number) => void,
-    onSelected: (id: number) => void = () => {},
+    getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
 ) {
     // TODO filter sequences and maybe no even select????
-    sequencesNode(sequences, scrollY, sequenceRect, onEdit, onSelected);
+    sequencesNode(sequences, scrollY, sequenceRect, getSelectableOptions);
 }

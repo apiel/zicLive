@@ -25,6 +25,7 @@ export function sequencesGridNode(
     col: number,
     scrollY: number,
     getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
+    _sequences = sequences,
 ) {
-    sequencesNode(sequences, scrollY, sequenceRect(col), getSelectableOptions);
+    sequencesNode(_sequences, scrollY, sequenceRect(col), getSelectableOptions);
 }

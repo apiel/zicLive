@@ -14,8 +14,8 @@ export function sequencesNode(
     sequenceRect: (id: number, scrollY: number) => Rect,
     getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
 ) {
-    for (let id = 0; id < sequences.length; id++) {
-        const { trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[id];
+    for (let i = 0; i < sequences.length; i++) {
+        const { id, trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[i];
         let next;
         if (nextSequenceId !== undefined) {
             // const nextSeq = sequences[nextSequenceId];
@@ -30,7 +30,7 @@ export function sequencesNode(
             pattern: getPattern(patternId),
             next,
         };
-        const rect = sequenceRect(id, scrollY);
+        const rect = sequenceRect(i, scrollY);
         sequenceNode(id, rect, props);
         drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
     }

@@ -1,7 +1,7 @@
 import { clear, drawFilledRect, drawRect, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
-import { cleanSelectableItems, forceSelectedItem } from '../selector';
+import { cleanSelectableItems, forceSelectedItem, getSlectedIndex } from '../selector';
 import { color, unit } from '../style';
 import { sequenceRect, sequencesGridNode } from '../nodes/sequencesGrid.node';
 import { getSelectedSequenceId, loadSequences, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
@@ -13,7 +13,7 @@ import { View } from '../def';
 import { drawField } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
 import { getColPosition } from '../draw/getDrawRect';
-import { sequencesRowNode } from '../nodes/sequencesRow.node';
+import { height, sequencesRowNode } from '../nodes/sequencesRow.node';
 
 const { margin } = unit;
 
@@ -44,13 +44,25 @@ export async function sequencerEditView() {
             size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
         });
     } else {
-        sequencesRowNode(scrollY, (id) => ({
-            onSelected: () => {
-                setSelectedSequenceId(id);
-                forceSelectedItem(View.Sequencer, id);
-            },
-            priority: id === selectedId,
-        }));
+        const _sequences = selectedId > 0 ? sequences.slice(selectedId - 1) : sequences;
+        const itemIndex = getSlectedIndex();
+        if (itemIndex < 3) {
+            const index = _sequences.findIndex((s) => s.id === selectedId);
+            if (index != itemIndex) {
+                forceSelectedItem(View.SequencerEdit, index);
+            }
+        }
+        sequencesRowNode(
+            scrollY,
+            (id) => ({
+                onSelected: () => {
+                    setSelectedSequenceId(id);
+                    forceSelectedItem(View.Sequencer, id);
+                },
+                priority: id === selectedId,
+            }),
+            _sequences,
+        );
         row = 2;
     }
 

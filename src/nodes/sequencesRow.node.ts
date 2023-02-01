@@ -6,7 +6,7 @@ import { sequences } from '../sequence';
 import { SelectableOptions } from '../selector';
 
 const { margin } = unit;
-const height = unit.height * 2;
+export const height = unit.height * 2;
 
 const sequenceWidth = config.screen.size.w / config.sequence.col - margin;
 
@@ -24,7 +24,7 @@ export function sequenceRect(id: number, scrollY = 0): Rect {
 export function sequencesRowNode(
     scrollY: number,
     getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
+    _sequences = sequences,
 ) {
-    // TODO filter sequences and maybe no even select????
-    sequencesNode(sequences, scrollY, sequenceRect, getSelectableOptions);
+    sequencesNode(_sequences, scrollY, sequenceRect, getSelectableOptions);
 }

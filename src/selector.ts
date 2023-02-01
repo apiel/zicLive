@@ -38,6 +38,10 @@ export function getSlectedItem() {
     return selectableItems[selectedItem[view]];
 }
 
+export function getSlectedIndex() {
+    return selectedItem[getView()];
+}
+
 export function forceSelectedItem(view: View, index: number) {
     selectedItem[view] = index;
 }

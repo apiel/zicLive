@@ -15,7 +15,13 @@ export async function patchView() {
     cleanSelectableItems();
     clear(color.background);
 
-    const { trackId, patchId } = getSelectedSequence();
+    const sequence = getSelectedSequence();
+    if (!sequence) {
+        drawText(`No patch selected`, { x: 10, y: 10 });
+        return;
+    }
+
+    const { trackId, patchId } = sequence;
     const { engine } = getTrack(trackId);
     const patch = getPatch(engine, patchId);
 
@@ -33,7 +39,7 @@ export async function patchView() {
         case 'zicSynth':
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
-        case 'PD':
+        case 'pd':
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'midi':
@@ -62,11 +68,11 @@ export async function patchEventHandler(events: Events) {
         const item = eventSelector(events);
         if (item) {
             // if (item.position.x < config.screen.size.w / 2) {
-                if (item.position.y > config.screen.size.h - 50) {
-                    scrollY -= 50;
-                } else if (item.position.y < 40 && scrollY < 0) {
-                    scrollY += 50;
-                }
+            if (item.position.y > config.screen.size.h - 50) {
+                scrollY -= 50;
+            } else if (item.position.y < 40 && scrollY < 0) {
+                scrollY += 50;
+            }
             // }
             await patchView();
             return true;

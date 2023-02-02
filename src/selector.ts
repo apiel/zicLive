@@ -37,7 +37,7 @@ export function getSlectedItem() {
     return selectableItems[selectedItem[view]];
 }
 
-export function getSlectedIndex() {
+export function getSelectedIndex() {
     return selectedItem[getView()];
 }
 

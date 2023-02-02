@@ -1,10 +1,10 @@
-import { clear, drawFilledRect, drawRect, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
-import { cleanSelectableItems, forceSelectedItem, getSlectedIndex } from '../selector';
+import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
 import { color, unit } from '../style';
 import { sequenceRect, sequencesGridNode } from '../nodes/sequencesGrid.node';
-import { getSelectedSequenceId, loadSequences, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
+import { getSelectedSequenceId, loadSequences, newSequence, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
@@ -44,15 +44,21 @@ export async function sequencerEditView() {
             size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
         });
     } else {
-        const _sequences = selectedId > 0 ? sequences.slice(selectedId - 1) : sequences;
-        const itemIndex = getSlectedIndex();
-        if (itemIndex < config.sequence.col) {
-            const index = _sequences.findIndex((s) => s.id === selectedId);
-            // FIXME add item
-            // FIXME scrollY
-            if (index !== -1 && index != itemIndex) {
-                console.log({ index, itemIndex, length: _sequences.length });
-                forceSelectedItem(View.SequencerEdit, index);
+        let _sequences = sequences;
+        if (selectedId === -1) {
+            _sequences = sequences.slice(-2);
+        } else {
+            if (selectedId > 0) {
+                _sequences = sequences.slice(selectedId - 1);
+            }
+            const itemIndex = getSelectedIndex();
+            if (itemIndex < config.sequence.col) {
+                const index = _sequences.findIndex((s) => s.id === selectedId);
+                // FIXME scrollY
+                // FIXME scrollX
+                if (index !== -1 && index != itemIndex) {
+                    forceSelectedItem(View.SequencerEdit, index);
+                }
             }
         }
         sequencesRowNode(
@@ -60,7 +66,6 @@ export async function sequencerEditView() {
             (id) => ({
                 onSelected: () => {
                     setSelectedSequenceId(id);
-                    forceSelectedItem(View.Sequencer, id);
                 },
                 priority: id === selectedId,
             }),
@@ -74,6 +79,11 @@ export async function sequencerEditView() {
         position: { x: getColPosition(col), y: margin + row * unit.height },
         size: { w: config.screen.size.w / col - margin, h: config.screen.size.h },
     });
+
+    if (selectedId === -1) {
+        drawButton('New sequence', row++, newSequence, {col});
+        return;
+    }
 
     const { trackId, patchId, patternId, detune, repeat, nextSequenceId } = sequences[selectedId];
 

@@ -37,7 +37,9 @@ export function sequencesNode(
     const addRect = sequenceRect(sequences.length, scrollY);
     setColor(color.foreground);
     drawFilledRect(addRect);
+
     drawSelectableRect(addRect, color.sequencer.selected, {
+        ...getSelectableOptions(-1),
         edit: newSequence,
     });
     drawText(

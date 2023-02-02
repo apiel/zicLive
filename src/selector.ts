@@ -23,7 +23,7 @@ export interface SelectableItem {
 }
 
 let selectableItems: SelectableItem[] = [];
-let selectedItem: { [view: string]: number } = Object.values(View)
+let selectedItem = Object.values(View)
     .reduce((acc, view) => {
         acc[view as string] = 0;
         return acc;

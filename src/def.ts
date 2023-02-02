@@ -8,6 +8,16 @@ export enum View {
     Help = 'Help',
 }
 
+// export const View = {
+//     Sequencer: 'Sequencer',
+//     SequencerEdit: 'SequencerEdit',
+//     Pattern: 'Pattern',
+//     Preset: 'Preset',
+//     Master: 'Master',
+//     Project: 'Project',
+//     Help: 'Help',
+// };
+
 // export const viewName = [
 //     'Sequencer',
 //     'SequencerEdit',

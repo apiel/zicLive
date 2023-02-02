@@ -25,9 +25,9 @@ export interface SelectableItem {
 let selectableItems: SelectableItem[] = [];
 let selectedItem = Object.values(View)
     .reduce((acc, view) => {
-        acc[view as string] = 0;
+        acc[view] = 0;
         return acc;
-    }, {} as { [view: string]: number });
+    }, {} as { [view in View]: number });
 
 export function getSlectedItem() {
     const view = getView();

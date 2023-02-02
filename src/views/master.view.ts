@@ -11,7 +11,6 @@ import { minmax } from '../util';
 
 const col = config.screen.col;
 
-// FIXME #36 masterView layout issue in 2 col mode
 export async function masterView() {
     cleanSelectableItems();
     clear(color.background);

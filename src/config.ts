@@ -18,6 +18,6 @@ export const config = {
         wavetables: `${DATA_PATH}/wavetables`,
     },
     sequence: {
-        col: screen.col === 1 ? 3 : 4,
+        col: screen.col === 1 ? 3 : 5,
     }
 };

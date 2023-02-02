@@ -23,12 +23,11 @@ export interface SelectableItem {
 }
 
 let selectableItems: SelectableItem[] = [];
-let selectedItem: { [view: number]: number } = Object.values(View)
-    .filter((v) => !isNaN(v as any))
+let selectedItem: { [view: string]: number } = Object.values(View)
     .reduce((acc, view) => {
-        acc[view as number] = 0;
+        acc[view as string] = 0;
         return acc;
-    }, {} as { [view: number]: number });
+    }, {} as { [view: string]: number });
 
 export function getSlectedItem() {
     const view = getView();

@@ -71,6 +71,7 @@ export async function sequencerEditView() {
             (id) => ({
                 onSelected: () => {
                     setSelectedSequenceId(id);
+                    forceSelectedItem(View.Sequencer, id);
                 },
                 priority: id === selectedId,
             }),

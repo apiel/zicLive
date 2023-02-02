@@ -1,9 +1,11 @@
 import { config } from "../config";
 
+// TODO might want  to use: row[col]...
+
 let row = 0;
 export const rowNext = config.screen.col === 1 ? (_col: number) => row++ : (col: number) => {
     if (col === config.screen.col) {
-        row++;
+        return row++;
     }
     return row;
 };

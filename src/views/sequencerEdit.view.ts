@@ -1,9 +1,8 @@
-import { clear, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
 import { color, unit } from '../style';
-import { sequenceRect, sequencesGridNode } from '../nodes/sequencesGrid.node';
 import {
     getSelectedSequenceId,
     loadSequences,
@@ -20,74 +19,57 @@ import { View } from '../def';
 import { drawField } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
 import { getColPosition } from '../draw/getDrawRect';
-import { height, sequencesRowNode } from '../nodes/sequencesRow.node';
+import { sequencesRowNode } from '../nodes/sequencesRow.node';
+import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
 
 const { margin } = unit;
 
 let scrollY = 0;
 const col = config.screen.col;
 
-// TODO #8 in small screen size there could still be 1 sequences column on side or one row on top
-
 export async function sequencerEditView() {
     cleanSelectableItems();
     clear(color.background);
 
     const selectedId = getSelectedSequenceId();
-    let row = 0;
+    rowReset();
 
-    if (col === 2) {
-        sequencesGridNode(col, scrollY, (id) => ({
-            edit: () => {
+    let _sequences = sequences;
+    if (selectedId === -1) {
+        _sequences = sequences.slice(-2);
+    } else {
+        if (selectedId > 0) {
+            _sequences = sequences.slice(selectedId - 1);
+        }
+        const itemIndex = getSelectedIndex();
+        if (itemIndex < config.sequence.col) {
+            const index = _sequences.findIndex((s) => s.id === selectedId);
+            if (index !== -1 && index != itemIndex) {
+                forceSelectedItem(View.SequencerEdit, index);
+            }
+        }
+    }
+    sequencesRowNode(
+        scrollY,
+        (id) => ({
+            onSelected: () => {
                 setSelectedSequenceId(id);
                 forceSelectedItem(View.Sequencer, id);
             },
-        }));
-
-        setColor(color.secondarySelected);
-        const selectedRect = sequenceRect(col)(selectedId, scrollY);
-        drawRect({
-            ...selectedRect,
-            size: { w: selectedRect.size.w + 1, h: selectedRect.size.h + 1 },
-        });
-    } else {
-        let _sequences = sequences;
-        if (selectedId === -1) {
-            _sequences = sequences.slice(-2);
-        } else {
-            if (selectedId > 0) {
-                _sequences = sequences.slice(selectedId - 1);
-            }
-            const itemIndex = getSelectedIndex();
-            if (itemIndex < config.sequence.col) {
-                const index = _sequences.findIndex((s) => s.id === selectedId);
-                if (index !== -1 && index != itemIndex) {
-                    forceSelectedItem(View.SequencerEdit, index);
-                }
-            }
-        }
-        sequencesRowNode(
-            scrollY,
-            (id) => ({
-                onSelected: () => {
-                    setSelectedSequenceId(id);
-                    forceSelectedItem(View.Sequencer, id);
-                },
-                priority: id === selectedId,
-            }),
-            _sequences,
-        );
-        row = 2;
-    }
+            priority: id === selectedId,
+        }),
+        _sequences,
+    );
+    rowAdd(2);
 
     setColor(color.foreground);
     drawFilledRect({
-        position: { x: getColPosition(col), y: scrollY + margin + row * unit.height },
-        size: { w: config.screen.size.w / col - margin, h: config.screen.size.h },
+        position: { x: margin, y: scrollY + margin + rowGet() * unit.height },
+        size: { w: config.screen.size.w - margin * 2, h: config.screen.size.h },
     });
 
     if (selectedId === -1) {
-        drawButton('New sequence', row++, newSequence, { col });
+        drawButton('New sequence', rowGet(), newSequence, { col });
         return;
     }
 
@@ -99,7 +81,7 @@ export async function sequencerEditView() {
     drawField(
         `Sequence`,
         `#${selectedId + 1}`,
-        row++,
+        rowNext(1),
         {
             edit: (direction) => {
                 const id = minmax(selectedId + direction, 0, sequences.length - 1);
@@ -108,7 +90,6 @@ export async function sequencerEditView() {
             },
         },
         {
-            col,
             valueColor: getTrackColor(trackId),
             scrollY,
         },
@@ -116,7 +97,7 @@ export async function sequencerEditView() {
     drawField(
         `Track`,
         track.name,
-        row++,
+        rowNext(col),
         {
             edit: (direction) => {
                 sequences[selectedId].trackId = minmax(trackId + direction, 0, getTrackCount() - 1);
@@ -130,7 +111,7 @@ export async function sequencerEditView() {
     drawField(
         `Patch`,
         patch.name,
-        row++,
+        rowNext(1),
         {
             edit: (direction) => {
                 sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
@@ -138,7 +119,6 @@ export async function sequencerEditView() {
             steps: [1, 10],
         },
         {
-            col,
             info: '#' + patchId.toString().padStart(3, '0'),
             scrollY,
         },
@@ -146,7 +126,7 @@ export async function sequencerEditView() {
     drawField(
         `Pattern`,
         '#' + patternId.toString().padStart(3, '0'),
-        row++,
+        rowNext(col),
         {
             edit: (direction) => {
                 sequences[selectedId].patternId = minmax(patternId + direction, 0, PATTERN_COUNT - 1);
@@ -161,21 +141,20 @@ export async function sequencerEditView() {
     drawField(
         `Detune`,
         detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
-        row++,
+        rowNext(1),
         {
             edit: (direction) => {
                 sequences[selectedId].detune = minmax(detune + direction, -12, 12);
             },
         },
         {
-            col,
             scrollY,
         },
     );
     drawField(
         `Repeat`,
         `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`,
-        row++,
+        rowNext(col),
         {
             edit: (direction) => {
                 sequences[selectedId].repeat = minmax(repeat + direction, 0, 16);
@@ -189,7 +168,8 @@ export async function sequencerEditView() {
     drawField(
         `Next`,
         nextSequenceId ? `${nextSequenceId + 1} ${getPatch(track.engine, patchId).name}` : `---`,
-        row++,
+        // rowNext(1),
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 if (direction !== 0) {
@@ -201,12 +181,11 @@ export async function sequencerEditView() {
             },
         },
         {
-            col,
             scrollY,
         },
     );
-    drawButton('Reload all', row++, loadSequences, { col, scrollY });
-    drawButton('Save all', row++, saveSequences, { col, scrollY });
+    drawButton('Reload all', rowNext(1), loadSequences, { scrollY });
+    drawButton('Save all', rowNext(col), saveSequences, { col, scrollY });
 }
 
 export async function sequencerEditEventHandler(events: Events) {

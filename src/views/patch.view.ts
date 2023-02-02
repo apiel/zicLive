@@ -37,12 +37,15 @@ export async function patchView() {
 
     switch (engine) {
         case 'zicSynth':
+            // TODO #40 preset view for zicSynth
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'pd':
+            // TODO #39 preset view for pd
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'midi':
+            // TODO #38 preset view for midi
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'kick23':

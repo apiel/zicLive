@@ -4,7 +4,14 @@ import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
 import { color, unit } from '../style';
 import { sequenceRect, sequencesGridNode } from '../nodes/sequencesGrid.node';
-import { getSelectedSequenceId, loadSequences, newSequence, saveSequences, sequences, setSelectedSequenceId } from '../sequence';
+import {
+    getSelectedSequenceId,
+    loadSequences,
+    newSequence,
+    saveSequences,
+    sequences,
+    setSelectedSequenceId,
+} from '../sequence';
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
@@ -54,8 +61,6 @@ export async function sequencerEditView() {
             const itemIndex = getSelectedIndex();
             if (itemIndex < config.sequence.col) {
                 const index = _sequences.findIndex((s) => s.id === selectedId);
-                // FIXME scrollY
-                // FIXME scrollX
                 if (index !== -1 && index != itemIndex) {
                     forceSelectedItem(View.SequencerEdit, index);
                 }
@@ -76,12 +81,12 @@ export async function sequencerEditView() {
 
     setColor(color.foreground);
     drawFilledRect({
-        position: { x: getColPosition(col), y: margin + row * unit.height },
+        position: { x: getColPosition(col), y: scrollY + margin + row * unit.height },
         size: { w: config.screen.size.w / col - margin, h: config.screen.size.h },
     });
 
     if (selectedId === -1) {
-        drawButton('New sequence', row++, newSequence, {col});
+        drawButton('New sequence', row++, newSequence, { col });
         return;
     }
 
@@ -104,6 +109,7 @@ export async function sequencerEditView() {
         {
             col,
             valueColor: getTrackColor(trackId),
+            scrollY,
         },
     );
     drawField(
@@ -117,6 +123,7 @@ export async function sequencerEditView() {
         },
         {
             col,
+            scrollY,
         },
     );
     drawField(
@@ -132,6 +139,7 @@ export async function sequencerEditView() {
         {
             col,
             info: '#' + patchId.toString().padStart(3, '0'),
+            scrollY,
         },
     );
     drawField(
@@ -146,6 +154,7 @@ export async function sequencerEditView() {
         },
         {
             col,
+            scrollY,
         },
     );
     drawField(
@@ -159,6 +168,7 @@ export async function sequencerEditView() {
         },
         {
             col,
+            scrollY,
         },
     );
     drawField(
@@ -172,6 +182,7 @@ export async function sequencerEditView() {
         },
         {
             col,
+            scrollY,
         },
     );
     drawField(
@@ -190,16 +201,11 @@ export async function sequencerEditView() {
         },
         {
             col,
+            scrollY,
         },
     );
-    // drawButton('Reload', row++, () => loadSequence(selectedId), { col });
-    // drawButton('Save', row++, () => console.log('save'), {col}); // Need to find a solution to fill the gaps
-    // Might want to move this in master view...
-    drawButton('Reload all', row++, loadSequences, { col });
-    drawButton('Save all', row++, saveSequences, { col });
-    // drawButton('Delete', row++, () => console.log('delete'), {col});
-    // drawButton('Play/Stop', row++, saveSequences, { col });
-    // drawButton('Play/Stop now', row++, saveSequences, { col });
+    drawButton('Reload all', row++, loadSequences, { col, scrollY });
+    drawButton('Save all', row++, saveSequences, { col, scrollY });
 }
 
 export async function sequencerEditEventHandler(events: Events) {
@@ -218,12 +224,10 @@ export async function sequencerEditEventHandler(events: Events) {
     } else {
         const item = eventSelector(events);
         if (item) {
-            if (item.position.x < config.screen.size.w / 2) {
-                if (item.position.y > config.screen.size.h - 50) {
-                    scrollY -= 50;
-                } else if (item.position.y < 40 && scrollY < 0) {
-                    scrollY += 50;
-                }
+            if (item.position.y > config.screen.size.h - 50) {
+                scrollY -= 50;
+            } else if (item.position.y < 40 && scrollY < 0) {
+                scrollY += 50;
             }
             item.options?.onSelected?.();
             await sequencerEditView();

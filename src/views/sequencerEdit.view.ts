@@ -69,7 +69,7 @@ export async function sequencerEditView() {
     });
 
     if (selectedId === -1) {
-        drawButton('New sequence', rowGet(), newSequence, { col });
+        drawButton('New sequence', rowGet(), newSequence);
         return;
     }
 

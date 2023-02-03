@@ -15,6 +15,7 @@ export interface SelectableOptions {
     onSelected?: () => void;
     edit?: EditHandler;
     steps?: [number, number]; // incrementation step for edit handler, first number is for left/right, second number is for up/down
+    priority?: boolean;
 }
 export interface SelectableItem {
     position: Point;
@@ -22,12 +23,11 @@ export interface SelectableItem {
 }
 
 let selectableItems: SelectableItem[] = [];
-let selectedItem: { [view: number]: number } = Object.values(View)
-    .filter((v) => !isNaN(v as any))
+let selectedItem = Object.values(View)
     .reduce((acc, view) => {
-        acc[view as number] = 0;
+        acc[view] = 0;
         return acc;
-    }, {} as { [view: number]: number });
+    }, {} as { [view in View]: number });
 
 export function getSlectedItem() {
     const view = getView();
@@ -35,6 +35,10 @@ export function getSlectedItem() {
         selectedItem[view] = selectableItems.length - 1;
     }
     return selectableItems[selectedItem[view]];
+}
+
+export function getSelectedIndex() {
+    return selectedItem[getView()];
 }
 
 export function forceSelectedItem(view: View, index: number) {
@@ -118,6 +122,10 @@ function findClosestUpDown(direction: Direction, current: SelectableItem) {
         if (nextRow.length === 1) {
             return nextRow[0].index;
         } else {
+            const priorityItem = nextRow.find((r) => r.item.options?.priority);
+            if (priorityItem) {
+                return priorityItem.index;
+            }
             let next = nextRow[0];
             let distance = Math.abs(next.item.position.x - current.position.x);
             for (let next2 of nextRow) {

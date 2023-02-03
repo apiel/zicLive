@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
-import { getSequencerStates, setSequencerState } from 'zic_node';
+import { setSequencerState } from 'zic_node';
 import { config } from './config';
 import { getPatch } from './patch';
 import { setPatternId } from './pattern';
@@ -7,7 +7,7 @@ import { getTrack } from './track';
 
 export const playing = [4, 7, 8, 10];
 
-interface Sequence {
+export interface Sequence {
     id: number;
     trackId: number;
     playing: boolean;
@@ -88,7 +88,7 @@ export async function saveSequences() {
 }
 
 export function newSequence() {
-    sequences.push({
+    const sequence = {
         id: sequences.length,
         trackId: 0,
         playing: false,
@@ -97,7 +97,9 @@ export function newSequence() {
         patternId: 0,
         nextSequenceId: undefined,
         patchId: 0,
-    });
+    };
+    sequences.push(sequence);
+    setSelectedSequenceId(sequence.id);
 }
 
 let selectedSequenceId = 0;
@@ -112,5 +114,7 @@ export function getSelectedSequence() {
 export function setSelectedSequenceId(id: number) {
     selectedSequenceId = id;
     const sequence = sequences[id];
-    setPatternId(sequence.patternId);
+    if (sequence) {
+        setPatternId(sequence.patternId);
+    }
 }

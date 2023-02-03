@@ -1,20 +1,21 @@
-import { drawFilledRect, drawText, setColor } from 'zic_node_ui';
-import { sequenceNode, sequenceRect } from './sequence.node';
+import { drawFilledRect, drawText, Rect, setColor } from 'zic_node_ui';
+import { sequenceNode } from './sequence.node';
 import { drawSelectableRect } from '../draw/drawSelectable';
 import { getPatch } from '../patch';
 import { getPattern } from '../pattern';
-import { newSequence, sequences } from '../sequence';
+import { newSequence, Sequence } from '../sequence';
 import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
+import { SelectableOptions } from '../selector';
 
-export function sequencerNode(
-    col: number,
+export function sequencesNode(
+    sequences: Sequence[],
     scrollY: number,
-    onEdit: (id: number) => void,
-    onSelected: (id: number) => void = () => {},
+    sequenceRect: (id: number, scrollY: number) => Rect,
+    getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
 ) {
-    for (let id = 0; id < sequences.length; id++) {
-        const { trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[id];
+    for (let i = 0; i < sequences.length; i++) {
+        const { id, trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[i];
         let next;
         if (nextSequenceId !== undefined) {
             // const nextSeq = sequences[nextSequenceId];
@@ -29,15 +30,16 @@ export function sequencerNode(
             pattern: getPattern(patternId),
             next,
         };
-        drawSelectableRect(sequenceNode(id, col, props, scrollY), color.sequencer.selected, {
-            edit: () => onEdit(id),
-            onSelected: () => onSelected(id),
-        });
+        const rect = sequenceRect(i, scrollY);
+        sequenceNode(id, rect, props);
+        drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
     }
-    const addRect = sequenceRect(sequences.length, col, scrollY);
+    const addRect = sequenceRect(sequences.length, scrollY);
     setColor(color.foreground);
     drawFilledRect(addRect);
+
     drawSelectableRect(addRect, color.sequencer.selected, {
+        ...getSelectableOptions(-1),
         edit: newSequence,
     });
     drawText(

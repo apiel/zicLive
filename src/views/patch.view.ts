@@ -70,13 +70,11 @@ export async function patchEventHandler(events: Events) {
     } else {
         const item = eventSelector(events);
         if (item) {
-            // if (item.position.x < config.screen.size.w / 2) {
-            if (item.position.y > config.screen.size.h - 50) {
-                scrollY -= 50;
-            } else if (item.position.y < 40 && scrollY < 0) {
-                scrollY += 50;
+            if (item.position.y > config.screen.size.h - 60) {
+                scrollY -= 60;
+            } else if (item.position.y < 60 && scrollY < 0) {
+                scrollY += 60;
             }
-            // }
             await patchView();
             return true;
         }

@@ -48,3 +48,7 @@ export function withInfo<T = void>(message: string, fn: (...args: any[]) => Prom
         return result;
     }
 }
+
+export function drawError(message: string) {
+    drawMessage(message, Message.Error);
+}

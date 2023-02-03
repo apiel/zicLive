@@ -1,13 +1,8 @@
 import { exit } from 'process';
-import {
-    getAllSequencerStates,
-    setOnBeatCallback,
-    start,
-    SynthPathIds,
-    trackSetString,
-} from 'zic_node';
+import { getAllSequencerStates, setOnBeatCallback, start, SynthPathIds, trackSetString } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
+import { drawError } from './draw/drawMessage';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
@@ -34,43 +29,53 @@ trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
     await loadSequences();
     setSelectedSequenceId(0);
     setOnBeatCallback(async () => {
-        const states = getAllSequencerStates();
-        let needRender = false;
-        for (let trackId = 0; trackId < states.length; trackId++) {
-            const {
-                currentStep,
-                current: { dataId, playing },
-            } = states[trackId];
-            cleanActiveStep(trackId);
-            if (playing) {
-                const sequence = getSequence(dataId);
-                if (sequence) {
-                    sequence.activeStep = currentStep;
-                    // console.log('currentStep', currentStep);
-                    needRender = true;
+        try {
+            const states = getAllSequencerStates();
+            let needRender = false;
+            for (let trackId = 0; trackId < states.length; trackId++) {
+                const {
+                    currentStep,
+                    current: { dataId, playing },
+                } = states[trackId];
+                cleanActiveStep(trackId);
+                if (playing) {
+                    const sequence = getSequence(dataId);
+                    if (sequence) {
+                        sequence.activeStep = currentStep;
+                        // console.log('currentStep', currentStep);
+                        needRender = true;
+                    }
                 }
             }
+            await renderView();
+            render();
+        } catch (error) {
+            console.error(error);
+            drawError((error as any).message);
         }
-        await renderView();
-        render();
     });
     await renderView();
     render();
 })();
 
 setInterval(async () => {
-    const events = getEvents();
-    // 41=Esc
-    if (events.exit || events.keysDown?.includes(41)) {
-        close();
-        exit();
-        // 224=Ctrl 44=Space
-    } else if (events.keysDown?.includes(224) || events.keysDown?.includes(44)) {
-        minimize();
-    } else if (events.keysDown || events.keysUp) {
-        // console.log('events', events);
-        if (await viewEventHandler(events)) {
-            render();
+    try {
+        const events = getEvents();
+        // 41=Esc
+        if (events.exit || events.keysDown?.includes(41)) {
+            close();
+            exit();
+            // 224=Ctrl 44=Space
+        } else if (events.keysDown?.includes(224) || events.keysDown?.includes(44)) {
+            minimize();
+        } else if (events.keysDown || events.keysUp) {
+            // console.log('events', events);
+            if (await viewEventHandler(events)) {
+                render();
+            }
         }
+    } catch (error) {
+        console.error(error);
+        drawError((error as any).message);
     }
 }, 10);

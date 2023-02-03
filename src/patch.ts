@@ -2,6 +2,7 @@ import { lstat, readdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { trackCc, trackSetNumber, trackSetString } from 'zic_node';
 import { config } from './config';
+import { drawError } from './draw/drawMessage';
 import { getPlayingSequencesForPatch, getSequencesForPatchId, playSequence } from './sequence';
 import { minmax } from './util';
 
@@ -106,8 +107,10 @@ export async function savePatchAs(engine: string, patch: Patch, as: string) {
     const currentId = patch.id;
     const isUnique = patches[engine].every(p => p.name !== as);
     if (!isUnique) {
-        // TODO #14 show error message "Patch name is not unique"
-        throw new Error(`Patch name ${as} is not unique`);
+        // TODO #43 use throw instead of drawError but so far doesn't work ^^
+        // throw new Error(`Patch name ${as} is not unique`);
+        drawError(`Patch name ${as} is not unique`);
+        return;
     }
     let nextId = patches[engine].findIndex(p => p.name === '');
     if (nextId === -1) {

@@ -1,10 +1,10 @@
-import { clear, drawFilledRect, drawText, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, drawText, Events, Point, setColor } from 'zic_node_ui';
 import { Midi } from 'tonal';
 import { patternPreviewNode } from '../nodes/patternPreview.node';
 import { config } from '../config';
-import { getPattern, Pattern, reloadPattern, savePattern, setPatternId, STEP_CONDITIONS } from '../pattern';
+import { getPattern, Pattern, reloadPattern, savePattern, setPatternId, Step, STEP_CONDITIONS } from '../pattern';
 import { color, font } from '../style';
-import { cleanSelectableItems } from '../selector';
+import { cleanSelectableItems, pushSelectableItem } from '../selector';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { drawSelectableText } from '../draw/drawSelectable';
 import { minmax } from '../util';
@@ -65,17 +65,44 @@ export async function patternView(options: RenderOptions = {}) {
     patternPreviewNode({ x: 140, y: headerPosition.y + 4 }, { w: config.screen.size.w - 140, h: 40 }, pattern);
 
     for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
-        drawStep(pattern, stepIndex);
+        const voices = pattern.steps[stepIndex];
+        const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
+        if (y < config.screen.size.h + size.h) {
+            for (let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
+                const position = {
+                    x: margin + (margin + size.w) * (voice % col),
+                    y,
+                };
+                drawStep(pattern, stepIndex, voice, voices[voice], position);
+            }
+        }
     }
 }
 
-function drawStep(pattern: Pattern, stepIndex: number) {
-    const voices = pattern.steps[stepIndex];
-    for (let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
-        const position = {
-            x: margin + (margin + size.w) * (voice % col),
-            y: margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex,
-        };
+function drawStep(pattern: Pattern, stepIndex: number, voice: number, step: Step | null, position: Point) {
+    let fontSize = 12;
+    let noteFontSize = 16;
+    let positionNote = { x: position.x + 2, y: position.y + 1 };
+    let positionVelocity = { x: position.x + 38, y: position.y + 1 };
+    let positionVelocityInfo = { x: positionVelocity.x + 23, y: positionVelocity.y };
+    let positionTie = { x: position.x + 85, y: position.y + 1 };
+    let positionCondition = { x: position.x + 38, y: position.y + 18 };
+    if (config.screen.col === 1) {
+        noteFontSize = 12;
+        positionNote.x = position.x + 1;
+        positionVelocity.x = position.x + 29;
+        positionVelocityInfo.x = positionVelocity.x + 21;
+        positionTie = { x: position.x + 1, y: position.y + 18 };
+        positionCondition.x = position.x + 22;
+    }
+
+    if (position.y < -size.h) {
+        // Not visible no need to draw
+        pushSelectableItem(positionNote);
+        pushSelectableItem(positionVelocity);
+        pushSelectableItem(positionTie);
+        pushSelectableItem(positionCondition);
+    } else {
         setColor(color.foreground);
         drawFilledRect({ position, size });
 
@@ -85,7 +112,6 @@ function drawStep(pattern: Pattern, stepIndex: number) {
             condition: '---',
             tie: '--',
         };
-        const step = voices[voice];
         if (step) {
             stepStr.note = Midi.midiToNoteName(step.note, { sharps: true });
             stepStr.velocity = `${step.velocity.toString().padStart(3, ' ')}`;
@@ -93,22 +119,6 @@ function drawStep(pattern: Pattern, stepIndex: number) {
             if (step.tie) {
                 stepStr.tie = 'Tie';
             }
-        }
-
-        let fontSize = 12;
-        let noteFontSize = 16;
-        let positionNote = { x: position.x + 2, y: position.y + 1 };
-        let positionVelocity = { x: position.x + 38, y: position.y + 1 };
-        let positionVelocityInfo = { x: positionVelocity.x + 23, y: positionVelocity.y };
-        let positionTie = { x: position.x + 85, y: position.y + 1 };
-        let positionCondition = { x: position.x + 38, y: position.y + 18 };
-        if (config.screen.col === 1) {
-            noteFontSize = 12;
-            positionNote.x = position.x + 1;
-            positionVelocity.x = position.x + 29;
-            positionVelocityInfo.x = positionVelocity.x + 21;
-            positionTie = { x: position.x + 1, y: position.y + 18 };
-            positionCondition.x = position.x + 22;
         }
 
         drawSelectableText(
@@ -154,11 +164,7 @@ function drawStep(pattern: Pattern, stepIndex: number) {
             },
         );
         if (step) {
-            drawText(
-                '%',
-                positionVelocityInfo,
-                { color: color.secondaryInfo, size: fontSize - 2, font: font.regular },
-            );
+            drawText('%', positionVelocityInfo, { color: color.secondaryInfo, size: fontSize - 2, font: font.regular });
         }
 
         drawSelectableText(
@@ -189,6 +195,7 @@ function drawStep(pattern: Pattern, stepIndex: number) {
     }
 }
 
+const srollingStep = 40;
 export async function patternEventHandler(events: Events) {
     const editMode = await getEditMode(events);
     if (editMode.refreshScreen) {
@@ -205,10 +212,10 @@ export async function patternEventHandler(events: Events) {
     } else {
         const item = eventSelector(events, findByColumnFirst);
         if (item) {
-            if (item.position.y > config.screen.size.h - 40) {
-                scrollY -= 40;
-            } else if (item.position.y < 40 && scrollY < 0) {
-                scrollY += 40;
+            if (item.position.y > config.screen.size.h - srollingStep) {
+                scrollY -= srollingStep;
+            } else if (item.position.y < srollingStep && scrollY < 0) {
+                scrollY += srollingStep;
             }
             await patternView();
             return true;

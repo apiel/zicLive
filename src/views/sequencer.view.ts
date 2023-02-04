@@ -11,6 +11,7 @@ import { RenderOptions } from '../view';
 let scrollY = 0;
 const col = config.sequence.col;
 
+// TODO #49 optimize rendering and draw only visible items
 export async function sequencerView(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);

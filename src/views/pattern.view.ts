@@ -18,7 +18,6 @@ const headerSize = { w: config.screen.size.w - margin * 2, h: 49 };
 const size = { w: config.screen.size.w / col - margin, h: 35 };
 const findByColumnFirst = config.screen.col !== 1;
 
-// FIXME #34 sometime view is hanging, might be some kind of infinite loop?? but why???
 export async function patternView(options: RenderOptions = {}) {
     const pattern = getPattern();
     const idStr = pattern.id.toString().padStart(3, '0');
@@ -26,43 +25,56 @@ export async function patternView(options: RenderOptions = {}) {
 
     clear(color.background);
 
-    setColor(color.foreground);
     const headerPosition = { x: margin, y: margin + scrollY };
-    drawFilledRect({ position: headerPosition, size: headerSize });
 
-    drawSelectableText(
-        `ID: ${idStr}`,
-        { x: headerPosition.x + 5, y: headerPosition.y + 4 },
-        { color: color.primary, size: 14, font: font.bold },
-        { edit: (direction) => setPatternId(pattern.id + direction), steps: [1, 10] },
-    );
+    const idPosition = { x: headerPosition.x + 5, y: headerPosition.y + 4 };
+    const savePosition = { x: headerPosition.x + 70, y: headerPosition.y + 4 };
+    const lenPosition = { x: headerPosition.x + 5, y: headerPosition.y + 24 };
+    const reloadPosition = { x: headerPosition.x + 70, y: headerPosition.y + 24 };
+    if (headerPosition.y < -headerSize.h) {
+        // Not visible no need to draw
+        pushSelectableItem(idPosition);
+        pushSelectableItem(savePosition);
+        pushSelectableItem(lenPosition);
+        pushSelectableItem(reloadPosition);
+    } else {
+        setColor(color.foreground);
+        drawFilledRect({ position: headerPosition, size: headerSize });
 
-    drawSelectableText(
-        `Save`,
-        { x: headerPosition.x + 70, y: headerPosition.y + 4 },
-        { color: color.info, size: 14, font: font.regular },
-        { edit: async () => savePattern(pattern) },
-    );
+        drawSelectableText(
+            `ID: ${idStr}`,
+            idPosition,
+            { color: color.primary, size: 14, font: font.bold },
+            { edit: (direction) => setPatternId(pattern.id + direction), steps: [1, 10] },
+        );
 
-    drawSelectableText(
-        `Len: ${pattern.stepCount}`,
-        { x: headerPosition.x + 5, y: headerPosition.y + 24 },
-        { color: color.info, size: 14, font: font.regular },
-        {
-            edit: (direction) => {
-                pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+        drawSelectableText(
+            `Save`,
+            savePosition,
+            { color: color.info, size: 14, font: font.regular },
+            { edit: async () => savePattern(pattern) },
+        );
+
+        drawSelectableText(
+            `Len: ${pattern.stepCount}`,
+            lenPosition,
+            { color: color.info, size: 14, font: font.regular },
+            {
+                edit: (direction) => {
+                    pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+                },
             },
-        },
-    );
+        );
 
-    drawSelectableText(
-        `Reload`,
-        { x: headerPosition.x + 70, y: headerPosition.y + 24 },
-        { color: color.info, size: 14, font: font.regular },
-        { edit: async () => reloadPattern(pattern.id) },
-    );
+        drawSelectableText(
+            `Reload`,
+            reloadPosition,
+            { color: color.info, size: 14, font: font.regular },
+            { edit: async () => reloadPattern(pattern.id) },
+        );
 
-    patternPreviewNode({ x: 140, y: headerPosition.y + 4 }, { w: config.screen.size.w - 140, h: 40 }, pattern);
+        patternPreviewNode({ x: 140, y: headerPosition.y + 4 }, { w: config.screen.size.w - 140, h: 40 }, pattern);
+    }
 
     for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
         const voices = pattern.steps[stepIndex];

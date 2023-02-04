@@ -7,11 +7,12 @@ import kick23, { kick23Init } from '../patches/kick23';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { config } from '../config';
+import { RenderOptions } from '../view';
 
 let scrollY = 0;
 let currentPatchId = -1;
 
-export async function patchView() {
+export async function patchView(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);
 

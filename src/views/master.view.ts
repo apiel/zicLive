@@ -8,10 +8,11 @@ import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color } from '../style';
 import { minmax } from '../util';
+import { RenderOptions } from '../view';
 
 const col = config.screen.col;
 
-export async function masterView() {
+export async function masterView(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);
 

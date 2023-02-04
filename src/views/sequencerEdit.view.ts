@@ -18,16 +18,17 @@ import { PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
 import { drawField } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
-import { getColPosition } from '../draw/getDrawRect';
 import { sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
+import { RenderOptions } from '../view';
 
 const { margin } = unit;
 
 let scrollY = 0;
 const col = config.screen.col;
 
-export async function sequencerEditView() {
+// TODO #50 in sequencer Editer optimize rendering and draw only visible items
+export async function sequencerEditView(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);
 

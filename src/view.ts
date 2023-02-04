@@ -18,26 +18,30 @@ export const setView = (newView: View) => {
     return true;
 };
 
-function _renderView() {
-    switch (view) {
-        case View.Sequencer:
-            return sequencerView();
-        case View.SequencerEdit:
-            return sequencerEditView();
-        case View.Pattern:
-            return patternView();
-        case View.Preset:
-            return patchView();
-        case View.Master:
-            return masterView();
-        case View.Help:
-            return helpView();
-    }
-    return sequencerView();
+export interface RenderOptions {
+    beatRendering?: boolean;
 }
 
-export const renderView = async () => {
-    await _renderView();
+function _renderView(options: RenderOptions) {
+    switch (view) {
+        case View.Sequencer:
+            return sequencerView(options);
+        case View.SequencerEdit:
+            return sequencerEditView(options);
+        case View.Pattern:
+            return patternView(options);
+        case View.Preset:
+            return patchView(options);
+        case View.Master:
+            return masterView(options);
+        case View.Help:
+            return helpView(options);
+    }
+    return sequencerView(options);
+}
+
+export const renderView = async (options: RenderOptions = {}) => {
+    await _renderView(options);
     renderMessage();
 };
 

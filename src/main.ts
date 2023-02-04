@@ -2,12 +2,13 @@ import { exit } from 'process';
 import { getAllSequencerStates, setOnBeatCallback, start, SynthPathIds, trackSetString } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
+import { beatViews } from './def';
 import { drawError } from './draw/drawMessage';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
-import { renderView, viewEventHandler } from './view';
+import { getView, renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });
 start();
@@ -31,7 +32,6 @@ trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
     setOnBeatCallback(async () => {
         try {
             const states = getAllSequencerStates();
-            let needRender = false;
             for (let trackId = 0; trackId < states.length; trackId++) {
                 const {
                     currentStep,
@@ -43,12 +43,13 @@ trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
                     if (sequence) {
                         sequence.activeStep = currentStep;
                         // console.log('currentStep', currentStep);
-                        needRender = true;
                     }
                 }
             }
-            await renderView();
-            render();
+            if (beatViews.includes(getView() as any)) {
+                await renderView({ beatRendering: true });
+                render();
+            }
         } catch (error) {
             console.error(error);
             drawError((error as any).message);

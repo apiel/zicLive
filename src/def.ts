@@ -29,3 +29,5 @@ export enum View {
 // ];
 // Could even get types like this:
 // type ViewName = (typeof viewName)[number];
+
+export const beatViews = [View.Sequencer, View.SequencerEdit] as const;

@@ -9,6 +9,7 @@ import { eventEdit, eventSelector, getEditMode } from '../events';
 import { drawSelectableText } from '../draw/drawSelectable';
 import { minmax } from '../util';
 import { MAX_VOICES_IN_PATTERN, NOTE_END, NOTE_START } from 'zic_node';
+import { RenderOptions } from '../view';
 
 let scrollY = 0;
 const margin = 1;
@@ -18,7 +19,7 @@ const size = { w: config.screen.size.w / col - margin, h: 35 };
 const findByColumnFirst = config.screen.col !== 1;
 
 // FIXME #34 sometime view is hanging, might be some kind of infinite loop?? but why???
-export async function patternView() {
+export async function patternView(options: RenderOptions = {}) {
     const pattern = getPattern();
     const idStr = pattern.id.toString().padStart(3, '0');
     cleanSelectableItems();

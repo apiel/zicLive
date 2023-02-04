@@ -4,9 +4,9 @@ import { drawSelectableText } from '../draw/drawSelectable';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { color, font } from '../style';
-import { renderView, setView } from '../view';
+import { RenderOptions, renderView, setView } from '../view';
 
-export async function helpView() {
+export async function helpView(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);
     drawText('Menu (>1sec) =', { x: 10, y: 10 }, { color: color.info });

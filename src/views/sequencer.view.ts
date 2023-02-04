@@ -6,11 +6,12 @@ import { color } from '../style';
 import { sequencesGridNode } from '../nodes/sequencesGrid.node';
 import { getSequence, setSelectedSequenceId, toggleSequence } from '../sequence';
 import { View } from '../def';
+import { RenderOptions } from '../view';
 
 let scrollY = 0;
 const col = config.sequence.col;
 
-export async function sequencerView() {
+export async function sequencerView(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);
     sequencesGridNode(col, scrollY, (id) => ({

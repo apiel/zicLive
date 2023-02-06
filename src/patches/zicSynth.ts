@@ -46,7 +46,7 @@ export default function (patch: Patch, scrollY: number) {
             name,
             morph,
             wavetable: getWavetable(name, morph),
-        }
+        };
     }
     let wavetable = wavetables[sId.oscWavetable];
     drawWavetable(wavetable.wavetable.data, { row: rowAddGraph(), col, scrollY });
@@ -75,9 +75,21 @@ export default function (patch: Patch, scrollY: number) {
         { scrollY, info: `${wavetable.wavetable.wavetableSampleCount} samples` },
     );
     drawField(
+        `Amplitude`,
+        ` ${Math.round(patch.floats[fId.OscAmplitude] * 100)}`,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.OscAmplitude, minmax(patch.floats[fId.OscAmplitude] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, info: `%` },
+    );
+    drawField(
         `Frequency`,
         patch.floats[fId.OscFrequency].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.OscFrequency, minmax(patch.floats[fId.OscFrequency] + direction, 10, 2000));
@@ -85,6 +97,19 @@ export default function (patch: Patch, scrollY: number) {
             steps: [1, 10],
         },
         { scrollY, info: `hz` },
+    );
+
+    drawField(
+        `Volume`,
+        Math.round(patch.floats[fId.Volume] * 100).toString(),
+        rowNext(col),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, col, info: `%` },
     );
 
     drawFieldDual(
@@ -112,7 +137,10 @@ export default function (patch: Patch, scrollY: number) {
         rowGetAndAdd(1),
         {
             edit: (direction) => {
-                patch.setNumber(fId.filterMode, minmax(patch.floats[fId.filterMode] + direction, 0, FilterMode.COUNT - 1));
+                patch.setNumber(
+                    fId.filterMode,
+                    minmax(patch.floats[fId.filterMode] + direction, 0, FilterMode.COUNT - 1),
+                );
             },
         },
         {
@@ -121,18 +149,6 @@ export default function (patch: Patch, scrollY: number) {
         },
     );
 
-    // drawField(
-    //     `Volume`,
-    //     Math.round(patch.floats[fId.Volume] * 100).toString(),
-    //     rowNext(1),
-    //     {
-    //         edit: (direction) => {
-    //             patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
-    //         },
-    //         steps: [0.01, 0.1],
-    //     },
-    //     { scrollY },
-    // );
     // drawField(
     //     `Duration`,
     //     patch.floats[fId.Duration].toString(),

@@ -115,7 +115,7 @@ export default function (patch: Patch, scrollY: number) {
             },
             steps: [0.01, 0.1],
         },
-        { scrollY },
+        { scrollY, info: `%` },
     );
     drawField(
         `Duration`,

@@ -4,6 +4,7 @@ import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import { getTrack } from '../track';
 import kick23, { kick23Init } from '../patches/kick23';
+import zicSynth, { zicSynthInit } from '../patches/zicSynth';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { config } from '../config';
@@ -33,13 +34,15 @@ export async function patchView(options: RenderOptions = {}) {
             case 'kick23':
                 kick23Init(patch);
                 break;
+            case 'zicSynth':
+                zicSynthInit(patch);
+                break;
         }
     }
 
     switch (engine) {
         case 'zicSynth':
-            // TODO #40 preset view for zicSynth
-            drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
+            zicSynth(patch, scrollY);
             break;
         case 'pd':
             // TODO #39 preset view for pd

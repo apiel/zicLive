@@ -31,14 +31,7 @@ const rowAddGraph =
         ? () => rowGetAndAdd(add)
         : () => rowGet();
 
-// FIXME #35 in patchView, selector sometime not visible when going up
 export default function (patch: Patch, scrollY: number) {
-    // setColor(color.header);
-    // drawFilledRect({ position: { x: 0, y: scrollY }, size: { w: config.screen.size.w, h: unit.height - 5 } });
-    // drawText(`Kick23`, { x: 10, y: 1 + scrollY });
-    // drawText(patch.name, { x: 80, y: 1 + scrollY }, { color: color.info });
-    // let row = 1;
-
     rowReset();
     if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
         lastWavetable = patch.strings[sId.Wavetable];

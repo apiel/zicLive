@@ -3,7 +3,7 @@ import { getAllSequencerStates, setOnBeatCallback, start, SynthPathIds, trackSet
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
 import { beatViews } from './def';
-import { drawError } from './draw/drawMessage';
+import { drawError, renderMessage } from './draw/drawMessage';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
@@ -53,6 +53,8 @@ trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
         } catch (error) {
             console.error(error);
             drawError((error as any).message);
+            renderMessage();
+            render();
         }
     });
     await renderView();
@@ -70,7 +72,6 @@ setInterval(async () => {
         } else if (events.keysDown?.includes(224) || events.keysDown?.includes(44)) {
             minimize();
         } else if (events.keysDown || events.keysUp) {
-            // console.log('events', events);
             if (await viewEventHandler(events)) {
                 render();
             }
@@ -78,5 +79,7 @@ setInterval(async () => {
     } catch (error) {
         console.error(error);
         drawError((error as any).message);
+        renderMessage();
+        render();
     }
 }, 10);

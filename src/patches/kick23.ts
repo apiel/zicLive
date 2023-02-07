@@ -26,10 +26,7 @@ export function kick23Init(patch: Patch) {
 const col = config.screen.col;
 
 const add = config.screen.col === 1 ? 3 : 1;
-const rowAddGraph =
-    config.screen.col === 1
-        ? () => rowGetAndAdd(add)
-        : () => rowGet();
+const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet();
 
 export default function (patch: Patch, scrollY: number) {
     rowReset();
@@ -336,9 +333,7 @@ export default function (patch: Patch, scrollY: number) {
         saveAs,
         rowGetAndAdd(1),
         {
-            edit: () => {
-                savePatchAs('kick23', patch, saveAs);
-            },
+            edit: withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs)),
         },
         {
             col,
@@ -366,7 +361,7 @@ export default function (patch: Patch, scrollY: number) {
             if (char === 'DEL') {
                 saveAs = saveAs.slice(0, -1);
             } else if (char === 'DONE') {
-                savePatchAs('kick23', patch, saveAs);
+                return withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs))();
             } else {
                 if (saveAs.length < 10) {
                     saveAs += char;

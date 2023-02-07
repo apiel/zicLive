@@ -9,6 +9,7 @@ import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { config } from '../config';
 import { RenderOptions } from '../view';
+import { renderMessage } from '../draw/drawMessage';
 
 let scrollY = 0;
 let currentPatchId = -1;
@@ -56,6 +57,8 @@ export async function patchView(options: RenderOptions = {}) {
             kick23(patch, scrollY);
             break;
     }
+
+    renderMessage();
 }
 
 export async function patchEventHandler(events: Events) {

@@ -21,6 +21,7 @@ import { drawButton } from '../draw/drawButton';
 import { sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
+import { renderMessage } from '../draw/drawMessage';
 
 const { margin } = unit;
 
@@ -187,6 +188,8 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     );
     drawButton('Reload all', rowNext(1), loadSequences, { scrollY });
     drawButton('Save all', rowNext(col), saveSequences, { col, scrollY });
+
+    renderMessage();
 }
 
 export async function sequencerEditEventHandler(events: Events) {

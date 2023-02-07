@@ -1,5 +1,6 @@
 import { clear, drawText, Events } from 'zic_node_ui';
 import { View } from '../def';
+import { renderMessage } from '../draw/drawMessage';
 import { drawSelectableText } from '../draw/drawSelectable';
 import { eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
@@ -51,6 +52,8 @@ export async function helpView(options: RenderOptions = {}) {
         { color: color.white, font: font.bold },
         { edit: () => setView(View.Preset) },
     );
+
+    renderMessage();
 }
 
 export async function helpEventHandler(events: Events) {

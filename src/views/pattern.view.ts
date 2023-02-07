@@ -10,6 +10,7 @@ import { drawSelectableText } from '../draw/drawSelectable';
 import { minmax } from '../util';
 import { MAX_VOICES_IN_PATTERN, NOTE_END, NOTE_START } from 'zic_node';
 import { RenderOptions } from '../view';
+import { renderMessage } from '../draw/drawMessage';
 
 let scrollY = 0;
 const margin = 1;
@@ -89,6 +90,8 @@ export async function patternView(options: RenderOptions = {}) {
             }
         }
     }
+
+    renderMessage();
 }
 
 function drawStep(pattern: Pattern, stepIndex: number, voice: number, step: Step | null, position: Point) {

@@ -133,7 +133,7 @@ export default function (patch: Patch, scrollY: number) {
         { info: 'hz', info2: '% res', scrollY },
     );
     drawField(
-        `Type`,
+        `Shape`,
         `${FilterNames[patch.floats[fId.filterMode]]}`,
         rowNext(col), //rowGetAndAdd(1),
         {

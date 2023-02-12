@@ -51,6 +51,20 @@ export default function (patch: Patch, scrollY: number) {
         };
     }
 
+    if (
+        !wavetables[sId.osc2Wavetable] ||
+        patch.strings[sId.osc2Wavetable] !== wavetables[sId.osc2Wavetable].name ||
+        patch.floats[fId.Osc2Morph] !== wavetables[sId.osc2Wavetable].morph
+    ) {
+        const name = patch.strings[sId.osc2Wavetable];
+        const morph = patch.floats[fId.Osc2Morph];
+        wavetables[sId.osc2Wavetable] = {
+            name,
+            morph,
+            wavetable: getWavetable(name, morph),
+        };
+    }
+
     drawField(
         `Volume`,
         Math.round(patch.floats[fId.Volume] * 100).toString(),
@@ -156,6 +170,97 @@ export default function (patch: Patch, scrollY: number) {
 
     drawSeparator('Oscillator 2 / LFO', rowGetAndAdd(1), { scrollY });
 
+    drawField(
+        `Mix2osc1`,
+        `${Math.round(patch.floats[fId.Mix] * 100)}`,
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, info: `%` },
+    );
+    // TODO make better mix representation
+    // const mix = Math.round(patch.floats[fId.Mix] * 100);
+    // drawField(
+    //     `Mix`,
+    //     // `${Math.round(patch.floats[fId.Mix] * 100)}`,
+    //     `${100 - mix}% osc1 ${mix}% osc2`,
+    //     rowNext(1),
+    //     {
+    //         edit: (direction) => {
+    //             patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
+    //         },
+    //         steps: [0.01, 0.1],
+    //     },
+    //     { scrollY, info: `%` },
+    // );
+
+    drawField(
+        `Freq NoteOn`,
+        patch.floats[fId.osc2FreqNoteOn] ? '      On' : '     Off',
+        rowNext(col),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.osc2FreqNoteOn, minmax(patch.floats[fId.osc2FreqNoteOn] + direction, 0, 1));
+            },
+        },
+        { scrollY, col },
+    );
+
+    let wavetable2 = wavetables[sId.osc2Wavetable];
+    drawWavetable(wavetable2.wavetable.data, { row: rowAddGraph(), col, scrollY });
+    drawField(
+        `Wavetable`,
+        path.parse(wavetable2.name).name,
+        rowGetAndAdd(1),
+        {
+            edit: async (direction) => {
+                patch.setString(sId.osc2Wavetable, await getNextWaveTable(direction, wavetable2.name));
+            },
+            steps: [1, 10],
+        },
+        { scrollY },
+    );
+    drawField(
+        `Morph`,
+        `${patch.floats[fId.Osc2Morph].toFixed(1)}/${wavetable2.wavetable.wavetableCount}`,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Osc2Morph, minmax(patch.floats[fId.Osc2Morph] + direction, 0, 64));
+            },
+            steps: [0.1, 1],
+        },
+        { scrollY, info: `${wavetable2.wavetable.wavetableSampleCount} samples` },
+    );
+    drawField(
+        `Amplitude`,
+        `${Math.round(patch.floats[fId.Osc2Amplitude] * 100)}`,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Osc2Amplitude, minmax(patch.floats[fId.Osc2Amplitude] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, info: `%` },
+    );
+    drawField(
+        `Frequency`,
+        patch.floats[fId.Osc2Frequency].toString(),
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Osc2Frequency, minmax(patch.floats[fId.Osc2Frequency] + direction, 10, 2000));
+            },
+            steps: [1, 10],
+        },
+        { scrollY, info: `hz` },
+    );
+
     drawSeparator('Envelope', rowGetAndAdd(1), { scrollY });
 
     drawField(
@@ -164,10 +269,7 @@ export default function (patch: Patch, scrollY: number) {
         rowGetAndAdd(1),
         {
             edit: (direction) => {
-                patch.setNumber(
-                    fId.envAttack,
-                    minmax(patch.floats[fId.envAttack] + direction, 0, 9900),
-                );
+                patch.setNumber(fId.envAttack, minmax(patch.floats[fId.envAttack] + direction, 0, 9900));
             },
             steps: [10, 100],
         },
@@ -183,10 +285,7 @@ export default function (patch: Patch, scrollY: number) {
         rowGetAndAdd(1),
         {
             edit: (direction) => {
-                patch.setNumber(
-                    fId.envDecay,
-                    minmax(patch.floats[fId.envAttack] + direction, 0, 9900),
-                );
+                patch.setNumber(fId.envDecay, minmax(patch.floats[fId.envAttack] + direction, 0, 9900));
             },
             steps: [10, 100],
         },
@@ -218,10 +317,7 @@ export default function (patch: Patch, scrollY: number) {
         rowGetAndAdd(1),
         {
             edit: (direction) => {
-                patch.setNumber(
-                    fId.envRelease,
-                    minmax(patch.floats[fId.envAttack] + direction, 0, 9900),
-                );
+                patch.setNumber(fId.envRelease, minmax(patch.floats[fId.envAttack] + direction, 0, 9900));
             },
             steps: [10, 100],
         },

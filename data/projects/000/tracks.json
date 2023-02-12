@@ -1,8 +1,8 @@
 [
     { "id": 0, "name": "trackKick", "engine": "kick23" },
     { "id": 1, "name": "trackPD", "engine": "pd" },
-    { "id": 2, "name": "track3", "engine": "zicSynth" },
-    { "id": 3, "name": "track4", "engine": "zicSynth" },
+    { "id": 2, "name": "track3", "engine": "synth" },
+    { "id": 3, "name": "track4", "engine": "synth" },
     { "id": 4, "name": "Midi1", "engine": "midi" },
     { "id": 5, "name": "Midi2", "engine": "midi" },
     { "id": 6, "name": "Midi3", "engine": "midi" },

@@ -2,8 +2,7 @@ import { lstat, readdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { trackCc, trackSetNumber, trackSetString } from 'zic_node';
 import { config } from './config';
-import { drawError } from './draw/drawMessage';
-import { getPlayingSequencesForPatch, getSequencesForPatchId, playSequence } from './sequence';
+import { getPlayingSequencesForPatch, getSequencesForPatchId } from './sequence';
 import { minmax } from './util';
 
 export interface Patch {

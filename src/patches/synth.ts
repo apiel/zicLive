@@ -1,5 +1,5 @@
 import path from 'path';
-import { getWavetable, ZicSynth, Wavetable, FilterNames, FilterMode } from 'zic_node';
+import { getWavetable, SynthDualOsc, Wavetable, FilterNames, FilterMode } from 'zic_node';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
 import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
 import { minmax } from '../util';
@@ -10,9 +10,10 @@ import { drawEnvelope } from '../draw/drawEnvelope';
 import { drawKeyboard } from '../draw/drawKeyboard';
 import { withInfo, withSuccess } from '../draw/drawMessage';
 import { rowGetAndAdd, rowGet, rowNext, rowReset } from '../draw/rowNext';
+import { drawSeparator } from '../draw/drawSeparator';
 
-const fId = ZicSynth.FloatId;
-const sId = ZicSynth.StringId;
+const fId = SynthDualOsc.FloatId;
+const sId = SynthDualOsc.StringId;
 
 let saveAs = '';
 
@@ -24,7 +25,7 @@ interface WavetableState {
 
 const wavetables: WavetableState[] = [];
 
-export function zicSynthInit(patch: Patch) {
+export function synthInit(patch: Patch) {
     saveAs = patch.name;
 }
 
@@ -39,78 +40,28 @@ export default function (patch: Patch, scrollY: number) {
     if (
         !wavetables[sId.oscWavetable] ||
         patch.strings[sId.oscWavetable] !== wavetables[sId.oscWavetable].name ||
-        patch.floats[fId.Morph] !== wavetables[sId.oscWavetable].morph
+        patch.floats[fId.OscMorph] !== wavetables[sId.oscWavetable].morph
     ) {
         const name = patch.strings[sId.oscWavetable];
-        const morph = patch.floats[fId.Morph];
+        const morph = patch.floats[fId.OscMorph];
         wavetables[sId.oscWavetable] = {
             name,
             morph,
             wavetable: getWavetable(name, morph),
         };
     }
-    let wavetable = wavetables[sId.oscWavetable];
-    drawWavetable(wavetable.wavetable.data, { row: rowAddGraph(), col, scrollY });
-    drawField(
-        `Wavetable`,
-        path.parse(wavetable.name).name,
-        rowGetAndAdd(1),
-        {
-            edit: async (direction) => {
-                patch.setString(sId.oscWavetable, await getNextWaveTable(direction, wavetable.name));
-            },
-            steps: [1, 10],
-        },
-        { scrollY },
-    );
-    drawField(
-        `Morph`,
-        `${patch.floats[fId.Morph].toFixed(1)}/${wavetable.wavetable.wavetableCount}`,
-        rowGetAndAdd(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction, 0, 64));
-            },
-            steps: [0.1, 1],
-        },
-        { scrollY, info: `${wavetable.wavetable.wavetableSampleCount} samples` },
-    );
-    drawField(
-        `Amplitude`,
-        ` ${Math.round(patch.floats[fId.OscAmplitude] * 100)}`,
-        rowGetAndAdd(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.OscAmplitude, minmax(patch.floats[fId.OscAmplitude] + direction, 0, 1));
-            },
-            steps: [0.01, 0.1],
-        },
-        { scrollY, info: `%` },
-    );
-    drawField(
-        `Frequency`,
-        patch.floats[fId.OscFrequency].toString(),
-        rowNext(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.OscFrequency, minmax(patch.floats[fId.OscFrequency] + direction, 10, 2000));
-            },
-            steps: [1, 10],
-        },
-        { scrollY, info: `hz` },
-    );
 
     drawField(
         `Volume`,
         Math.round(patch.floats[fId.Volume] * 100).toString(),
-        rowNext(col),
+        rowGetAndAdd(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
             },
             steps: [0.01, 0.1],
         },
-        { scrollY, col, info: `%` },
+        { scrollY, info: `%` },
     );
 
     drawFieldDual(
@@ -149,6 +100,63 @@ export default function (patch: Patch, scrollY: number) {
             scrollY,
         },
     );
+
+    drawSeparator('Oscillator 1', rowGetAndAdd(1), { scrollY });
+
+    let wavetable = wavetables[sId.oscWavetable];
+    drawWavetable(wavetable.wavetable.data, { row: rowAddGraph(), col, scrollY });
+    drawField(
+        `Wavetable`,
+        path.parse(wavetable.name).name,
+        rowGetAndAdd(1),
+        {
+            edit: async (direction) => {
+                patch.setString(sId.oscWavetable, await getNextWaveTable(direction, wavetable.name));
+            },
+            steps: [1, 10],
+        },
+        { scrollY },
+    );
+    drawField(
+        `Morph`,
+        `${patch.floats[fId.OscMorph].toFixed(1)}/${wavetable.wavetable.wavetableCount}`,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.OscMorph, minmax(patch.floats[fId.OscMorph] + direction, 0, 64));
+            },
+            steps: [0.1, 1],
+        },
+        { scrollY, info: `${wavetable.wavetable.wavetableSampleCount} samples` },
+    );
+    drawField(
+        `Amplitude`,
+        `${Math.round(patch.floats[fId.OscAmplitude] * 100)}`,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.OscAmplitude, minmax(patch.floats[fId.OscAmplitude] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, info: `%` },
+    );
+    drawField(
+        `Frequency`,
+        patch.floats[fId.OscFrequency].toString(),
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.OscFrequency, minmax(patch.floats[fId.OscFrequency] + direction, 10, 2000));
+            },
+            steps: [1, 10],
+        },
+        { scrollY, info: `hz` },
+    );
+
+    drawSeparator('Oscillator 2 / LFO', rowGetAndAdd(1), { scrollY });
+
+    drawSeparator('Envelope', rowGetAndAdd(1), { scrollY });
 
     drawField(
         `Attack`,
@@ -225,8 +233,8 @@ export default function (patch: Patch, scrollY: number) {
 
     drawFieldDual(
         `Env. Osc.`,
-        ` ${Math.round(patch.floats[fId.envModPitch] * 100)}`,
-        ` ${Math.round(patch.floats[fId.envModAmplitude] * 100)}`,
+        `${Math.round(patch.floats[fId.envModPitch] * 100)}`,
+        `${Math.round(patch.floats[fId.envModAmplitude] * 100)}`,
         rowNext(1),
         {
             edit: (direction) => {
@@ -245,8 +253,8 @@ export default function (patch: Patch, scrollY: number) {
 
     drawFieldDual(
         `Env. Filter`,
-        ` ${Math.round(patch.floats[fId.envModCutoff] * 100)}`,
-        ` ${Math.round(patch.floats[fId.envModResonance] * 100)}`,
+        `${Math.round(patch.floats[fId.envModCutoff] * 100)}`,
+        `${Math.round(patch.floats[fId.envModResonance] * 100)}`,
         rowNext(col),
         {
             edit: (direction) => {

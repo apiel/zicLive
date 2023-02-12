@@ -12,6 +12,7 @@ const baseColor = {
     selected: { r: 150, g: 150, b: 150 },
     secondarySelected: { r: 100, g: 100, b: 100 },
     chart: rgb('#595f6b'),
+    separator: { r: 70, g: 70, b: 70 },
 };
 
 export const color = {

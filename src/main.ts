@@ -1,5 +1,5 @@
 import { exit } from 'process';
-import { getAllSequencerStates, setOnBeatCallback, start, SynthPathIds, trackSetString } from 'zic_node';
+import { getAllSequencerStates, setOnBeatCallback, start, trackSetString } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
 import { beatViews } from './def';
@@ -16,9 +16,8 @@ start();
 // FIXME might need to remove this?
 trackSetString(0, `${DATA_PATH}/wavetables/0_test.wav`);
 trackSetString(1, `${DATA_PATH}/patches/pd/_pd/poly`);
-trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
-trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
-trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 0);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 1);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo1);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo2);

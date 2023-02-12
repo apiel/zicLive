@@ -11,6 +11,7 @@ import { drawKeyboard } from '../draw/drawKeyboard';
 import { withInfo, withSuccess } from '../draw/drawMessage';
 import { rowGetAndAdd, rowGet, rowNext, rowReset } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
+import { drawSliderField } from '../draw/drawSlider';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;
@@ -170,18 +171,18 @@ export default function (patch: Patch, scrollY: number) {
 
     drawSeparator('Oscillator 2 / LFO', rowGetAndAdd(1), { scrollY });
 
-    drawField(
-        `Mix2osc1`,
-        `${Math.round(patch.floats[fId.Mix] * 100)}`,
-        rowNext(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
-            },
-            steps: [0.01, 0.1],
-        },
-        { scrollY, info: `%` },
-    );
+    // drawField(
+    //     `Mix2osc1`,
+    //     `${Math.round(patch.floats[fId.Mix] * 100)}`,
+    //     rowNext(1),
+    //     {
+    //         edit: (direction) => {
+    //             patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
+    //         },
+    //         steps: [0.01, 0.1],
+    //     },
+    //     { scrollY, info: `%` },
+    // );
     // TODO make better mix representation
     // const mix = Math.round(patch.floats[fId.Mix] * 100);
     // drawField(
@@ -197,6 +198,18 @@ export default function (patch: Patch, scrollY: number) {
     //     },
     //     { scrollY, info: `%` },
     // );
+    drawSliderField(
+        `Mix`,
+        patch.floats[fId.Mix],
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, leftLabel: 'osc1', rightLabel: 'osc2' },
+    );
 
     drawField(
         `Freq NoteOn`,

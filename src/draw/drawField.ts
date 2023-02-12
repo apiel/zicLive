@@ -13,7 +13,7 @@ export interface FieldOptions {
 }
 
 // TODO can this be generic?
-function getFieldRect(row: number, options: FieldOptions) {
+export function getFieldRect(row: number, options: FieldOptions) {
     const { col = 1, size = 1, scrollY = 0 } = options;
     return {
         position: { x: (col - 1) * unit.halfScreen, y: row * unit.height + scrollY  + unit.margin }, // need to keep margin for selection

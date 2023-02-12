@@ -1,7 +1,6 @@
-import { Color, drawFilledRect, drawLine, drawText, setColor } from 'zic_node_ui';
-import { config } from '../config';
+import { drawFilledRect, drawLine, drawText, setColor } from 'zic_node_ui';
 import { SelectableOptions } from '../selector';
-import { color, color as _color, unit } from '../style';
+import { color, color as _color } from '../style';
 import { FieldOptions, getFieldRect } from './drawField';
 import { drawSelectableRect } from './drawSelectable';
 
@@ -26,7 +25,6 @@ export function drawSliderField(
         { x: rect.position.x + 2, y: rect.position.y + 2 },
         { size: 14, color: color.info },
     );
-    // drawText(value.toString(), { x: rect.position.x + 80, y: rect.position.y + 2 }, { size: 14, color: valueColor });
 
     const leftRect = drawText(
         leftLabel,
@@ -45,17 +43,3 @@ export function drawSliderField(
 
     drawText(rightLabel, { x: x + width + 5, y: rect.position.y + 5 }, { size: 10, color: color.info });
 }
-
-// export function drawSlider(name: string, row: number, { scrollY, color }: SliderOptions = {}) {
-//     const rect = getDrawRect({ row, scrollY });
-//     if (color === undefined) {
-//         color = _color.separator;
-//     }
-//     setColor(color);
-//     const text = drawText(name, { x: rect.position.x + 20, y: rect.position.y }, { size: 14, color });
-
-//     const y = rect.position.y + 7;
-
-//     drawLine({ x: rect.position.x - 3, y }, { x: rect.position.x + 16, y });
-//     drawLine({ x: rect.position.x + 24 + text.size.w, y }, { x: config.screen.size.w - 7, y });
-// }

@@ -332,6 +332,19 @@ export default function (patch: Patch, scrollY: number) {
 
     drawSeparator('Envelope', rowGetAndAdd(1), { scrollY });
 
+    const envMs = patch.floats[fId.envAttack] + patch.floats[fId.envDecay] + patch.floats[fId.envRelease];
+    const env = envMs / 4 * 5;
+    drawEnvelope(
+        [
+            [0, 0],
+            [1, patch.floats[fId.envAttack] / env],
+            [patch.floats[fId.envSustain], patch.floats[fId.envDecay] / env],
+            [patch.floats[fId.envSustain], 1.0 - patch.floats[fId.envRelease] / env],
+            [0.0, 1.0],
+        ],
+        { row: rowAddGraph(), col, scrollY },
+    );
+
     drawField(
         `Attack`,
         patch.floats[fId.envAttack].toString(),
@@ -354,7 +367,7 @@ export default function (patch: Patch, scrollY: number) {
         rowGetAndAdd(1),
         {
             edit: (direction) => {
-                patch.setNumber(fId.envDecay, minmax(patch.floats[fId.envAttack] + direction, 0, 9900));
+                patch.setNumber(fId.envDecay, minmax(patch.floats[fId.envDecay] + direction, 0, 9900));
             },
             steps: [10, 100],
         },
@@ -386,7 +399,7 @@ export default function (patch: Patch, scrollY: number) {
         rowGetAndAdd(1),
         {
             edit: (direction) => {
-                patch.setNumber(fId.envRelease, minmax(patch.floats[fId.envAttack] + direction, 0, 9900));
+                patch.setNumber(fId.envRelease, minmax(patch.floats[fId.envRelease] + direction, 0, 9900));
             },
             steps: [10, 100],
         },

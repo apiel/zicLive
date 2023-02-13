@@ -274,6 +274,62 @@ export default function (patch: Patch, scrollY: number) {
         { scrollY, info: `hz` },
     );
 
+    drawFieldDual(
+        `Mod. Osc1`,
+        `${Math.round(patch.floats[fId.osc2ModPitch] * 100)}`,
+        `${Math.round(patch.floats[fId.osc2ModAmplitude] * 100)}`,
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.osc2ModPitch, minmax(patch.floats[fId.osc2ModPitch] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.osc2ModAmplitude, minmax(patch.floats[fId.osc2ModAmplitude] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        { info: '%frq', info2: '%amp', scrollY },
+    );
+
+    drawFieldDual(
+        `Mod. Filter`,
+        `${Math.round(patch.floats[fId.osc2ModCutOff] * 100)}`,
+        `${Math.round(patch.floats[fId.osc2ModResonance] * 100)}`,
+        rowNext(col),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.osc2ModCutOff, minmax(patch.floats[fId.osc2ModCutOff] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.osc2ModResonance, minmax(patch.floats[fId.osc2ModResonance] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        { info: '%frq', info2: '%res', scrollY, col },
+    );
+
+    drawFieldDual(
+        ``,
+        `${Math.round(patch.floats[fId.osc2ModMorph] * 100)}`,
+        ``,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.osc2ModMorph, minmax(patch.floats[fId.osc2ModMorph] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {
+        },
+        { info: '%morph', scrollY },
+    );
+
     drawSeparator('Envelope', rowGetAndAdd(1), { scrollY });
 
     drawField(

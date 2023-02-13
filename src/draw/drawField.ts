@@ -76,17 +76,19 @@ export function drawFieldDual(
             { size: 10, color: color.info },
         );
     }
-    const labelRect2 = drawSelectableText(
-        value2,
-        { x: rect.position.x + 140, y: rect.position.y + 2 },
-        { size: 14, color: valueColor2 },
-        selectableOptions2,
-    );
-    if (info2) {
-        drawText(
-            info2,
-            { x: labelRect2.position.x + labelRect2.size.w + 2, y: rect.position.y + 6 },
-            { size: 10, color: color.info },
+    if (value2) {
+        const labelRect2 = drawSelectableText(
+            value2,
+            { x: rect.position.x + 140, y: rect.position.y + 2 },
+            { size: 14, color: valueColor2 },
+            selectableOptions2,
         );
+        if (info2) {
+            drawText(
+                info2,
+                { x: labelRect2.position.x + labelRect2.size.w + 2, y: rect.position.y + 6 },
+                { size: 10, color: color.info },
+            );
+        }
     }
 }

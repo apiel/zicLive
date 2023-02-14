@@ -434,10 +434,61 @@ export default function (patch: Patch, scrollY: number) {
     );
 
     drawFieldDual(
+        `Env. Osc2.`,
+        `${Math.round(patch.floats[fId.envModPitch2] * 100)}`,
+        `${Math.round(patch.floats[fId.envModAmplitude2] * 100)}`,
+        rowNext(col),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.envModPitch2, minmax(patch.floats[fId.envModPitch2] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.envModAmplitude2, minmax(patch.floats[fId.envModAmplitude2] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        { info: '%frq', info2: '%amp', scrollY, col },
+    );
+
+
+    drawFieldDual(
+        ``,
+        `${Math.round(patch.floats[fId.envModMorph] * 100)}`,
+        ``,
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.envModMorph, minmax(patch.floats[fId.envModMorph] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {},
+        { info: '%morph', scrollY },
+    );
+
+    drawFieldDual(
+        ``,
+        `${Math.round(patch.floats[fId.envModMorph2] * 100)}`,
+        ``,
+        rowNext(col),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.envModMorph2, minmax(patch.floats[fId.envModMorph2] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {},
+        { info: '%morph', scrollY, col },
+    );
+
+    drawFieldDual(
         `Env. Filter`,
         `${Math.round(patch.floats[fId.envModCutoff] * 100)}`,
         `${Math.round(patch.floats[fId.envModResonance] * 100)}`,
-        rowNext(col),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envModCutoff, minmax(patch.floats[fId.envModCutoff] + direction, 0, 1));
@@ -450,6 +501,6 @@ export default function (patch: Patch, scrollY: number) {
             },
             steps: [0.01, 0.05],
         },
-        { info: '%frq', info2: '%res', scrollY, col },
+        { info: '%frq', info2: '%res', scrollY },
     );
 }

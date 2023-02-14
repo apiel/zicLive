@@ -10,6 +10,7 @@ import { drawEnvelope } from '../draw/drawEnvelope';
 import { drawKeyboard } from '../draw/drawKeyboard';
 import { withInfo, withSuccess } from '../draw/drawMessage';
 import { rowGetAndAdd, rowGet, rowNext, rowReset } from '../draw/rowNext';
+import { drawSeparator } from '../draw/drawSeparator';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -30,6 +31,71 @@ const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => ro
 
 export default function (patch: Patch, scrollY: number) {
     rowReset();
+
+    drawField(
+        `Volume`,
+        Math.round(patch.floats[fId.Volume] * 100).toString(),
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
+            },
+            steps: [0.01, 0.1],
+        },
+        { scrollY, info: `%` },
+    );
+
+    drawFieldDual(
+        `Distortion`,
+        patch.floats[fId.distortion].toString(),
+        patch.floats[fId.distortionRange].toString(),
+        rowNext(col),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.distortion, minmax(patch.floats[fId.distortion] + direction, 0, 100));
+            },
+            steps: [1, 10],
+        },
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.distortionRange, minmax(patch.floats[fId.distortionRange] + direction, 10, 120));
+            },
+            steps: [1, 10],
+        },
+        { scrollY, col, info2: `range`, info: `%` },
+    );
+
+    drawField(
+        `Filter`,
+        patch.floats[fId.filterCutoff].toString(),
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction, 200, 8000));
+            },
+            steps: [10, 100],
+        },
+        { info: 'hz', scrollY },
+    );
+    drawField(
+        `Resonance`,
+        ` ${Math.round(patch.floats[fId.filterResonance] * 100)}`,
+        rowGetAndAdd(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.filterResonance, minmax(patch.floats[fId.filterResonance] + direction, 0, 1));
+            },
+            steps: [0.01, 0.05],
+        },
+        {
+            col,
+            info: `%`,
+            scrollY,
+        },
+    );
+
+    drawSeparator('Wavetable', rowGetAndAdd(1), { scrollY });
+
     if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
         lastWavetable = patch.strings[sId.Wavetable];
         lastMorph = patch.floats[fId.Morph];
@@ -73,47 +139,8 @@ export default function (patch: Patch, scrollY: number) {
         { scrollY, info: `hz` },
     );
 
-    drawField(
-        `Filter`,
-        patch.floats[fId.filterCutoff].toString(),
-        rowNext(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction, 200, 8000));
-            },
-            steps: [10, 100],
-        },
-        { info: 'hz', scrollY },
-    );
-    drawField(
-        `Resonance`,
-        ` ${Math.round(patch.floats[fId.filterResonance] * 100)}`,
-        rowGetAndAdd(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.filterResonance, minmax(patch.floats[fId.filterResonance] + direction, 0, 1));
-            },
-            steps: [0.01, 0.05],
-        },
-        {
-            col,
-            info: `%`,
-            scrollY,
-        },
-    );
+    drawSeparator('Envelope Amplitude', rowGetAndAdd(1), { scrollY });
 
-    drawField(
-        `Volume`,
-        Math.round(patch.floats[fId.Volume] * 100).toString(),
-        rowNext(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
-            },
-            steps: [0.01, 0.1],
-        },
-        { scrollY, info: `%` },
-    );
     drawField(
         `Duration`,
         patch.floats[fId.Duration].toString(),
@@ -125,7 +152,6 @@ export default function (patch: Patch, scrollY: number) {
             steps: [1, 10],
         },
         {
-            col,
             info: `ms (t)`,
             scrollY,
         },
@@ -213,6 +239,8 @@ export default function (patch: Patch, scrollY: number) {
         { info: '%', info2: '%t', scrollY },
     );
 
+    drawSeparator('Envelope Frequency', rowGetAndAdd(1), { scrollY });
+
     drawEnvelope(
         [
             [1.0, 0.0],
@@ -292,26 +320,6 @@ export default function (patch: Patch, scrollY: number) {
             steps: [0.01, 0.1],
         },
         { info: '%', info2: '%t', scrollY },
-    );
-
-    drawFieldDual(
-        `Distortion`,
-        patch.floats[fId.distortion].toString(),
-        patch.floats[fId.distortionRange].toString(),
-        rowGetAndAdd(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.distortion, minmax(patch.floats[fId.distortion] + direction, 0, 100));
-            },
-            steps: [1, 10],
-        },
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.distortionRange, minmax(patch.floats[fId.distortionRange] + direction, 10, 120));
-            },
-            steps: [1, 10],
-        },
-        { scrollY },
     );
 
     drawFieldDual(

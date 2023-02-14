@@ -18,11 +18,6 @@ const sId = Kick23.StringId;
 let wavetable: Wavetable;
 let lastWavetable = '';
 let lastMorph = 0;
-let saveAs = '';
-
-export function kick23Init(patch: Patch) {
-    saveAs = patch.name;
-}
 
 const col = config.screen.col;
 
@@ -320,62 +315,5 @@ export default function (patch: Patch, scrollY: number) {
             steps: [0.01, 0.1],
         },
         { info: '%', info2: '%t', scrollY },
-    );
-
-    drawFieldDual(
-        ``,
-        `Reload`,
-        `Save`,
-        rowNext(1),
-        {
-            edit: withInfo('Loaded', () => loadPatchId('kick23', patch.id)),
-        },
-        {
-            edit: withSuccess('Saved', () => savePatch('kick23', patch.id)),
-        },
-        { scrollY },
-    );
-
-    drawField(
-        `Save as`,
-        saveAs,
-        rowNext(col),
-        {
-            edit: withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs)),
-        },
-        {
-            col,
-            scrollY,
-        },
-    );
-
-    // drawFieldDual(
-    //     ``,
-    //     `Delete`,
-    //     `Rename`, // ?
-    //     row,
-    //     {
-    //         // TODO #4 patch delete. If patch used, they should be replaced with default patch
-    //         edit: () => console.log('Delete to be implemented...'),
-    //     },
-    //     {
-    //         // edit: () => savePatch('kick23', patch.id),
-    //     },
-    //     { scrollY },
-    // );
-
-    drawKeyboard(
-        (char) => {
-            if (char === 'DEL') {
-                saveAs = saveAs.slice(0, -1);
-            } else if (char === 'DONE') {
-                return withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs))();
-            } else {
-                if (saveAs.length < 10) {
-                    saveAs += char;
-                }
-            }
-        },
-        { row: rowNext(1), col, scrollY, done: 'SAVE' },
     );
 }

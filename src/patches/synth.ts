@@ -16,8 +16,6 @@ import { drawSliderField } from '../draw/drawSlider';
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;
 
-let saveAs = '';
-
 interface WavetableState {
     wavetable: Wavetable;
     name: string;
@@ -25,10 +23,6 @@ interface WavetableState {
 }
 
 const wavetables: WavetableState[] = [];
-
-export function synthInit(patch: Patch) {
-    saveAs = patch.name;
-}
 
 const col = config.screen.col;
 

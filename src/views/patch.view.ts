@@ -51,7 +51,7 @@ export async function patchView(options: RenderOptions = {}) {
             // TODO #38 preset view for midi
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
-        case 'kick23':
+        case engine:
             kick23(patch, scrollY);
             break;
     }
@@ -63,10 +63,10 @@ export async function patchView(options: RenderOptions = {}) {
         `Save`,
         rowNext(1),
         {
-            edit: withInfo('Loaded', () => loadPatchId('kick23', patch.id)),
+            edit: withInfo('Loaded', () => loadPatchId(engine, patch.id)),
         },
         {
-            edit: withSuccess('Saved', () => savePatch('kick23', patch.id)),
+            edit: withSuccess('Saved', () => savePatch(engine, patch.id)),
         },
         { scrollY },
     );
@@ -76,7 +76,7 @@ export async function patchView(options: RenderOptions = {}) {
         saveAs,
         rowNext(col),
         {
-            edit: withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs)),
+            edit: withSuccess('Saved', () => savePatchAs(engine, patch, saveAs)),
         },
         {
             col,
@@ -89,7 +89,7 @@ export async function patchView(options: RenderOptions = {}) {
             if (char === 'DEL') {
                 saveAs = saveAs.slice(0, -1);
             } else if (char === 'DONE') {
-                return withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs))();
+                return withSuccess('Saved', () => savePatchAs(engine, patch, saveAs))();
             } else {
                 if (saveAs.length < 10) {
                     saveAs += char;

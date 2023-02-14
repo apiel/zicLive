@@ -9,7 +9,7 @@ import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
 import { drawKeyboard } from '../draw/drawKeyboard';
 import { withInfo, withSuccess } from '../draw/drawMessage';
-import { rowGetAndAdd, rowGet, rowNext, rowReset } from '../draw/rowNext';
+import { rowNext, rowGet, rowReset, rowGetAndAdd } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
 
 const fId = Kick23.FloatId;
@@ -27,7 +27,7 @@ export function kick23Init(patch: Patch) {
 const col = config.screen.col;
 
 const add = config.screen.col === 1 ? 3 : 1;
-const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet();
+const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet() + 1;
 
 export default function (patch: Patch, scrollY: number) {
     rowReset();
@@ -80,7 +80,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Resonance`,
         ` ${Math.round(patch.floats[fId.filterResonance] * 100)}`,
-        rowGetAndAdd(1),
+        rowNext(col),
         {
             edit: (direction) => {
                 patch.setNumber(fId.filterResonance, minmax(patch.floats[fId.filterResonance] + direction, 0, 1));
@@ -94,57 +94,10 @@ export default function (patch: Patch, scrollY: number) {
         },
     );
 
-    drawSeparator('Wavetable', rowGetAndAdd(1), { scrollY });
-
-    if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
-        lastWavetable = patch.strings[sId.Wavetable];
-        lastMorph = patch.floats[fId.Morph];
-        wavetable = getWavetable(lastWavetable, lastMorph);
-    }
-    drawWavetable(wavetable.data, { row: rowAddGraph(), col, scrollY });
-    drawField(
-        `Wavetable`,
-        path.parse(patch.strings[sId.Wavetable]).name,
-        rowGetAndAdd(1),
-        {
-            edit: async (direction) => {
-                patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
-            },
-            steps: [1, 10],
-        },
-        { scrollY },
-    );
-    drawField(
-        `Morph`,
-        `${patch.floats[fId.Morph].toFixed(1)}/${wavetable.wavetableCount}`,
-        rowGetAndAdd(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction, 0, 64));
-            },
-            steps: [0.1, 1],
-        },
-        { scrollY, info: `${wavetable.wavetableSampleCount} samples` },
-    );
-    drawField(
-        `Frequency`,
-        patch.floats[fId.Frequency].toString(),
-        rowGetAndAdd(1),
-        {
-            edit: (direction) => {
-                patch.setNumber(fId.Frequency, minmax(patch.floats[fId.Frequency] + direction, 10, 2000));
-            },
-            steps: [1, 10],
-        },
-        { scrollY, info: `hz` },
-    );
-
-    drawSeparator('Envelope Amplitude', rowGetAndAdd(1), { scrollY });
-
     drawField(
         `Duration`,
         patch.floats[fId.Duration].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction, 10, 5000));
@@ -156,6 +109,53 @@ export default function (patch: Patch, scrollY: number) {
             scrollY,
         },
     );
+
+    drawSeparator('Wavetable', rowNext(1), { scrollY });
+
+    if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
+        lastWavetable = patch.strings[sId.Wavetable];
+        lastMorph = patch.floats[fId.Morph];
+        wavetable = getWavetable(lastWavetable, lastMorph);
+    }
+    drawWavetable(wavetable.data, { row: rowAddGraph(), col, scrollY });
+    drawField(
+        `Wavetable`,
+        path.parse(patch.strings[sId.Wavetable]).name,
+        rowNext(1),
+        {
+            edit: async (direction) => {
+                patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
+            },
+            steps: [1, 10],
+        },
+        { scrollY },
+    );
+    drawField(
+        `Morph`,
+        `${patch.floats[fId.Morph].toFixed(1)}/${wavetable.wavetableCount}`,
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction, 0, 64));
+            },
+            steps: [0.1, 1],
+        },
+        { scrollY, info: `${wavetable.wavetableSampleCount} samples` },
+    );
+    drawField(
+        `Frequency`,
+        patch.floats[fId.Frequency].toString(),
+        rowNext(1),
+        {
+            edit: (direction) => {
+                patch.setNumber(fId.Frequency, minmax(patch.floats[fId.Frequency] + direction, 10, 2000));
+            },
+            steps: [1, 10],
+        },
+        { scrollY, info: `hz` },
+    );
+
+    drawSeparator('Envelope Amplitude', rowNext(1), { scrollY });
 
     drawEnvelope(
         [
@@ -172,7 +172,7 @@ export default function (patch: Patch, scrollY: number) {
         `AmpMod1`,
         Math.round(patch.floats[fId.envAmp1] * 100).toString(),
         Math.round(patch.floats[fId.envAmp1Time] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAmp1, minmax(patch.floats[fId.envAmp1] + direction, 0, 1));
@@ -194,7 +194,7 @@ export default function (patch: Patch, scrollY: number) {
         `AmpMod2`,
         Math.round(patch.floats[fId.envAmp2] * 100).toString(),
         Math.round(patch.floats[fId.envAmp2Time] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAmp2, minmax(patch.floats[fId.envAmp2] + direction, 0, 1));
@@ -220,7 +220,7 @@ export default function (patch: Patch, scrollY: number) {
         `AmpMod3`,
         Math.round(patch.floats[fId.envAmp3] * 100).toString(),
         Math.round(patch.floats[fId.envAmp3Time] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAmp3, minmax(patch.floats[fId.envAmp3] + direction, 0, 1));
@@ -239,7 +239,7 @@ export default function (patch: Patch, scrollY: number) {
         { info: '%', info2: '%t', scrollY },
     );
 
-    drawSeparator('Envelope Frequency', rowGetAndAdd(1), { scrollY });
+    drawSeparator('Envelope Frequency', rowNext(1), { scrollY });
 
     drawEnvelope(
         [
@@ -255,7 +255,7 @@ export default function (patch: Patch, scrollY: number) {
         `FrqMod1`,
         Math.round(patch.floats[fId.envFreq1] * 100).toString(),
         Math.round(patch.floats[fId.envFreq1Time] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envFreq1, minmax(patch.floats[fId.envFreq1] + direction, 0, 1));
@@ -277,7 +277,7 @@ export default function (patch: Patch, scrollY: number) {
         `FrqMod2`,
         Math.round(patch.floats[fId.envFreq2] * 100).toString(),
         Math.round(patch.floats[fId.envFreq2Time] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envFreq2, minmax(patch.floats[fId.envFreq2] + direction, 0, 1));
@@ -303,7 +303,7 @@ export default function (patch: Patch, scrollY: number) {
         `FrqMod3`,
         Math.round(patch.floats[fId.envFreq3] * 100).toString(),
         Math.round(patch.floats[fId.envFreq3Time] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envFreq3, minmax(patch.floats[fId.envFreq3] + direction, 0, 1));
@@ -339,7 +339,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Save as`,
         saveAs,
-        rowGetAndAdd(1),
+        rowNext(col),
         {
             edit: withSuccess('Saved', () => savePatchAs('kick23', patch, saveAs)),
         },

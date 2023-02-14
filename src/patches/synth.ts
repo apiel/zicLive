@@ -33,7 +33,7 @@ export function synthInit(patch: Patch) {
 const col = config.screen.col;
 
 const add = config.screen.col === 1 ? 3 : 1;
-const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet();
+const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet() + 1;
 
 // TODO should there be on top a way to change of seq??
 export default function (patch: Patch, scrollY: number) {
@@ -69,7 +69,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Volume`,
         Math.round(patch.floats[fId.Volume] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction, 0, 1));
@@ -116,14 +116,14 @@ export default function (patch: Patch, scrollY: number) {
         },
     );
 
-    drawSeparator('Oscillator 1', rowGetAndAdd(1), { scrollY });
+    drawSeparator('Oscillator 1', rowNext(1), { scrollY });
 
     let wavetable = wavetables[sId.oscWavetable];
     drawWavetable(wavetable.wavetable.data, { row: rowAddGraph(), col, scrollY });
     drawField(
         `Wavetable`,
         path.parse(wavetable.name).name,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: async (direction) => {
                 patch.setString(sId.oscWavetable, await getNextWaveTable(direction, wavetable.name));
@@ -135,7 +135,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Morph`,
         `${patch.floats[fId.OscMorph].toFixed(1)}/${wavetable.wavetable.wavetableCount}`,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.OscMorph, minmax(patch.floats[fId.OscMorph] + direction, 0, 64));
@@ -147,7 +147,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Amplitude`,
         `${Math.round(patch.floats[fId.OscAmplitude] * 100)}`,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.OscAmplitude, minmax(patch.floats[fId.OscAmplitude] + direction, 0, 1));
@@ -159,7 +159,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Frequency`,
         patch.floats[fId.OscFrequency].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.OscFrequency, minmax(patch.floats[fId.OscFrequency] + direction, 10, 2000));
@@ -169,7 +169,7 @@ export default function (patch: Patch, scrollY: number) {
         { scrollY, info: `hz` },
     );
 
-    drawSeparator('Oscillator 2 / LFO', rowGetAndAdd(1), { scrollY });
+    drawSeparator('Oscillator 2 / LFO', rowNext(1), { scrollY });
 
     // drawField(
     //     `Mix2osc1`,
@@ -228,7 +228,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Wavetable`,
         path.parse(wavetable2.name).name,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: async (direction) => {
                 patch.setString(sId.osc2Wavetable, await getNextWaveTable(direction, wavetable2.name));
@@ -240,7 +240,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Morph`,
         `${patch.floats[fId.Osc2Morph].toFixed(1)}/${wavetable2.wavetable.wavetableCount}`,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Osc2Morph, minmax(patch.floats[fId.Osc2Morph] + direction, 0, 64));
@@ -252,7 +252,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Amplitude`,
         `${Math.round(patch.floats[fId.Osc2Amplitude] * 100)}`,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Osc2Amplitude, minmax(patch.floats[fId.Osc2Amplitude] + direction, 0, 1));
@@ -264,7 +264,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Frequency`,
         patch.floats[fId.Osc2Frequency].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.Osc2Frequency, minmax(patch.floats[fId.Osc2Frequency] + direction, 10, 2000));
@@ -318,37 +318,41 @@ export default function (patch: Patch, scrollY: number) {
         ``,
         `${Math.round(patch.floats[fId.osc2ModMorph] * 100)}`,
         ``,
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.osc2ModMorph, minmax(patch.floats[fId.osc2ModMorph] + direction, 0, 1));
             },
             steps: [0.01, 0.05],
         },
-        {
-        },
+        {},
         { info: '%morph', scrollY },
     );
 
-    drawSeparator('Envelope', rowGetAndAdd(1), { scrollY });
+    drawSeparator('Envelope', rowNext(1), { scrollY });
 
     const envMs = patch.floats[fId.envAttack] + patch.floats[fId.envDecay] + patch.floats[fId.envRelease];
-    const env = envMs / 4 * 5;
+    const env = (envMs / 4) * 5;
     drawEnvelope(
-        [
-            [0, 0],
-            [1, patch.floats[fId.envAttack] / env],
-            [patch.floats[fId.envSustain], patch.floats[fId.envDecay] / env],
-            [patch.floats[fId.envSustain], 1.0 - patch.floats[fId.envRelease] / env],
-            [0.0, 1.0],
-        ],
+        env
+            ? [
+                  [0, 0],
+                  [1, patch.floats[fId.envAttack] / env],
+                  [patch.floats[fId.envSustain], (patch.floats[fId.envAttack] + patch.floats[fId.envDecay]) / env],
+                  [patch.floats[fId.envSustain], 1.0 - patch.floats[fId.envRelease] / env],
+                  [0.0, 1.0],
+              ]
+            : [
+                  [0, 0],
+                  [0.0, 1.0],
+              ],
         { row: rowAddGraph(), col, scrollY },
     );
 
     drawField(
         `Attack`,
         patch.floats[fId.envAttack].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envAttack, minmax(patch.floats[fId.envAttack] + direction, 0, 9900));
@@ -364,7 +368,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Decay`,
         patch.floats[fId.envDecay].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envDecay, minmax(patch.floats[fId.envDecay] + direction, 0, 9900));
@@ -380,7 +384,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Sustain`,
         Math.round(patch.floats[fId.envSustain] * 100).toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envSustain, minmax(patch.floats[fId.envSustain] + direction, 0, 1));
@@ -396,7 +400,7 @@ export default function (patch: Patch, scrollY: number) {
     drawField(
         `Release`,
         patch.floats[fId.envRelease].toString(),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 patch.setNumber(fId.envRelease, minmax(patch.floats[fId.envRelease] + direction, 0, 9900));

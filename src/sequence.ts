@@ -54,11 +54,12 @@ export function playSequence(sequence: Sequence, playing = true, next?: boolean)
     sequence.playing = playing;
     const { engine } = getTrack(sequence.trackId);
     const { floats, strings, cc } = getPatch(engine, sequence.patchId);
+    const patch = { floats, strings, cc, id: sequence.patchId };
     setSequencerState(sequence.trackId, sequence.patternId, playing, {
         next,
         detune: sequence.detune,
         dataId: sequence.id,
-        patch: { floats, strings, cc, id: sequence.patchId },
+        patch,
     });
 }
 

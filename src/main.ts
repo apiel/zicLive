@@ -1,9 +1,9 @@
 import { exit } from 'process';
-import { getAllSequencerStates, setOnBeatCallback, start, SynthPathIds, trackSetString } from 'zic_node';
+import { getAllSequencerStates, setOnBeatCallback, start, trackSetString } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
 import { config, DATA_PATH } from './config';
 import { beatViews } from './def';
-import { drawError } from './draw/drawMessage';
+import { drawError, renderMessage } from './draw/drawMessage';
 import { loadPatches } from './patch';
 import { loadPatterns } from './pattern';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
@@ -16,9 +16,8 @@ start();
 // FIXME might need to remove this?
 trackSetString(0, `${DATA_PATH}/wavetables/0_test.wav`);
 trackSetString(1, `${DATA_PATH}/patches/pd/_pd/poly`);
-trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Osc);
-trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo1);
-trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 0);
+trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 1);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo1);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo2);
@@ -53,6 +52,8 @@ trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, SynthPathIds.Lfo2);
         } catch (error) {
             console.error(error);
             drawError((error as any).message);
+            renderMessage();
+            render();
         }
     });
     await renderView();
@@ -70,7 +71,6 @@ setInterval(async () => {
         } else if (events.keysDown?.includes(224) || events.keysDown?.includes(44)) {
             minimize();
         } else if (events.keysDown || events.keysUp) {
-            // console.log('events', events);
             if (await viewEventHandler(events)) {
                 render();
             }
@@ -78,5 +78,7 @@ setInterval(async () => {
     } catch (error) {
         console.error(error);
         drawError((error as any).message);
+        renderMessage();
+        render();
     }
 }, 10);

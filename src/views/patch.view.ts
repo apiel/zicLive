@@ -1,16 +1,23 @@
 import { clear, drawText, Events } from 'zic_node_ui';
-import { getPatch } from '../patch';
+import { getPatch, loadPatchId, savePatch, savePatchAs } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import { getTrack } from '../track';
-import kick23, { kick23Init } from '../patches/kick23';
+import kick23 from '../patches/kick23';
+import synth from '../patches/synth';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { config } from '../config';
 import { RenderOptions } from '../view';
+import { renderMessage, withInfo, withSuccess } from '../draw/drawMessage';
+import { drawField, drawFieldDual } from '../draw/drawField';
+import { rowNext } from '../draw/rowNext';
+import { drawKeyboard } from '../draw/drawKeyboard';
 
 let scrollY = 0;
 let currentPatchId = -1;
+let saveAs = '';
+const col = config.screen.col;
 
 export async function patchView(options: RenderOptions = {}) {
     cleanSelectableItems();
@@ -29,17 +36,12 @@ export async function patchView(options: RenderOptions = {}) {
     if (currentPatchId !== patchId) {
         scrollY = 0;
         currentPatchId = patchId;
-        switch (engine) {
-            case 'kick23':
-                kick23Init(patch);
-                break;
-        }
+        saveAs = patch.name;
     }
 
     switch (engine) {
-        case 'zicSynth':
-            // TODO #40 preset view for zicSynth
-            drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
+        case 'synth':
+            synth(patch, scrollY);
             break;
         case 'pd':
             // TODO #39 preset view for pd
@@ -49,10 +51,55 @@ export async function patchView(options: RenderOptions = {}) {
             // TODO #38 preset view for midi
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
-        case 'kick23':
+        case engine:
             kick23(patch, scrollY);
             break;
     }
+
+
+    drawFieldDual(
+        ``,
+        `Reload`,
+        `Save`,
+        rowNext(1),
+        {
+            edit: withInfo('Loaded', () => loadPatchId(engine, patch.id)),
+        },
+        {
+            edit: withSuccess('Saved', () => savePatch(engine, patch.id)),
+        },
+        { scrollY },
+    );
+
+    drawField(
+        `Save as`,
+        saveAs,
+        rowNext(col),
+        {
+            edit: withSuccess('Saved', () => savePatchAs(engine, patch, saveAs)),
+        },
+        {
+            col,
+            scrollY,
+        },
+    );
+
+    drawKeyboard(
+        (char) => {
+            if (char === 'DEL') {
+                saveAs = saveAs.slice(0, -1);
+            } else if (char === 'DONE') {
+                return withSuccess('Saved', () => savePatchAs(engine, patch, saveAs))();
+            } else {
+                if (saveAs.length < 10) {
+                    saveAs += char;
+                }
+            }
+        },
+        { row: rowNext(1), col, scrollY, done: 'SAVE' },
+    );
+
+    renderMessage();
 }
 
 export async function patchEventHandler(events: Events) {

@@ -2,12 +2,15 @@ import { config } from "../config";
 
 // TODO might want  to use: row[col]...
 
-let row = 0;
+let row = -1;
+let previousCol = 0;
 export const rowNext = config.screen.col === 1 ? (_col: number) => row++ : (col: number) => {
-    if (col === config.screen.col) {
-        return row++;
+    if (col > previousCol) {
+        previousCol = col;
+        return row;
     }
-    return row;
+    previousCol = col;
+    return ++row;
 };
 
 /**
@@ -33,8 +36,8 @@ export const rowGetAndAdd = (add: number) => {
     return r;
 }
 
-export const rowReset = () => {
-    row = 0;
+export const rowReset = (_row = -1) => {
+    row = _row;
 }
 
 export const rowGet = () => row;

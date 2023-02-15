@@ -14,7 +14,7 @@ let messageTimeout: NodeJS.Timeout;
 let message = '';
 let messageType = Message.None;
 
-export function drawMessage(_message: string, type: Message = Message.Info) {
+export async function drawMessage(_message: string, type: Message = Message.Info) {
     message = _message;
     messageType = type;
     clearTimeout(messageTimeout);
@@ -38,7 +38,7 @@ export function withSuccess<T = void>(message: string, fn: (...args: any[]) => P
         const result = await fn(...args);
         drawMessage(message, Message.Success);
         return result;
-    }
+    };
 }
 
 export function withInfo<T = void>(message: string, fn: (...args: any[]) => Promise<T>) {
@@ -46,7 +46,7 @@ export function withInfo<T = void>(message: string, fn: (...args: any[]) => Prom
         const result = await fn(...args);
         drawMessage(message);
         return result;
-    }
+    };
 }
 
 export function drawError(message: string) {

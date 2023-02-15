@@ -7,7 +7,6 @@ import { patchEventHandler, patchView } from './views/patch.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
 import { View } from './def';
-import { renderMessage } from './draw/drawMessage';
 
 let view: View = View.Sequencer;
 
@@ -22,7 +21,7 @@ export interface RenderOptions {
     beatRendering?: boolean;
 }
 
-function _renderView(options: RenderOptions) {
+export const renderView = (options: RenderOptions = {}) => {
     switch (view) {
         case View.Sequencer:
             return sequencerView(options);
@@ -38,16 +37,11 @@ function _renderView(options: RenderOptions) {
             return helpView(options);
     }
     return sequencerView(options);
-}
-
-export const renderView = async (options: RenderOptions = {}) => {
-    await _renderView(options);
-    renderMessage();
 };
 
-export const viewEventHandler = (events: Events) => {
+export const viewEventHandler = async (events: Events) => {
     if (eventMenu(events)) {
-        renderView();
+        await renderView();
         return true;
     }
     switch (view) {

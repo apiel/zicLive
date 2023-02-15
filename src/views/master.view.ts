@@ -3,6 +3,7 @@ import { clear, Events } from 'zic_node_ui';
 import { config } from '../config';
 import { drawButton } from '../draw/drawButton';
 import { drawField } from '../draw/drawField';
+import { renderMessage } from '../draw/drawMessage';
 import { rowNext, rowReset } from '../draw/rowNext';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
@@ -65,6 +66,8 @@ export async function masterView(options: RenderOptions = {}) {
 
     drawButton('Save', rowNext(1), () => console.log('save project'));
     drawButton('Reload', rowNext(2), () => console.log('reload project'), { col });
+
+    renderMessage();
 }
 
 export async function masterEventHandler(events: Events) {

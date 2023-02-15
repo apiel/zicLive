@@ -21,6 +21,7 @@ import { drawButton } from '../draw/drawButton';
 import { sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
+import { renderMessage } from '../draw/drawMessage';
 
 const { margin } = unit;
 
@@ -65,12 +66,12 @@ export async function sequencerEditView(options: RenderOptions = {}) {
 
     setColor(color.foreground);
     drawFilledRect({
-        position: { x: margin, y: scrollY + margin + rowGet() * unit.height },
+        position: { x: margin, y: scrollY + margin + (rowGet() + 1) * unit.height },
         size: { w: config.screen.size.w - margin * 2, h: config.screen.size.h },
     });
 
     if (selectedId === -1) {
-        drawButton('New sequence', rowGet(), newSequence);
+        drawButton('New sequence', rowNext(1), newSequence);
         return;
     }
 
@@ -169,8 +170,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     drawField(
         `Next`,
         nextSequenceId ? `${nextSequenceId + 1} ${getPatch(track.engine, patchId).name}` : `---`,
-        // rowNext(1),
-        rowGetAndAdd(1),
+        rowNext(1),
         {
             edit: (direction) => {
                 if (direction !== 0) {
@@ -187,6 +187,8 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     );
     drawButton('Reload all', rowNext(1), loadSequences, { scrollY });
     drawButton('Save all', rowNext(col), saveSequences, { col, scrollY });
+
+    renderMessage();
 }
 
 export async function sequencerEditEventHandler(events: Events) {

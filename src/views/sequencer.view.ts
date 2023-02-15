@@ -7,6 +7,7 @@ import { sequencesGridNode } from '../nodes/sequencesGrid.node';
 import { getSequence, setSelectedSequenceId, toggleSequence } from '../sequence';
 import { View } from '../def';
 import { RenderOptions } from '../view';
+import { renderMessage } from '../draw/drawMessage';
 
 let scrollY = 0;
 const col = config.sequence.col;
@@ -22,6 +23,8 @@ export async function sequencerView(options: RenderOptions = {}) {
             forceSelectedItem(View.SequencerEdit, id);
         },
     }));
+
+    renderMessage();
 }
 
 export async function sequencerEventHandler(events: Events) {

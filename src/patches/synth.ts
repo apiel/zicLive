@@ -165,33 +165,6 @@ export default function (patch: Patch, scrollY: number) {
 
     drawSeparator('Oscillator 2 / LFO', rowNext(1), { scrollY });
 
-    // drawField(
-    //     `Mix2osc1`,
-    //     `${Math.round(patch.floats[fId.Mix] * 100)}`,
-    //     rowNext(1),
-    //     {
-    //         edit: (direction) => {
-    //             patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
-    //         },
-    //         steps: [0.01, 0.1],
-    //     },
-    //     { scrollY, info: `%` },
-    // );
-    // TODO make better mix representation
-    // const mix = Math.round(patch.floats[fId.Mix] * 100);
-    // drawField(
-    //     `Mix`,
-    //     // `${Math.round(patch.floats[fId.Mix] * 100)}`,
-    //     `${100 - mix}% osc1 ${mix}% osc2`,
-    //     rowNext(1),
-    //     {
-    //         edit: (direction) => {
-    //             patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
-    //         },
-    //         steps: [0.01, 0.1],
-    //     },
-    //     { scrollY, info: `%` },
-    // );
     drawSliderField(
         `Mix`,
         patch.floats[fId.Mix],
@@ -257,11 +230,15 @@ export default function (patch: Patch, scrollY: number) {
     );
     drawField(
         `Frequency`,
-        patch.floats[fId.Osc2Frequency].toString(),
+        patch.floats[fId.Osc2Frequency].toFixed(1).toString(),
         rowNext(1),
         {
             edit: (direction) => {
-                patch.setNumber(fId.Osc2Frequency, minmax(patch.floats[fId.Osc2Frequency] + direction, 10, 2000));
+                const val = patch.floats[fId.Osc2Frequency];
+                patch.setNumber(
+                    fId.Osc2Frequency,
+                    minmax(val + direction * (patch.floats[fId.Osc2Frequency] > 10 ? 1 : 0.1), 0.1, 2000),
+                );
             },
             steps: [1, 10],
         },
@@ -446,7 +423,6 @@ export default function (patch: Patch, scrollY: number) {
         },
         { info: '%frq', info2: '%amp', scrollY, col },
     );
-
 
     drawFieldDual(
         ``,

@@ -5,7 +5,7 @@ Zic Live is a groovebox for small screen size like handled console or Raspberry 
 ![sequencer](https://github.com/apiel/zicLive/blob/main/img/zicLive_sequencer.png?raw=true)
 ![pattern](https://github.com/apiel/zicLive/blob/main/img/zicLive_pattern.png?raw=true)
 
-There is different kinds of synth engine, a basic wavetable synth, a drum kick, a [PureData](https://puredata.info/) engine and a Midi engine.
+There is different kinds of track: 1 drum kick, 3 basic wavetable synth, and 4 Midi track.
 
 ![kick23](https://github.com/apiel/zicLive/blob/main/img/zicLive_kick23.png?raw=true)
 

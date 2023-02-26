@@ -1,8 +1,8 @@
-import { clear, drawFilledRect, drawRect, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
-import { color, unit } from '../style';
+import { color, font, unit } from '../style';
 import {
     getSelectedSequenceId,
     loadSequences,
@@ -14,16 +14,17 @@ import {
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
-import { PATTERN_COUNT } from 'zic_node';
+import { NOTE_END, NOTE_START, PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
-import { drawField } from '../draw/drawField';
+import { drawField, getFieldRect } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
 import { sequenceRect, sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
-
-const { margin } = unit;
+import { getPattern, Pattern, Step, STEP_CONDITIONS } from '../pattern';
+import { drawSelectableText } from '../draw/drawSelectable';
+import { Midi } from 'tonal';
 
 let scrollY = 0;
 const col = config.screen.col;
@@ -67,10 +68,6 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     rowAdd(2);
 
     setColor(color.foreground);
-    drawFilledRect({
-        position: { x: margin, y: scrollY + margin + (rowGet() + 1) * unit.height },
-        size: { w: config.screen.size.w - margin * 2, h: config.screen.size.h },
-    });
 
     if (selectedId === -1) {
         drawButton('New sequence', rowNext(1), newSequence);
@@ -190,7 +187,121 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     drawButton('Reload all', rowNext(1), loadSequences, { scrollY });
     drawButton('Save all', rowNext(col), saveSequences, { col, scrollY });
 
+    drawPattern();
+
     renderMessage();
+}
+
+const margin = 1;
+function drawPattern() {
+    const pattern = getPattern();
+
+    for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
+        const step = pattern.steps[stepIndex][0];
+        // FIXME : draw only visible steps
+        // const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
+        // if (y < config.screen.size.h + size.h) {
+        drawStep(pattern, step, rowNext(1), stepIndex);
+        // }
+    }
+}
+
+export function drawStep(pattern: Pattern, step: Step | null, row: number, stepIndex: number) {
+    const rect = getFieldRect(row, { scrollY });
+
+    setColor(color.foreground);
+    drawFilledRect({
+        position: { x: rect.position.x + 1, y: rect.position.y + 1 },
+        size: { w: rect.size.w - 2, h: rect.size.h - 2 },
+    });
+
+    const stepStr = {
+        note: '---',
+        velocity: '---',
+        condition: '---',
+        tie: '--',
+    };
+    if (step) {
+        stepStr.note = Midi.midiToNoteName(step.note, { sharps: true });
+        stepStr.velocity = `${step.velocity.toString().padStart(3, ' ')}`;
+        stepStr.condition = step.condition ? STEP_CONDITIONS[step.condition] : STEP_CONDITIONS[0];
+        if (step.tie) {
+            stepStr.tie = 'Tie';
+        }
+    }
+
+    drawSelectableText(
+        stepStr.note,
+        { x: rect.position.x + 2, y: rect.position.y + 3 },
+        { color: color.info, size: 17, font: font.bold },
+        {
+            edit: (direction) => {
+                if (step) {
+                    if (direction < 0 && step.note <= NOTE_START) {
+                        pattern.steps[stepIndex][0] = null;
+                    } else {
+                        step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+                    }
+                } else if (direction === 1) {
+                    // If no already existing step, create one if direction is positive
+                    const previousStep = pattern.steps
+                        .slice(0, stepIndex)
+                        .reverse()
+                        .find((step) => step[0]?.note)?.[0];
+                    pattern.steps[stepIndex][0] = {
+                        note: previousStep?.note || 60,
+                        velocity: 100,
+                        tie: false,
+                    };
+                }
+            },
+            steps: [1, 12],
+        },
+    );
+
+    drawSelectableText(
+        stepStr.velocity,
+        // FIXME if moving down, then selection not working well
+        { x: rect.position.x + 38, y: rect.position.y + 3 },
+        { color: color.info, size: 12, font: font.regular },
+        {
+            edit: (direction) => {
+                if (step) {
+                    step.velocity = minmax(step.velocity + direction, 1, 100);
+                }
+            },
+            steps: [1, 5],
+        },
+    );
+    if (step) {
+        drawText('%', { x: rect.position.x + 61, y: rect.position.y + 3 }, { color: color.secondaryInfo, size: 10, font: font.regular });
+    }
+
+    drawSelectableText(
+        stepStr.tie,
+        { x: rect.position.x + 80, y: rect.position.y + 3 },
+        { color: color.info, size: 12, font: font.regular },
+        {
+            edit: () => {
+                if (step) {
+                    step.tie = !step.tie;
+                }
+            },
+        },
+    );
+
+    drawSelectableText(
+        stepStr.condition,
+        { x: rect.position.x + 110, y: rect.position.y + 3 },
+        { color: color.secondaryInfo, size: 12, font: font.regular },
+        {
+            edit: (direction) => {
+                if (step) {
+                    step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
+                }
+            },
+        },
+    );
 }
 
 export async function sequencerEditEventHandler(events: Events) {

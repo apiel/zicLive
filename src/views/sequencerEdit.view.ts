@@ -1,4 +1,4 @@
-import { clear, drawFilledRect, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, drawRect, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
@@ -18,7 +18,7 @@ import { PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
 import { drawField } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
-import { sequencesRowNode } from '../nodes/sequencesRow.node';
+import { sequenceRect, sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
@@ -61,7 +61,9 @@ export async function sequencerEditView(options: RenderOptions = {}) {
             priority: id === selectedId,
         }),
         _sequences,
+        { selectedId },
     );
+
     rowAdd(2);
 
     setColor(color.foreground);

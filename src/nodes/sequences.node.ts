@@ -8,11 +8,16 @@ import { color, font } from '../style';
 import { getTrack, getTrackColor } from '../track';
 import { SelectableOptions } from '../selector';
 
+export interface SequenceNoteOptions {
+    selectedId?: number;
+}
+
 export function sequencesNode(
     sequences: Sequence[],
     scrollY: number,
     sequenceRect: (id: number, scrollY: number) => Rect,
     getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
+    { selectedId }: SequenceNoteOptions = { selectedId: -1 },
 ) {
     for (let i = 0; i < sequences.length; i++) {
         const { id, trackId, patchId, patternId, nextSequenceId, ...seq } = sequences[i];
@@ -29,6 +34,7 @@ export function sequencesNode(
             title: getPatch(track.engine, patchId).name,
             pattern: getPattern(patternId),
             next,
+            selected: selectedId === id,
         };
         const rect = sequenceRect(i, scrollY);
         sequenceNode(id, rect, props);

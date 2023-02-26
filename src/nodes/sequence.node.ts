@@ -1,4 +1,4 @@
-import { Color, drawFilledRect, drawLine, drawText, Point, Rect, setColor, Size } from 'zic_node_ui';
+import { Color, drawFilledRect, drawLine, drawRect, drawText, Point, Rect, setColor, Size } from 'zic_node_ui';
 import { color, font } from '../style';
 import { Pattern } from '../pattern';
 import { patternPreviewNode } from './patternPreview.node';
@@ -13,12 +13,13 @@ interface Props {
     repeat: number;
     pattern: Pattern;
     activeStep?: number;
+    selected?: boolean;
 }
 
 export function sequenceNode(
     id: number,
     { position, size }: Rect,
-    { titleColor, title, playing, detune, next, repeat, pattern, activeStep }: Props,
+    { titleColor, title, playing, detune, next, repeat, pattern, activeStep, selected }: Props,
 ): Rect {
     setColor(playing ? color.sequencer.playing : color.foreground);
     drawFilledRect({ position, size });
@@ -40,6 +41,11 @@ export function sequenceNode(
     patternPreviewNode({ x: position.x + 2, y: position.y + 15 }, { w: size.w, h: size.h - 30 }, pattern, playing);
     if (activeStep !== undefined) {
         renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, pattern, activeStep);
+    }
+
+    if (selected) {
+        setColor(color.secondarySelected);
+        drawRect({ position, size });
     }
 
     return { position, size };

@@ -1,7 +1,7 @@
 import { Rect } from 'zic_node_ui';
 import { unit } from '../style';
 import { config } from '../config';
-import { sequencesNode } from './sequences.node';
+import { SequenceNoteOptions, sequencesNode } from './sequences.node';
 import { sequences } from '../sequence';
 import { SelectableOptions } from '../selector';
 
@@ -25,6 +25,7 @@ export function sequencesRowNode(
     scrollY: number,
     getSelectableOptions: (id: number) => SelectableOptions = () => ({}),
     _sequences = sequences,
+    options: SequenceNoteOptions,
 ) {
-    sequencesNode(_sequences, scrollY, sequenceRect, getSelectableOptions);
+    sequencesNode(_sequences, scrollY, sequenceRect, getSelectableOptions, options);
 }

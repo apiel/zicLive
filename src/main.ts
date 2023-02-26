@@ -15,7 +15,7 @@ start();
 
 // FIXME might need to remove this?
 trackSetString(0, `${DATA_PATH}/wavetables/0_test.wav`);
-trackSetString(1, `${DATA_PATH}/patches/pd/_pd/poly`);
+trackSetString(1, `${DATA_PATH}/wavetables/0_test.wav`);
 trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 0);
 trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 1);
 // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);

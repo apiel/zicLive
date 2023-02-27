@@ -80,6 +80,8 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     const track = getTrack(trackId);
     const patches = getPatches(track.engine);
     const patch = getPatch(track.engine, patchId);
+
+    // TODO should id be a string??? 5-7 char
     drawField(
         `Sequence`,
         `#${selectedId + 1}`,
@@ -125,6 +127,8 @@ export async function sequencerEditView(options: RenderOptions = {}) {
             scrollY,
         },
     );
+
+    // TODO remove and mow assign by default the sequence to the equivalent pattern
     drawField(
         `Pattern`,
         '#' + patternId.toString().padStart(3, '0'),
@@ -186,6 +190,8 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
     );
 
+    // TODO instead of having save pattern and save sequence, have a single button
+    // to save the current sequence (and now all the sequences)
     drawFieldDual(
         `Seq(s)`,
         `Reload`,

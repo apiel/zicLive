@@ -16,15 +16,16 @@ import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { NOTE_END, NOTE_START, PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
-import { drawField, getFieldRect } from '../draw/drawField';
+import { drawField, drawFieldDual, getFieldRect } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
 import { sequenceRect, sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
-import { renderMessage } from '../draw/drawMessage';
+import { renderMessage, withInfo, withSuccess } from '../draw/drawMessage';
 import { getPattern, Pattern, Step, STEP_CONDITIONS } from '../pattern';
 import { drawSelectableText } from '../draw/drawSelectable';
 import { Midi } from 'tonal';
+import { drawSeparator } from '../draw/drawSeparator';
 
 let scrollY = 0;
 const col = config.screen.col;
@@ -184,10 +185,51 @@ export async function sequencerEditView(options: RenderOptions = {}) {
             scrollY,
         },
     );
-    drawButton('Reload all', rowNext(1), loadSequences, { scrollY });
-    drawButton('Save all', rowNext(col), saveSequences, { col, scrollY });
+
+    drawFieldDual(
+        `Seq(s)`,
+        `Reload`,
+        `Save`,
+        rowNext(1),
+        {
+            edit: withInfo('All sequences loaded', loadSequences),
+        },
+        {
+            edit: withSuccess('All sequences saved', saveSequences),
+        },
+        { scrollY },
+    );
+
+    drawSeparator('Pattern', rowNext(1), { scrollY });
+
+    const pattern = getPattern();
+    drawField(
+        `Len`,
+        `${pattern.stepCount}`,
+        rowNext(1),
+        {
+            edit: (direction) => {
+                pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+            },
+        },
+        { scrollY },
+    );
 
     drawPattern();
+
+    drawFieldDual(
+        `Pattern`,
+        `Reload`,
+        `Save`,
+        rowNext(1),
+        {
+            edit: withInfo('All sequences loaded', loadSequences),
+        },
+        {
+            edit: withSuccess('All sequences saved', saveSequences),
+        },
+        { scrollY },
+    );
 
     renderMessage();
 }
@@ -230,10 +272,12 @@ export function drawStep(pattern: Pattern, step: Step | null, row: number, stepI
         }
     }
 
+    const y = rect.position.y + 6;
+
     drawSelectableText(
         stepStr.note,
-        { x: rect.position.x + 2, y: rect.position.y + 3 },
-        { color: color.info, size: 17, font: font.bold },
+        { x: rect.position.x + 4, y: y },
+        { color: color.info, size: 13, font: font.bold },
         {
             edit: (direction) => {
                 if (step) {
@@ -262,7 +306,7 @@ export function drawStep(pattern: Pattern, step: Step | null, row: number, stepI
     drawSelectableText(
         stepStr.velocity,
         // FIXME if moving down, then selection not working well
-        { x: rect.position.x + 38, y: rect.position.y + 3 },
+        { x: rect.position.x + 38, y },
         { color: color.info, size: 12, font: font.regular },
         {
             edit: (direction) => {
@@ -274,12 +318,12 @@ export function drawStep(pattern: Pattern, step: Step | null, row: number, stepI
         },
     );
     if (step) {
-        drawText('%', { x: rect.position.x + 61, y: rect.position.y + 3 }, { color: color.secondaryInfo, size: 10, font: font.regular });
+        drawText('%', { x: rect.position.x + 61, y }, { color: color.secondaryInfo, size: 10, font: font.regular });
     }
 
     drawSelectableText(
         stepStr.tie,
-        { x: rect.position.x + 80, y: rect.position.y + 3 },
+        { x: rect.position.x + 80, y },
         { color: color.info, size: 12, font: font.regular },
         {
             edit: () => {
@@ -292,7 +336,7 @@ export function drawStep(pattern: Pattern, step: Step | null, row: number, stepI
 
     drawSelectableText(
         stepStr.condition,
-        { x: rect.position.x + 110, y: rect.position.y + 3 },
+        { x: rect.position.x + 110, y },
         { color: color.secondaryInfo, size: 12, font: font.regular },
         {
             edit: (direction) => {

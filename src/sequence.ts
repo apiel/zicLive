@@ -95,7 +95,7 @@ export function newSequence() {
         playing: false,
         detune: 0,
         repeat: 0,
-        patternId: 0,
+        patternId: sequences.length,
         nextSequenceId: undefined,
         patchId: 0,
     };

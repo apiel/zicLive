@@ -1,8 +1,8 @@
-import { clear, drawFilledRect, drawRect, drawText, Events, setColor } from 'zic_node_ui';
+import { clear, drawFilledRect, drawText, Events, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
-import { color, font, unit } from '../style';
+import { color, font } from '../style';
 import {
     getSelectedSequenceId,
     loadSequences,
@@ -18,8 +18,8 @@ import { NOTE_END, NOTE_START, PATTERN_COUNT } from 'zic_node';
 import { View } from '../def';
 import { drawField, drawFieldDual, getFieldRect } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';
-import { sequenceRect, sequencesRowNode } from '../nodes/sequencesRow.node';
-import { rowAdd, rowGet, rowGetAndAdd, rowNext, rowReset } from '../draw/rowNext';
+import { sequencesRowNode } from '../nodes/sequencesRow.node';
+import { rowAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
 import { renderMessage, withInfo, withSuccess } from '../draw/drawMessage';
 import { getPattern, Pattern, Step, STEP_CONDITIONS } from '../pattern';
@@ -128,26 +128,10 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
     );
 
-    // TODO remove and mow assign by default the sequence to the equivalent pattern
-    drawField(
-        `Pattern`,
-        '#' + patternId.toString().padStart(3, '0'),
-        rowNext(col),
-        {
-            edit: (direction) => {
-                sequences[selectedId].patternId = minmax(patternId + direction, 0, PATTERN_COUNT - 1);
-            },
-            steps: [1, 10],
-        },
-        {
-            col,
-            scrollY,
-        },
-    );
     drawField(
         `Detune`,
         detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
-        rowNext(1),
+        rowNext(col),
         {
             edit: (direction) => {
                 sequences[selectedId].detune = minmax(detune + direction, -12, 12);
@@ -155,26 +139,26 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
         {
             scrollY,
+            col
         },
     );
     drawField(
         `Repeat`,
         `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`,
-        rowNext(col),
+        rowNext(1),
         {
             edit: (direction) => {
                 sequences[selectedId].repeat = minmax(repeat + direction, 0, 16);
             },
         },
         {
-            col,
             scrollY,
         },
     );
     drawField(
         `Next`,
         nextSequenceId ? `${nextSequenceId + 1} ${getPatch(track.engine, patchId).name}` : `---`,
-        rowNext(1),
+        rowNext(col),
         {
             edit: (direction) => {
                 if (direction !== 0) {
@@ -187,6 +171,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
         {
             scrollY,
+            col
         },
     );
 
@@ -240,7 +225,6 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     renderMessage();
 }
 
-const margin = 1;
 function drawPattern() {
     const pattern = getPattern();
 

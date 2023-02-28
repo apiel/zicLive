@@ -1,8 +1,8 @@
 [
     { "id": 0, "trackId": 0, "playing": false, "detune": 0, "repeat": 0, "patternId": 0, "patchId": 0 },
     { "id": 1, "trackId": 2, "playing": false, "detune": 0, "repeat": 0, "patternId": 1, "patchId": 1 },
-    { "id": 2, "trackId": 2, "playing": false, "detune": 0, "repeat": 0, "patternId": 3, "patchId": 1 },
-    { "id": 3, "trackId": 1, "playing": false, "detune": 0, "repeat": 0, "patternId": 2, "patchId": 1, "presetId": 0 },
-    { "id": 4, "trackId": 2, "playing": false, "detune": 0, "repeat": 0, "patternId": 0, "patchId": 0 },
-    { "id": 5, "trackId": 0, "playing": false, "detune": 0, "repeat": 0, "patternId": 0, "patchId": 0 }
+    { "id": 2, "trackId": 2, "playing": false, "detune": 0, "repeat": 0, "patternId": 2, "patchId": 1 },
+    { "id": 3, "trackId": 1, "playing": false, "detune": 0, "repeat": 0, "patternId": 3, "patchId": 1, "presetId": 0 },
+    { "id": 4, "trackId": 2, "playing": false, "detune": 0, "repeat": 0, "patternId": 4, "patchId": 0 },
+    { "id": 5, "trackId": 0, "playing": false, "detune": 0, "repeat": 0, "patternId": 5, "patchId": 0 }
 ]

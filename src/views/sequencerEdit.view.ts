@@ -5,8 +5,10 @@ import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../se
 import { color, font } from '../style';
 import {
     getSelectedSequenceId,
+    loadSequence,
     loadSequences,
     newSequence,
+    saveSequence,
     saveSequences,
     sequences,
     setSelectedSequenceId,
@@ -141,7 +143,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
         {
             scrollY,
-            col
+            col,
         },
     );
     drawField(
@@ -173,24 +175,22 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
         {
             scrollY,
-            col
+            col,
         },
     );
 
-    // TODO instead of having save pattern and save sequence, have a single button
-    // to save the current sequence (and now all the sequences)
     drawFieldDual(
-        `Seq(s)`,
+        ``,
         `Reload`,
         `Save`,
-        rowNext(1),
+        rowNext(col),
         {
-            edit: withInfo('All sequences loaded', loadSequences),
+            edit: withInfo('Sequence loaded', () => loadSequence(selectedId)),
         },
         {
-            edit: withSuccess('All sequences saved', saveSequences),
+            edit: withSuccess('Sequences saved', () => saveSequence(sequences[selectedId])),
         },
-        { scrollY },
+        { scrollY, col },
     );
 
     drawSeparator('Pattern', rowNext(1), { scrollY });
@@ -209,25 +209,10 @@ export async function sequencerEditView(options: RenderOptions = {}) {
 
     drawPattern(stepCount, steps);
 
-    drawFieldDual(
-        `Pattern`,
-        `Reload`,
-        `Save`,
-        rowNext(1),
-        {
-            edit: withInfo('All sequences loaded', loadSequences),
-        },
-        {
-            edit: withSuccess('All sequences saved', saveSequences),
-        },
-        { scrollY },
-    );
-
     renderMessage();
 }
 
 function drawPattern(stepCount: number, steps: Steps) {
-
     for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) {
         const step = steps[stepIndex][0];
         // FIXME : draw only visible steps
@@ -283,7 +268,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
                         .slice(0, stepIndex)
                         .reverse()
                         .find((step) => step[0]?.note)?.[0];
-                        sequences[selectedId].steps[stepIndex][0] = {
+                    sequences[selectedId].steps[stepIndex][0] = {
                         note: previousStep?.note || 60,
                         velocity: 100,
                         tie: false,

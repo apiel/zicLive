@@ -11,7 +11,6 @@ const screen = {
 export const config = {
     screen,
     path: {
-        patterns: `${DATA_PATH}/patterns`,
         patches: `${DATA_PATH}/patches`,
         tracks: `${DATA_PATH}/projects/000/tracks.json`,
         sequences: `${DATA_PATH}/projects/000/sequences`,

@@ -2,7 +2,6 @@ import { Events } from 'zic_node_ui';
 import { eventMenu } from './events';
 import { helpEventHandler, helpView } from './views/help.view';
 import { masterEventHandler, masterView } from './views/master.view';
-import { patternEventHandler, patternView } from './views/pattern.view';
 import { patchEventHandler, patchView } from './views/patch.view';
 import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
@@ -27,8 +26,6 @@ export const renderView = (options: RenderOptions = {}) => {
             return sequencerView(options);
         case View.SequencerEdit:
             return sequencerEditView(options);
-        case View.Pattern:
-            return patternView(options);
         case View.Preset:
             return patchView(options);
         case View.Master:
@@ -49,8 +46,6 @@ export const viewEventHandler = async (events: Events) => {
             return sequencerEventHandler(events);
         case View.SequencerEdit:
             return sequencerEditEventHandler(events);
-        case View.Pattern:
-            return patternEventHandler(events);
         case View.Preset:
             return patchEventHandler(events);
         case View.Master:

@@ -5,7 +5,6 @@ import { config, DATA_PATH } from './config';
 import { beatViews } from './def';
 import { drawError, renderMessage } from './draw/drawMessage';
 import { loadPatches } from './patch';
-import { loadPatterns } from './pattern';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
 import { getView, renderView, viewEventHandler } from './view';
@@ -25,7 +24,6 @@ trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 1);
 (async function () {
     await loadTracks();
     await loadPatches();
-    await loadPatterns();
     await loadSequences();
     setSelectedSequenceId(0);
     setOnBeatCallback(async () => {

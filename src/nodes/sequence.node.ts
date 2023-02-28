@@ -1,8 +1,8 @@
 import { Color, drawFilledRect, drawLine, drawRect, drawText, Point, Rect, setColor, Size } from 'zic_node_ui';
 import { color, font } from '../style';
-import { Pattern } from '../pattern';
 import { patternPreviewNode } from './patternPreview.node';
 import { truncate } from '../util';
+import { Steps } from '../sequence';
 
 interface Props {
     titleColor: Color;
@@ -11,7 +11,8 @@ interface Props {
     detune: number;
     next?: string;
     repeat: number;
-    pattern: Pattern;
+    stepCount: number;
+    steps: Steps;
     activeStep?: number;
     selected?: boolean;
 }
@@ -19,7 +20,7 @@ interface Props {
 export function sequenceNode(
     id: number,
     { position, size }: Rect,
-    { titleColor, title, playing, detune, next, repeat, pattern, activeStep, selected }: Props,
+    { titleColor, title, playing, detune, next, repeat, stepCount, steps, activeStep, selected }: Props,
 ): Rect {
     setColor(playing ? color.sequencer.playing : color.foreground);
     drawFilledRect({ position, size });
@@ -38,9 +39,15 @@ export function sequenceNode(
         { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
-    patternPreviewNode({ x: position.x + 2, y: position.y + 15 }, { w: size.w, h: size.h - 30 }, pattern, playing);
+    patternPreviewNode(
+        { x: position.x + 2, y: position.y + 15 },
+        { w: size.w, h: size.h - 30 },
+        stepCount,
+        steps,
+        playing,
+    );
     if (activeStep !== undefined) {
-        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, pattern, activeStep);
+        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, stepCount, activeStep);
     }
 
     if (selected) {
@@ -51,9 +58,9 @@ export function sequenceNode(
     return { position, size };
 }
 
-function renderActiveStep(position: Point, size: Size, pattern: Pattern, step: number) {
+function renderActiveStep(position: Point, size: Size, stepCount: number, step: number) {
     setColor(color.sequencer.pattern.playing);
-    const stepWidth = (size.w - 2) / pattern.stepCount;
+    const stepWidth = (size.w - 2) / stepCount;
     drawLine(
         { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y },
         { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + 20 },

@@ -1,17 +1,17 @@
 import { drawFilledRect, drawLine, Point, setColor, Size } from 'zic_node_ui';
-import { Pattern } from '../pattern';
+import { Steps } from '../sequence';
 import { color } from '../style';
 
-export function patternPreviewNode(position: Point, size: Size, pattern: Pattern, playing = false) {
+export function patternPreviewNode(position: Point, size: Size, stepCount: number, _steps: Steps, playing = false) {
     setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
-    const stepWidth = (size.w - 2) / pattern.stepCount;
-    const steps = pattern.steps.map((voices) => voices.filter((v) => v)); // remove undefined/null
+    const stepWidth = (size.w - 2) / stepCount;
+    const steps = _steps.map((voices) => voices.filter((v) => v)); // remove undefined/null
     const notes = steps.flatMap((voices) =>voices.map((v) => v!.note));
     const noteMin = Math.min(...notes);
     const noteRange = Math.max(...notes) - noteMin;
 
     if (noteRange === 0) {
-        for (let step = 0; step < pattern.stepCount; step++) {
+        for (let step = 0; step < stepCount; step++) {
             if (steps[step].length) {
                 const rect = {
                     position: {
@@ -27,7 +27,7 @@ export function patternPreviewNode(position: Point, size: Size, pattern: Pattern
             }
         }
     } else {
-        for (let step = 0; step < pattern.stepCount; step++) {
+        for (let step = 0; step < stepCount; step++) {
             const voices = steps[step];
             for (let voice = 0; voice < voices.length; voice++) {
                 const {note} = voices[voice]!;

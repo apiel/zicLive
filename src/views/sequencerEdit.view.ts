@@ -10,6 +10,9 @@ import {
     saveSequences,
     sequences,
     setSelectedSequenceId,
+    Step,
+    Steps,
+    STEP_CONDITIONS,
 } from '../sequence';
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
@@ -22,7 +25,6 @@ import { sequencesRowNode } from '../nodes/sequencesRow.node';
 import { rowAdd, rowNext, rowReset } from '../draw/rowNext';
 import { RenderOptions } from '../view';
 import { renderMessage, withInfo, withSuccess } from '../draw/drawMessage';
-import { getPattern, Pattern, Step, STEP_CONDITIONS } from '../pattern';
 import { drawSelectableText } from '../draw/drawSelectable';
 import { Midi } from 'tonal';
 import { drawSeparator } from '../draw/drawSeparator';
@@ -75,7 +77,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         return;
     }
 
-    const { trackId, patchId, patternId, detune, repeat, nextSequenceId } = sequences[selectedId];
+    const { trackId, patchId, detune, repeat, nextSequenceId, stepCount, steps } = sequences[selectedId];
 
     const track = getTrack(trackId);
     const patches = getPatches(track.engine);
@@ -193,20 +195,19 @@ export async function sequencerEditView(options: RenderOptions = {}) {
 
     drawSeparator('Pattern', rowNext(1), { scrollY });
 
-    const pattern = getPattern();
     drawField(
         `Len`,
-        `${pattern.stepCount}`,
+        `${stepCount}`,
         rowNext(1),
         {
             edit: (direction) => {
-                pattern.stepCount = minmax(pattern.stepCount + direction, 1, 64);
+                sequences[selectedId].stepCount = minmax(stepCount + direction, 1, 64);
             },
         },
         { scrollY },
     );
 
-    drawPattern();
+    drawPattern(stepCount, steps);
 
     drawFieldDual(
         `Pattern`,
@@ -225,20 +226,20 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     renderMessage();
 }
 
-function drawPattern() {
-    const pattern = getPattern();
+function drawPattern(stepCount: number, steps: Steps) {
 
-    for (let stepIndex = 0; stepIndex < pattern.stepCount; stepIndex++) {
-        const step = pattern.steps[stepIndex][0];
+    for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) {
+        const step = steps[stepIndex][0];
         // FIXME : draw only visible steps
         // const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
         // if (y < config.screen.size.h + size.h) {
-        drawStep(pattern, step, rowNext(1), stepIndex);
+        drawStep(step, rowNext(1), stepIndex);
         // }
     }
 }
 
-export function drawStep(pattern: Pattern, step: Step | null, row: number, stepIndex: number) {
+export function drawStep(step: Step | null, row: number, stepIndex: number) {
+    const selectedId = getSelectedSequenceId();
     const rect = getFieldRect(row, { scrollY });
 
     setColor(color.foreground);
@@ -272,17 +273,17 @@ export function drawStep(pattern: Pattern, step: Step | null, row: number, stepI
             edit: (direction) => {
                 if (step) {
                     if (direction < 0 && step.note <= NOTE_START) {
-                        pattern.steps[stepIndex][0] = null;
+                        sequences[selectedId].steps[stepIndex][0] = null;
                     } else {
                         step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
                     }
                 } else if (direction === 1) {
                     // If no already existing step, create one if direction is positive
-                    const previousStep = pattern.steps
+                    const previousStep = sequences[selectedId].steps
                         .slice(0, stepIndex)
                         .reverse()
                         .find((step) => step[0]?.note)?.[0];
-                    pattern.steps[stepIndex][0] = {
+                        sequences[selectedId].steps[stepIndex][0] = {
                         note: previousStep?.note || 60,
                         velocity: 100,
                         tie: false,

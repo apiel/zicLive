@@ -1,6 +1,7 @@
 import { Events } from 'zic_node_ui';
 import { View } from './def';
 import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } from './selector';
+import { incSelectedSequenceId } from './sequence';
 import { getView, setView } from './view';
 
 const KEY_UP = 82;
@@ -87,16 +88,23 @@ export function eventMenu(events: Events) {
         if (isEventUpPressed(events)) {
             keyState.menuTime = 0;
             return setView(View.Preset);
-        // } else if (isEventDownPressed(events)) {
-        //     keyState.menuTime = 0;
-        //     return setView(View.Pattern);
-        } else if (isEventLeftPressed(events)) {
+        } else if (isEventDownPressed(events)) {
             keyState.menuTime = 0;
             return setView(View.Master);
+        } else if (isEventLeftPressed(events)) {
+            keyState.menuTime = 0;
+            const changed = setView(View.SequencerEdit);
+            if (!changed) {
+                incSelectedSequenceId(-1);
+            }
+            return true;
         } else if (isEventRightPressed(events)) {
             keyState.menuTime = 0;
-            // return setView(View.Project); // Might not even need Project, as everything can be done in master
-            return setView(View.SequencerEdit);
+            const changed = setView(View.SequencerEdit);
+            if (!changed) {
+                incSelectedSequenceId(+1);
+            }
+            return true;
         }
     }
     return false;

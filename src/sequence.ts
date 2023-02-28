@@ -207,5 +207,13 @@ export function getSelectedSequence() {
 }
 
 export function setSelectedSequenceId(id: number) {
-    selectedSequenceId = id;
+    selectedSequenceId = id % sequences.length;
+}
+
+export function incSelectedSequenceId(direction: number) {
+    if (direction > 0 && selectedSequenceId < sequences.length - 1) {
+        selectedSequenceId++;
+    } else if (direction < 0 && selectedSequenceId > 0) {
+        selectedSequenceId--;
+    }
 }

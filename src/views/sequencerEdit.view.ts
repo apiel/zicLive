@@ -6,10 +6,8 @@ import { color, font } from '../style';
 import {
     getSelectedSequenceId,
     loadSequence,
-    loadSequences,
     newSequence,
     saveSequence,
-    saveSequences,
     sequences,
     setSelectedSequenceId,
     Step,
@@ -19,7 +17,7 @@ import {
 import { getPatch, getPatches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
-import { NOTE_END, NOTE_START, PATTERN_COUNT } from 'zic_node';
+import { NOTE_END, NOTE_START } from 'zic_node';
 import { View } from '../def';
 import { drawField, drawFieldDual, getFieldRect } from '../draw/drawField';
 import { drawButton } from '../draw/drawButton';

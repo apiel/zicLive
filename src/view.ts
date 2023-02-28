@@ -12,6 +12,9 @@ let view: View = View.Sequencer;
 export const getView = () => view;
 
 export const setView = (newView: View) => {
+    if (view === newView) {
+        return false;
+    }
     view = newView;
     return true;
 };

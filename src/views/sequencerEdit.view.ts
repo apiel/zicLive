@@ -14,7 +14,7 @@ import {
     Steps,
     STEP_CONDITIONS,
 } from '../sequence';
-import { getPatch, getPatches } from '../patch';
+import { getPatch, getPatches, Patch } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { NOTE_END, NOTE_START } from 'zic_node';
@@ -114,36 +114,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
             scrollY,
         },
     );
-    drawField(
-        `Patch`,
-        patch.name,
-        rowNext(1),
-        {
-            edit: (direction) => {
-                sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
-            },
-            steps: [1, 10],
-        },
-        {
-            info: '#' + patchId.toString().padStart(3, '0'),
-            scrollY,
-        },
-    );
 
-    drawField(
-        `Detune`,
-        detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
-        rowNext(col),
-        {
-            edit: (direction) => {
-                sequences[selectedId].detune = minmax(detune + direction, -12, 12);
-            },
-        },
-        {
-            scrollY,
-            col,
-        },
-    );
     drawField(
         `Repeat`,
         `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`,
@@ -177,6 +148,22 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         },
     );
 
+    drawField(
+        `Detune`,
+        detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
+        rowNext(1),
+        {
+            edit: (direction) => {
+                sequences[selectedId].detune = minmax(detune + direction, -12, 12);
+            },
+        },
+        {
+            scrollY,
+        },
+    );
+
+    rowAdd(1);
+
     drawFieldDual(
         ``,
         `Reload`,
@@ -205,23 +192,24 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         { scrollY },
     );
 
-    drawPattern(stepCount, steps);
+    // FIXME make patchId per step
+    drawPattern(stepCount, steps, patchId, patches);
 
     renderMessage();
 }
 
-function drawPattern(stepCount: number, steps: Steps) {
+function drawPattern(stepCount: number, steps: Steps, patchId: number, patches: Patch[]) {
     for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) {
         const step = steps[stepIndex][0];
         // FIXME : draw only visible steps
         // const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
         // if (y < config.screen.size.h + size.h) {
-        drawStep(step, rowNext(1), stepIndex);
+        drawStep(step, rowNext(1), stepIndex, patchId, patches);
         // }
     }
 }
 
-export function drawStep(step: Step | null, row: number, stepIndex: number) {
+export function drawStep(step: Step | null, row: number, stepIndex: number, patchId: number, patches: Patch[]) {
     const selectedId = getSelectedSequenceId();
     const rect = getFieldRect(row, { scrollY });
 
@@ -318,6 +306,18 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
                     step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
                 }
             },
+        },
+    );
+
+    drawSelectableText(
+        '#' + patchId.toString().padStart(3, '0'),
+        { x: rect.position.x + 170, y },
+        { color: color.secondaryInfo, size: 12, font: font.regular },
+        {
+            edit: (direction) => {
+                sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
+            },
+            steps: [1, 10],
         },
     );
 }

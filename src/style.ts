@@ -4,6 +4,8 @@ import { config } from './config';
 const baseColor = {
     background: rgb('#21252b'),
     foreground: rgb('#2b2c2e'),
+    foreground2: rgb('#383a3d'),
+    foreground3: rgb('#42454A'),
     header: rgb('#2f3645'),
     primary: rgb('#0d6efd'), // #3761a1
     white: { r: 255, g: 255, b: 255 },
@@ -19,7 +21,7 @@ export const color = {
     ...baseColor,
     sequencer: {
         selected: baseColor.selected,
-        playing: rgb('#42454A'),
+        playing: baseColor.foreground3,
         pattern: {
             playing: baseColor.chart,
             waiting: rgb('#3f444e'),

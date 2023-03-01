@@ -225,7 +225,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
     const selectedId = getSelectedSequenceId();
     const rect = getFieldRect(row, { scrollY });
 
-    setColor(color.foreground);
+    setColor(stepIndex % 4 === 0 ? color.foreground2 : color.foreground);
     drawFilledRect({
         position: { x: rect.position.x + 1, y: rect.position.y + 1 },
         size: { w: rect.size.w - 2, h: rect.size.h - 2 },

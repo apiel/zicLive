@@ -76,6 +76,7 @@ async function loadPatchesForEngine(enginePath: string) {
     return patchesForType;
 }
 
+// FIXME this might not be necessary if all patches are loaded in zicNode
 export async function loadPatchId(engine: string, patchId: number) {
     const enginePath = `${config.path.patches}/${engine}`;
     const patchname = `${patchId.toString().padStart(3, '0')}.json`;

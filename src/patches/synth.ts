@@ -1,14 +1,12 @@
 import path from 'path';
 import { getWavetable, SynthDualOsc, Wavetable, FilterNames, FilterMode } from 'zic_node';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
-import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
+import { Patch } from '../patch';
 import { minmax } from '../util';
 import { config } from '../config';
 import { drawWavetable } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
-import { drawKeyboard } from '../draw/drawKeyboard';
-import { withInfo, withSuccess } from '../draw/drawMessage';
 import { rowGetAndAdd, rowGet, rowNext, rowReset } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
 import { drawSliderField } from '../draw/drawSlider';

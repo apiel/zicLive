@@ -47,10 +47,10 @@ export async function helpView(options: RenderOptions = {}) {
     );
     drawText('Menu + Up =', { x: 10, y: 110 }, { color: color.info });
     drawSelectableText(
-        'Preset',
+        'Patch',
         { x: 130, y: 110 },
         { color: color.white, font: font.bold },
-        { edit: () => setView(View.Preset) },
+        { edit: () => setView(View.Patch) },
     );
 
     renderMessage();

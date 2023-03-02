@@ -29,7 +29,7 @@ export const renderView = (options: RenderOptions = {}) => {
             return sequencerView(options);
         case View.SequencerEdit:
             return sequencerEditView(options);
-        case View.Preset:
+        case View.Patch:
             return patchView(options);
         case View.Master:
             return masterView(options);
@@ -49,7 +49,7 @@ export const viewEventHandler = async (events: Events) => {
             return sequencerEventHandler(events);
         case View.SequencerEdit:
             return sequencerEditEventHandler(events);
-        case View.Preset:
+        case View.Patch:
             return patchEventHandler(events);
         case View.Master:
             return masterEventHandler(events);

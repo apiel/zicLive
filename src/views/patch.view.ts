@@ -43,10 +43,6 @@ export async function patchView(options: RenderOptions = {}) {
         case 'synth':
             synth(patch, scrollY);
             break;
-        case 'pd':
-            // TODO #39 preset view for pd
-            drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
-            break;
         case 'midi':
             // TODO #38 preset view for midi
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });

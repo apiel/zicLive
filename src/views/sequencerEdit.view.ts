@@ -81,7 +81,6 @@ export async function sequencerEditView(options: RenderOptions = {}) {
 
     const track = getTrack(trackId);
     const patches = getPatches(track.engine);
-    const patch = getPatch(track.engine, patchId);
 
     // TODO should id be a string??? 5-7 char
     drawField(

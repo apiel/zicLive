@@ -8,7 +8,6 @@ import {
     setSequencerState,
 } from 'zic_node';
 import { config } from './config';
-import { getPatch } from './patch';
 import { fileExist } from './util';
 
 // FIXME
@@ -145,7 +144,7 @@ function initPattern({ id, stepCount, steps }: Sequence) {
         for (let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
             const step = steps[stepIndex]?.[voice];
             if (step) {
-                setPatternStep(id, stepIndex, step.note, step.velocity, step.tie, voice);
+                setPatternStep(id, stepIndex, step.note, step.velocity, step.tie, step.patchId, voice);
             }
         }
     }

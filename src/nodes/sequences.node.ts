@@ -4,7 +4,7 @@ import { drawSelectableRect } from '../draw/drawSelectable';
 import { getPatch } from '../patch';
 import { newSequence, Sequence } from '../sequence';
 import { color, font } from '../style';
-import { getTrack, getTrackColor } from '../track';
+import { getTrackColor } from '../track';
 import { SelectableOptions } from '../selector';
 
 export interface SequenceNoteOptions {
@@ -26,11 +26,10 @@ export function sequencesNode(
             // next = `${seq.nextSequenceId} ${getPatch(nextSeq.patchId).name}`;
             next = nextSequenceId.toString();
         }
-        const track = getTrack(trackId);
         const props = {
             ...seq,
             titleColor: getTrackColor(trackId),
-            title: getPatch(track.engine, patchId).name,
+            title: getPatch(patchId).name,
             next,
             selected: selectedId === id,
         };

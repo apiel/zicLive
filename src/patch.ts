@@ -1,141 +1,139 @@
-import { readdir, readFile, writeFile } from 'fs/promises';
-import path from 'path';
-import { setPatch, trackCc, trackSetNumber, trackSetString } from 'zic_node';
-import { config, Engine, EngineType } from './config';
-import { getPlayingSequencesForPatch, getSequencesForPatchId } from './sequence';
-import { isDirectory, minmax } from './util';
+import { readFile, writeFile } from 'fs/promises';
+import { setPatch, trackCc, trackSetNumber, trackSetString, PATCH_COUNT } from 'zic_node';
+import { config, Engine } from './config';
+import { getPlayingSequencesForPatch } from './sequence';
+import { fileExist, minmax } from './util';
 
-export interface Patch {
-    id: number;
-    name: string;
-    floats: { [id: number]: number };
-    strings: { [id: number]: string };
-    cc: { [id: number]: number };
-    setString: (stringId: number, value: string) => void;
-    setNumber: (floatId: number, value: number) => void;
-    setCc: (ccId: number, value: number, voice: number) => void;
+const sortedEngine = Object.values(config.engines)
+    .sort((a, b) => a.idStart - b.idStart)
+    .reverse();
+
+function getEngineByPatchId(patchId: number): Engine {
+    const engine = sortedEngine.find((engine) => patchId >= engine.idStart);
+    if (!engine) {
+        throw new Error(`No engine found for patch ${patchId}`);
+    }
+    return engine;
 }
 
-const patches: { [engine: string]: Patch[] } = {};
+export class Patch {
+    protected filename: string;
 
-export const getPatches = (engine: EngineType) => patches[engine];
+    isModified: boolean = false;
+    engine: Engine;
+    name: string = 'Init patch';
+    floats: { [id: number]: number } = {};
+    strings: { [id: number]: string } = {};
+    cc: { [id: number]: number } = {};
 
-export const getPatch = (engine: EngineType, patchId: number) => {
-    const _patches = getPatches(engine);
-    const id = minmax(patchId, 0, _patches.length - 1);
-    return _patches[id];
-};
+    setString(stringId: number, value: string) {
+        this.isModified = true;
+        this.strings[stringId] = value;
 
-const setString = (patch: Patch) => (stringId: number, value: string) => {
-    patch.strings[stringId] = value;
-
-    const sequences = getPlayingSequencesForPatch(patch.id);
-    for (const sequence of sequences) {
-        trackSetString(sequence.trackId, value, stringId);
+        const sequences = getPlayingSequencesForPatch(this.id);
+        for (const sequence of sequences) {
+            trackSetString(sequence.trackId, value, stringId);
+        }
     }
-};
-const setNumber = (patch: Patch) => (floatId: number, value: number) => {
-    patch.floats[floatId] = value;
 
-    const sequences = getPlayingSequencesForPatch(patch.id);
-    for (const sequence of sequences) {
-        trackSetNumber(sequence.trackId, value, floatId);
+    setNumber(floatId: number, value: number) {
+        this.isModified = true;
+        this.floats[floatId] = value;
+
+        const sequences = getPlayingSequencesForPatch(this.id);
+        for (const sequence of sequences) {
+            trackSetNumber(sequence.trackId, value, floatId);
+        }
     }
-};
-const setCc = (patch: Patch) => (ccId: number, value: number) => {
-    patch.cc[ccId] = value;
 
-    const sequences = getPlayingSequencesForPatch(patch.id);
-    for (const sequence of sequences) {
-        trackCc(sequence.trackId, value, ccId);
+    setCc(ccId: number, value: number) {
+        this.isModified = true;
+        this.cc[ccId] = value;
+
+        const sequences = getPlayingSequencesForPatch(this.id);
+        for (const sequence of sequences) {
+            trackCc(sequence.trackId, value, ccId);
+        }
     }
-};
 
-async function loadPatchForEngine(enginePath: string, patchname: string) {
-    const patch = JSON.parse((await readFile(`${enginePath}/${patchname}`)).toString());
-    patch.id = parseInt(path.parse(patchname).name);
-    patch.setString = setString(patch);
-    patch.setNumber = setNumber(patch);
-    patch.setCc = setCc(patch);
-    return patch;
+    constructor(public readonly id: number) {
+        this.engine = getEngineByPatchId(this.id);
+        this.filename = `${(this.id - this.engine.idStart).toString().padStart(3, '0')}.json`;
+    }
+
+    save() {
+        const engine = getEngineByPatchId(this.id);
+        const patchFile = `${engine.path}/${this.filename}`;
+        return writeFile(patchFile, JSON.stringify(this, null, 2));
+    }
+
+    async load() {
+        const patchFile = `${this.engine.path}/${this.filename}`;
+        if (!(await fileExist(patchFile))) {
+            this.isModified = false;
+            this.name = this.engine.initName;
+            // TODO might want to assign default patch
+            return;
+        }
+        const patch = JSON.parse((await readFile(patchFile)).toString());
+        patch.id += this.engine.idStart;
+        this.isModified = true;
+        Object.assign(this, patch);
+        setPatch(patch);
+    }
+
+    set({ id, ...patch}: Partial<Patch>) {
+        Object.assign(this, patch);
+        setPatch(this);
+        this.isModified = true;
+    }
+
+    // Should not be necessary because next step it will anyway apply the reloaded patch
+    // async reload() {
+    //     await this.load();
+    //     const sequences = getPlayingSequencesForPatch(this.id);
+    //     for (const sequence of sequences) {
+    //         for (const id in this.floats) {
+    //             trackSetNumber(sequence.trackId, this.floats[id], Number(id));
+    //         }
+    //         for (const id in this.strings) {
+    //             trackSetString(sequence.trackId, this.strings[id], Number(id));
+    //         }
+    //         for (const id in this.cc) {
+    //             trackCc(sequence.trackId, this.cc[id], Number(id));
+    //         }
+    //     }
+    // }
 }
 
-async function loadPatchesForEngine(engine: Engine) {
-    const patchesForType: Patch[] = [];
-    try {
-        const patchnames = await readdir(engine.path);
-        for (const patchname of patchnames) {
-            if (patchname[0] !== '_' && patchname !== 'tsconfig.json') {
-                const patch = await loadPatchForEngine(engine.path, patchname);
-                patchesForType.push(patch);
-                patch.id += engine.idStart;
-                setPatch(patch);
-            }
-        }
-    } catch (error) {
-        console.error(`Error while loading patches for ${engine.path}`, error);
-    }
-    return patchesForType;
-}
+export const patches: Patch[] = Array(PATCH_COUNT)
+    .fill(undefined)
+    .map((_, id) => new Patch(id));
 
-// FIXME this might not be necessary if all patches are loaded in zicNode
-export async function loadPatchId(engine: string, patchId: number) {
-    const enginePath = `${config.path.patches}/${engine}`;
-    const patchname = `${patchId.toString().padStart(3, '0')}.json`;
-    const patch = await loadPatchForEngine(enginePath, patchname);
-    patches[engine][patchId] = patch;
-    const sequences = getPlayingSequencesForPatch(patch.id);
-    for (const sequence of sequences) {
-        for (const id in patch.floats) {
-            trackSetNumber(sequence.trackId, patch.floats[id], Number(id));
-        }
-        for (const id in patch.strings) {
-            trackSetString(sequence.trackId, patch.strings[id], Number(id));
-        }
-        for (const id in patch.cc) {
-            trackCc(sequence.trackId, patch.cc[id], Number(id));
-        }
-    }
-}
+export const getPatch = (patchId: number) => {
+    const id = minmax(patchId, 0, patches.length - 1);
+    return patches[id];
+};
 
 export async function loadPatches() {
     try {
-        for (const engineType in config.engines) {
-            const engine = config.engines[engineType as EngineType];
-            if (await isDirectory(engine.path)) {
-                patches[engineType] = await loadPatchesForEngine(engine);
-            }
+        for (const patch of patches) {
+            await patch.load();
         }
     } catch (error) {
         console.error(`Error while loading patche engines`, error);
     }
 }
 
-export function savePatch(engine: string, patchId: number) {
-    const enginePath = `${config.path.patches}/${engine}`;
-    const patchname = `${patchId.toString().padStart(3, '0')}.json`;
-    const patch = patches[engine][patchId];
-    return writeFile(`${enginePath}/${patchname}`, JSON.stringify(patch, null, 2));
-}
-
-export async function savePatchAs(engine: string, patch: Patch, as: string) {
-    const currentId = patch.id;
-    const isUnique = patches[engine].every((p) => p.name !== as);
+export async function savePatchAs(patch: Patch, as: string) {
+    const isUnique = patches.every((p) => p.name !== as);
     if (!isUnique) {
         throw new Error(`Patch name ${as} is not unique`);
     }
-    let nextId = patches[engine].findIndex((p) => p.name === '');
+    let nextId = patches.findIndex((p) => p.isModified === false);
     if (nextId === -1) {
-        nextId = patches[engine].length;
+        throw new Error(`No more free patch`);
     }
-    patch.name = as;
-    patch.id = nextId;
-    patches[engine][nextId] = patch;
-    await savePatch(engine, nextId);
-    const sequences = getSequencesForPatchId(currentId);
-    for (const sequence of sequences) {
-        sequence.patchId = nextId;
-    }
-    // Reload patch
-    await loadPatchId(engine, currentId);
+    patches[nextId].set({ ...patch, name: as });
+    await patches[nextId].save();
 }

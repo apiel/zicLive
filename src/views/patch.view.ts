@@ -1,8 +1,7 @@
 import { clear, drawText, Events } from 'zic_node_ui';
-import { getPatch, loadPatchId, savePatch, savePatchAs } from '../patch';
+import { getPatch, savePatchAs } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import { getTrack } from '../track';
 import kick23 from '../patches/kick23';
 import synth from '../patches/synth';
 import { eventEdit, eventSelector, getEditMode } from '../events';
@@ -29,9 +28,8 @@ export async function patchView(options: RenderOptions = {}) {
         return;
     }
 
-    const { trackId, patchId } = sequence;
-    const { engine } = getTrack(trackId);
-    const patch = getPatch(engine, patchId);
+    const { patchId } = sequence;
+    const patch = getPatch(patchId);
 
     if (currentPatchId !== patchId) {
         scrollY = 0;
@@ -39,13 +37,13 @@ export async function patchView(options: RenderOptions = {}) {
         saveAs = patch.name;
     }
 
-    switch (engine as string) {
+    switch (patch.engine.name) {
         case 'synth':
             synth(patch, scrollY);
             break;
         case 'midi':
             // TODO #38 preset view for midi
-            drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
+            drawText(`Engine "${patch.engine.name}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'kick23':
             kick23(patch, scrollY);
@@ -59,10 +57,10 @@ export async function patchView(options: RenderOptions = {}) {
         `Save`,
         rowNext(1),
         {
-            edit: withInfo('Loaded', () => loadPatchId(engine, patch.id)),
+            edit: withInfo('Loaded', () => patch.load()),
         },
         {
-            edit: withSuccess('Saved', () => savePatch(engine, patch.id)),
+            edit: withSuccess('Saved', () => patch.save()),
         },
         { scrollY },
     );
@@ -72,7 +70,7 @@ export async function patchView(options: RenderOptions = {}) {
         saveAs,
         rowNext(col),
         {
-            edit: withSuccess('Saved', () => savePatchAs(engine, patch, saveAs)),
+            edit: withSuccess('Saved', () => savePatchAs(patch, saveAs)),
         },
         {
             col,
@@ -85,7 +83,7 @@ export async function patchView(options: RenderOptions = {}) {
             if (char === 'DEL') {
                 saveAs = saveAs.slice(0, -1);
             } else if (char === 'DONE') {
-                return withSuccess('Saved', () => savePatchAs(engine, patch, saveAs))();
+                return withSuccess('Saved', () => savePatchAs(patch, saveAs))();
             } else {
                 if (saveAs.length < 10) {
                     saveAs += char;

@@ -117,8 +117,7 @@ export function playSequence(sequence: Sequence, playing = true, next?: boolean)
         }
     }
     sequence.playing = playing;
-    const { engine } = getTrack(sequence.trackId);
-    const { floats, strings, cc } = getPatch(engine, sequence.patchId);
+    const { floats, strings, cc } = getPatch(sequence.patchId);
     const patch = { floats, strings, cc, id: sequence.patchId };
     setSequencerState(sequence.trackId, sequence.id, playing, {
         next,

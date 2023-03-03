@@ -14,7 +14,7 @@ import {
     Steps,
     STEP_CONDITIONS,
 } from '../sequence';
-import { getPatch, getPatches, Patch } from '../patch';
+import { getPatch, Patch, patches } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { NOTE_END, NOTE_START } from 'zic_node';
@@ -80,7 +80,6 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     const { trackId, patchId, detune, repeat, nextSequenceId, stepCount, steps } = sequences[selectedId];
 
     const track = getTrack(trackId);
-    const patches = getPatches(track.engine);
 
     // TODO should id be a string??? 5-7 char
     drawField(
@@ -129,7 +128,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     );
     drawField(
         `Next`,
-        nextSequenceId ? `${nextSequenceId + 1} ${getPatch(track.engine, patchId).name}` : `---`,
+        nextSequenceId ? `${nextSequenceId + 1} ${getPatch(patchId).name}` : `---`,
         rowNext(col),
         {
             edit: (direction) => {
@@ -192,23 +191,23 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     );
 
     // FIXME make patchId per step
-    drawPattern(stepCount, steps, patchId, patches);
+    drawPattern(stepCount, steps, patchId);
 
     renderMessage();
 }
 
-function drawPattern(stepCount: number, steps: Steps, patchId: number, patches: Patch[]) {
+function drawPattern(stepCount: number, steps: Steps, patchId: number) {
     for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) {
         const step = steps[stepIndex][0];
         // FIXME : draw only visible steps
         // const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
         // if (y < config.screen.size.h + size.h) {
-        drawStep(step, rowNext(1), stepIndex, patchId, patches);
+        drawStep(step, rowNext(1), stepIndex, patchId);
         // }
     }
 }
 
-export function drawStep(step: Step | null, row: number, stepIndex: number, patchId: number, patches: Patch[]) {
+export function drawStep(step: Step | null, row: number, stepIndex: number, patchId: number) {
     const selectedId = getSelectedSequenceId();
     const rect = getFieldRect(row, { scrollY });
 

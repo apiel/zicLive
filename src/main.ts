@@ -1,7 +1,7 @@
 import { exit } from 'process';
-import { getAllSequencerStates, setOnBeatCallback, start, trackSetString } from 'zic_node';
+import { getAllSequencerStates, setOnBeatCallback, start } from 'zic_node';
 import { open, close, getEvents, render, minimize } from 'zic_node_ui';
-import { config, DATA_PATH } from './config';
+import { config } from './config';
 import { beatViews } from './def';
 import { drawError, renderMessage } from './draw/drawMessage';
 import { loadPatches } from './patch';
@@ -11,15 +11,6 @@ import { getView, renderView, viewEventHandler } from './view';
 
 open({ size: config.screen.size });
 start();
-
-// // FIXME might need to remove this?
-// trackSetString(0, `${DATA_PATH}/wavetables/0_test.wav`);
-// trackSetString(1, `${DATA_PATH}/wavetables/0_test.wav`);
-// trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 0);
-// trackSetString(2, `${DATA_PATH}/wavetables/0_test.wav`, 1);
-// // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Osc);
-// // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo1);
-// // trackSetString(1, `${DATA_PATH}/wavetables/ACID_SP.WAV`, SynthPathIds.Lfo2);
 
 (async function () {
     await loadTracks();

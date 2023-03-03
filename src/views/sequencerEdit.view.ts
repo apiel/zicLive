@@ -77,7 +77,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         return;
     }
 
-    const { trackId, patchId, detune, repeat, nextSequenceId, stepCount, steps } = sequences[selectedId];
+    const { trackId, detune, repeat, nextSequenceId, stepCount, steps } = sequences[selectedId];
 
     const track = getTrack(trackId);
 
@@ -128,7 +128,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     );
     drawField(
         `Next`,
-        nextSequenceId ? `${nextSequenceId + 1} ${getPatch(patchId).name}` : `---`,
+        nextSequenceId ? `${nextSequenceId + 1}` : `---`,
         rowNext(col),
         {
             edit: (direction) => {
@@ -191,23 +191,23 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     );
 
     // FIXME make patchId per step
-    drawPattern(stepCount, steps, patchId);
+    drawPattern(stepCount, steps);
 
     renderMessage();
 }
 
-function drawPattern(stepCount: number, steps: Steps, patchId: number) {
+function drawPattern(stepCount: number, steps: Steps) {
     for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) {
         const step = steps[stepIndex][0];
         // FIXME : draw only visible steps
         // const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
         // if (y < config.screen.size.h + size.h) {
-        drawStep(step, rowNext(1), stepIndex, patchId);
+        drawStep(step, rowNext(1), stepIndex);
         // }
     }
 }
 
-export function drawStep(step: Step | null, row: number, stepIndex: number, patchId: number) {
+export function drawStep(step: Step | null, row: number, stepIndex: number) {
     const selectedId = getSelectedSequenceId();
     const rect = getFieldRect(row, { scrollY });
 
@@ -222,6 +222,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number, patc
         velocity: '---',
         condition: '---',
         tie: '--',
+        patch: '---',
     };
     if (step) {
         stepStr.note = Midi.midiToNoteName(step.note, { sharps: true });
@@ -230,6 +231,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number, patc
         if (step.tie) {
             stepStr.tie = 'Tie';
         }
+        stepStr.patch = '#' + step.patchId.toString().padStart(3, '0');
     }
 
     const y = rect.position.y + 6;
@@ -256,6 +258,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number, patc
                         note: previousStep?.note || 60,
                         velocity: 100,
                         tie: false,
+                        patchId: 0, // FIXME should set the right patchid
                     };
                 }
             },
@@ -308,13 +311,14 @@ export function drawStep(step: Step | null, row: number, stepIndex: number, patc
     );
 
     drawSelectableText(
-        '#' + patchId.toString().padStart(3, '0'),
+        stepStr.patch,
         { x: rect.position.x + 170, y },
         { color: color.secondaryInfo, size: 12, font: font.regular },
         {
-            edit: (direction) => {
-                sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
-            },
+            // FIXME
+            // edit: (direction) => {
+            //     sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
+            // },
             steps: [1, 10],
         },
     );

@@ -28,7 +28,7 @@ export async function patchView(options: RenderOptions = {}) {
         return;
     }
 
-    const { patchId } = sequence;
+    const patchId = 0; // FIXME
     const patch = getPatch(patchId);
 
     if (currentPatchId !== patchId) {

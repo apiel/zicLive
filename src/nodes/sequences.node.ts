@@ -1,7 +1,6 @@
 import { drawFilledRect, drawText, Rect, setColor } from 'zic_node_ui';
 import { sequenceNode } from './sequence.node';
 import { drawSelectableRect } from '../draw/drawSelectable';
-import { getPatch } from '../patch';
 import { newSequence, Sequence } from '../sequence';
 import { color, font } from '../style';
 import { getTrackColor } from '../track';
@@ -19,7 +18,7 @@ export function sequencesNode(
     { selectedId }: SequenceNoteOptions = { selectedId: -1 },
 ) {
     for (let i = 0; i < sequences.length; i++) {
-        const { id, trackId, patchId, nextSequenceId, ...seq } = sequences[i];
+        const { id, trackId, nextSequenceId, ...seq } = sequences[i];
         let next;
         if (nextSequenceId !== undefined) {
             // const nextSeq = sequences[nextSequenceId];
@@ -29,7 +28,7 @@ export function sequencesNode(
         const props = {
             ...seq,
             titleColor: getTrackColor(trackId),
-            title: getPatch(patchId).name,
+            title: 'fixme',//getPatch(patchId).name, // FIXME
             next,
             selected: selectedId === id,
         };

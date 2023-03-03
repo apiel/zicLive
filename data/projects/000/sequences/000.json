@@ -6,5 +6,5 @@
     "repeat": 0,
     "patchId": 800,
     "stepCount": 4,
-    "steps": [[{ "note": 60, "velocity": 100, "tie": false }], [], [], []]
+    "steps": [[{ "note": 60, "velocity": 100, "tie": false, "patchId": 800 }], [], [], []]
 }

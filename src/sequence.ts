@@ -9,7 +9,6 @@ import {
 } from 'zic_node';
 import { config } from './config';
 import { getPatch } from './patch';
-import { getTrack } from './track';
 import { fileExist } from './util';
 
 // FIXME
@@ -19,6 +18,7 @@ export interface Step {
     note: number;
     velocity: number;
     tie: boolean;
+    patchId: number;
     condition?: number;
 }
 
@@ -68,6 +68,7 @@ export enum StepCondition {
 
 export type Steps = (Step | null)[][];
 
+// TODO refacto to use class
 export interface Sequence {
     id: number;
     trackId: number;
@@ -75,7 +76,6 @@ export interface Sequence {
     detune: number;
     repeat: number;
     nextSequenceId?: number;
-    patchId: number;
     activeStep?: number;
     stepCount: number;
     steps: Steps;
@@ -93,13 +93,12 @@ export function getPlayingSequence(trackId: number) {
     return sequences.find((s) => s.playing && s.trackId === trackId);
 }
 
-// FIXME
 export function getPlayingSequencesForPatch(patchId: number) {
-    return sequences.filter((s) => s.playing && s.patchId === patchId);
+    return getSequencesForPatchId(patchId).filter((s) => s.playing);
 }
 
 export function getSequencesForPatchId(patchId: number) {
-    return sequences.filter((s) => s.patchId === patchId);
+    return sequences.filter((s) => s.steps.flat().find((step) => step?.patchId === patchId));
 }
 
 export function cleanActiveStep(trackId: number) {
@@ -109,6 +108,12 @@ export function cleanActiveStep(trackId: number) {
     }
 }
 
+// function getPatchesInSequence(sequence: Sequence) {
+//     return [...new Set(sequence.steps.flat().map((step) => step?.patchId))].filter(
+//         (patchId) => patchId !== undefined,
+//     ) as number[];
+// }
+
 export function playSequence(sequence: Sequence, playing = true, next?: boolean) {
     if (playing) {
         const playingSeq = getPlayingSequence(sequence.trackId);
@@ -117,13 +122,10 @@ export function playSequence(sequence: Sequence, playing = true, next?: boolean)
         }
     }
     sequence.playing = playing;
-    const { floats, strings, cc } = getPatch(sequence.patchId);
-    const patch = { floats, strings, cc, id: sequence.patchId };
     setSequencerState(sequence.trackId, sequence.id, playing, {
         next,
         detune: sequence.detune,
         dataId: sequence.id,
-        patch,
     });
 }
 

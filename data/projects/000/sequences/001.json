@@ -7,21 +7,21 @@
     "patchId": 0,
     "stepCount": 16,
     "steps": [
-        [{ "note": 60, "velocity": 100, "tie": false }],
-        [null, { "note": 62, "velocity": 100, "tie": false }],
-        [{ "note": 64, "velocity": 100, "tie": false }],
-        [{ "note": 65, "velocity": 100, "tie": true }],
-        [{ "note": 65, "velocity": 100, "tie": false }],
+        [{ "note": 60, "velocity": 100, "tie": false, "patchId": 0 }],
+        [{ "note": 62, "velocity": 100, "tie": false, "patchId": 0 }],
+        [{ "note": 64, "velocity": 100, "tie": false, "patchId": 0 }],
+        [{ "note": 65, "velocity": 100, "tie": true, "patchId": 0 }],
+        [{ "note": 65, "velocity": 100, "tie": false, "patchId": 0 }],
         [],
-        [{ "note": 60, "velocity": 100, "tie": false }],
-        [{ "note": 54, "velocity": 100, "tie": false }],
+        [{ "note": 60, "velocity": 100, "tie": false, "patchId": 0 }],
+        [{ "note": 54, "velocity": 100, "tie": false, "patchId": 0 }],
         [],
         [],
-        [{ "note": 58, "velocity": 100, "tie": false }],
+        [{ "note": 58, "velocity": 100, "tie": false, "patchId": 0 }],
         [],
-        [{ "note": 60, "velocity": 100, "tie": false }],
+        [{ "note": 60, "velocity": 100, "tie": false, "patchId": 0 }],
         [],
-        [{ "note": 60, "velocity": 100, "tie": false }],
-        [{ "note": 60, "velocity": 100, "tie": false }]
+        [{ "note": 60, "velocity": 100, "tie": false, "patchId": 0 }],
+        [{ "note": 60, "velocity": 100, "tie": false, "patchId": 0 }]
     ]
 }

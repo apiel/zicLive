@@ -1,9 +1,9 @@
-import { lstat, readdir, readFile, writeFile } from 'fs/promises';
+import { readdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
-import { trackCc, trackSetNumber, trackSetString } from 'zic_node';
+import { setPatch, trackCc, trackSetNumber, trackSetString } from 'zic_node';
 import { config, Engine, EngineType } from './config';
 import { getPlayingSequencesForPatch, getSequencesForPatchId } from './sequence';
-import { minmax } from './util';
+import { isDirectory, minmax } from './util';
 
 export interface Patch {
     id: number;
@@ -18,9 +18,9 @@ export interface Patch {
 
 const patches: { [engine: string]: Patch[] } = {};
 
-export const getPatches = (engine: string) => patches[engine];
+export const getPatches = (engine: EngineType) => patches[engine];
 
-export const getPatch = (engine: string, patchId: number) => {
+export const getPatch = (engine: EngineType, patchId: number) => {
     const _patches = getPatches(engine);
     const id = minmax(patchId, 0, _patches.length - 1);
     return _patches[id];
@@ -68,6 +68,8 @@ async function loadPatchesForEngine(engine: Engine) {
             if (patchname[0] !== '_' && patchname !== 'tsconfig.json') {
                 const patch = await loadPatchForEngine(engine.path, patchname);
                 patchesForType.push(patch);
+                patch.id += engine.idStart;
+                setPatch(patch);
             }
         }
     } catch (error) {
@@ -100,8 +102,7 @@ export async function loadPatches() {
     try {
         for (const engineType in config.engines) {
             const engine = config.engines[engineType as EngineType];
-            const isDirectory = (await lstat(engine.path)).isDirectory();
-            if (isDirectory) {
+            if (await isDirectory(engine.path)) {
                 patches[engineType] = await loadPatchesForEngine(engine);
             }
         }

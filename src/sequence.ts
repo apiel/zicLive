@@ -1,8 +1,16 @@
 import { readFile, writeFile } from 'fs/promises';
-import { MAX_STEPS_IN_PATTERN, MAX_VOICES_IN_PATTERN, PATTERN_COUNT, setPatternLength, setPatternStep, setSequencerState } from 'zic_node';
+import {
+    MAX_STEPS_IN_PATTERN,
+    MAX_VOICES_IN_PATTERN,
+    PATTERN_COUNT,
+    setPatternLength,
+    setPatternStep,
+    setSequencerState,
+} from 'zic_node';
 import { config } from './config';
 import { getPatch } from './patch';
 import { getTrack } from './track';
+import { fileExist } from './util';
 
 // FIXME
 export const playing = [4, 7, 8, 10];
@@ -85,6 +93,7 @@ export function getPlayingSequence(trackId: number) {
     return sequences.find((s) => s.playing && s.trackId === trackId);
 }
 
+// FIXME
 export function getPlayingSequencesForPatch(patchId: number) {
     return sequences.filter((s) => s.playing && s.patchId === patchId);
 }
@@ -129,10 +138,10 @@ function getFilepath(id: number) {
 }
 
 // FIXME should we instead load sequence in memory
-function initPattern({id, stepCount, steps}: Sequence) {
+function initPattern({ id, stepCount, steps }: Sequence) {
     setPatternLength(id, stepCount);
-    for(let stepIndex = 0; stepIndex < MAX_STEPS_IN_PATTERN; stepIndex++) {
-        for(let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
+    for (let stepIndex = 0; stepIndex < MAX_STEPS_IN_PATTERN; stepIndex++) {
+        for (let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
             const step = steps[stepIndex]?.[voice];
             if (step) {
                 setPatternStep(id, stepIndex, step.note, step.velocity, step.tie, voice);
@@ -160,7 +169,9 @@ export async function loadSequences() {
     try {
         sequences = [];
         for (let id = 0; id < PATTERN_COUNT; id++) {
-            await loadSequence(id);
+            if (await fileExist(getFilepath(id))) {
+                await loadSequence(id);
+            }
         }
     } catch (error) {
         console.error(`Error while loading sequences`, error);

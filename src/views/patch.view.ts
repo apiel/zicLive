@@ -39,7 +39,7 @@ export async function patchView(options: RenderOptions = {}) {
         saveAs = patch.name;
     }
 
-    switch (engine) {
+    switch (engine as string) {
         case 'synth':
             synth(patch, scrollY);
             break;
@@ -47,7 +47,7 @@ export async function patchView(options: RenderOptions = {}) {
             // TODO #38 preset view for midi
             drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
-        case engine:
+        case 'kick23':
             kick23(patch, scrollY);
             break;
     }

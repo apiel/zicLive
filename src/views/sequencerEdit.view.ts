@@ -14,7 +14,7 @@ import {
     Steps,
     STEP_CONDITIONS,
 } from '../sequence';
-import { getPatch, Patch, patches } from '../patch';
+import { setCurrentPatchId } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { NOTE_END, NOTE_START } from 'zic_node';
@@ -236,11 +236,18 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
 
     const y = rect.position.y + 6;
 
+    const onSelected = () => {
+        if (step) {
+            setCurrentPatchId(step.patchId);
+        }
+    };
+
     drawSelectableText(
         stepStr.note,
         { x: rect.position.x + 4, y: y },
         { color: color.info, size: 13, font: font.bold },
         {
+            onSelected,
             edit: (direction) => {
                 if (step) {
                     if (direction < 0 && step.note <= NOTE_START) {
@@ -272,6 +279,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
         { x: rect.position.x + 38, y },
         { color: color.info, size: 12, font: font.regular },
         {
+            onSelected,
             edit: (direction) => {
                 if (step) {
                     step.velocity = minmax(step.velocity + direction, 1, 100);
@@ -289,6 +297,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
         { x: rect.position.x + 80, y },
         { color: color.info, size: 12, font: font.regular },
         {
+            onSelected,
             edit: () => {
                 if (step) {
                     step.tie = !step.tie;
@@ -302,6 +311,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
         { x: rect.position.x + 110, y },
         { color: color.secondaryInfo, size: 12, font: font.regular },
         {
+            onSelected,
             edit: (direction) => {
                 if (step) {
                     step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
@@ -315,6 +325,7 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
         { x: rect.position.x + 170, y },
         { color: color.secondaryInfo, size: 12, font: font.regular },
         {
+            onSelected,
             // FIXME
             // edit: (direction) => {
             //     sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);

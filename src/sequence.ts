@@ -8,6 +8,7 @@ import {
     setSequencerState,
 } from 'zic_node';
 import { config } from './config';
+import { setCurrentPatchId } from './patch';
 import { fileExist } from './util';
 
 // FIXME
@@ -219,12 +220,16 @@ export function getSelectedSequence() {
 
 export function setSelectedSequenceId(id: number) {
     selectedSequenceId = id % sequences.length;
+    const patchId = sequences[selectedSequenceId].steps.flat().find((step) => step)?.patchId;
+    if (patchId !== undefined) {
+        setCurrentPatchId(patchId);
+    }
 }
 
 export function incSelectedSequenceId(direction: number) {
     if (direction > 0 && selectedSequenceId < sequences.length - 1) {
-        selectedSequenceId++;
+        setSelectedSequenceId(selectedSequenceId + 1);
     } else if (direction < 0 && selectedSequenceId > 0) {
-        selectedSequenceId--;
+        setSelectedSequenceId(selectedSequenceId - 1);
     }
 }

@@ -4,6 +4,11 @@ import { config, Engine } from './config';
 import { getPlayingSequencesForPatch } from './sequence';
 import { fileExist, minmax } from './util';
 
+export let currentPatchId = 0;
+export function setCurrentPatchId(id: number) {
+    currentPatchId = minmax(0, PATCH_COUNT - 1, id);
+}
+
 const sortedEngine = Object.values(config.engines)
     .sort((a, b) => a.idStart - b.idStart)
     .reverse();

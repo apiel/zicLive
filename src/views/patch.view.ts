@@ -1,5 +1,5 @@
 import { clear, drawText, Events } from 'zic_node_ui';
-import { getPatch, savePatchAs } from '../patch';
+import { currentPatchId, getPatch, savePatchAs } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import kick23 from '../patches/kick23';
@@ -14,7 +14,7 @@ import { rowNext } from '../draw/rowNext';
 import { drawKeyboard } from '../draw/drawKeyboard';
 
 let scrollY = 0;
-let currentPatchId = -1;
+let lastCurrentPatchId = -1;
 let saveAs = '';
 const col = config.screen.col;
 
@@ -28,12 +28,11 @@ export async function patchView(options: RenderOptions = {}) {
         return;
     }
 
-    const patchId = 0; // FIXME
-    const patch = getPatch(patchId);
+    const patch = getPatch(currentPatchId);
 
-    if (currentPatchId !== patchId) {
+    if (lastCurrentPatchId !== currentPatchId) {
         scrollY = 0;
-        currentPatchId = patchId;
+        lastCurrentPatchId = currentPatchId;
         saveAs = patch.name;
     }
 

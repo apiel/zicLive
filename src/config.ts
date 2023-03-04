@@ -25,18 +25,21 @@ export const config = {
         synth: {
             path: `${path.patches}/synth`,
             idStart: 0,
+            idEnd: 799,
             initName: 'Init Synth',
             name: 'synth',
         },
         kick23: {
             path: `${path.patches}/kick23`,
             idStart: 800,
+            idEnd: 899,
             initName: 'Init Kick23',
             name: 'kick23',
         },
         midi: {
             path: `${path.patches}/midi`,
             idStart: 900,
+            idEnd: 999,
             initName: 'Init Midi',
             name: 'midi',
         },

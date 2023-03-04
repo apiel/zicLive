@@ -1,5 +1,5 @@
 import { clear, drawFilledRect, drawText, Events, setColor } from 'zic_node_ui';
-import { config } from '../config';
+import { config, Engine } from '../config';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems, forceSelectedItem, getSelectedIndex } from '../selector';
 import { color, font } from '../style';
@@ -14,7 +14,7 @@ import {
     Steps,
     STEP_CONDITIONS,
 } from '../sequence';
-import { setCurrentPatchId } from '../patch';
+import { currentPatchId, setCurrentPatchId } from '../patch';
 import { getTrack, getTrackColor, getTrackCount } from '../track';
 import { minmax } from '../util';
 import { NOTE_END, NOTE_START } from 'zic_node';
@@ -80,6 +80,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
     const { trackId, detune, repeat, nextSequenceId, stepCount, steps } = sequences[selectedId];
 
     const track = getTrack(trackId);
+    const engine = config.engines[track.engine];
 
     // TODO should id be a string??? 5-7 char
     drawField(
@@ -190,24 +191,23 @@ export async function sequencerEditView(options: RenderOptions = {}) {
         { scrollY },
     );
 
-    // FIXME make patchId per step
-    drawPattern(stepCount, steps);
+    drawPattern(stepCount, steps, engine);
 
     renderMessage();
 }
 
-function drawPattern(stepCount: number, steps: Steps) {
+function drawPattern(stepCount: number, steps: Steps, engine: Engine) {
     for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) {
         const step = steps[stepIndex][0];
         // FIXME : draw only visible steps
         // const y = margin * 2 + headerSize.h + scrollY + (margin + size.h) * stepIndex;
         // if (y < config.screen.size.h + size.h) {
-        drawStep(step, rowNext(1), stepIndex);
+        drawStep(step, rowNext(1), stepIndex, engine);
         // }
     }
 }
 
-export function drawStep(step: Step | null, row: number, stepIndex: number) {
+export function drawStep(step: Step | null, row: number, stepIndex: number, engine: Engine) {
     const selectedId = getSelectedSequenceId();
     const rect = getFieldRect(row, { scrollY });
 
@@ -262,10 +262,13 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
                         .reverse()
                         .find((step) => step[0]?.note)?.[0];
                     sequences[selectedId].steps[stepIndex][0] = {
-                        note: previousStep?.note || 60,
+                        note: previousStep?.note ?? 60,
                         velocity: 100,
                         tie: false,
-                        patchId: 0, // FIXME should set the right patchid
+                        patchId:
+                            previousStep?.patchId ??
+                            sequences[selectedId].steps.flat().find((s) => s)?.patchId ??
+                            engine.idStart,
                     };
                 }
             },
@@ -326,10 +329,11 @@ export function drawStep(step: Step | null, row: number, stepIndex: number) {
         { color: color.secondaryInfo, size: 12, font: font.regular },
         {
             onSelected,
-            // FIXME
-            // edit: (direction) => {
-            //     sequences[selectedId].patchId = minmax(patchId + direction, 0, patches.length - 1);
-            // },
+            edit: (direction) => {
+                if (step) {
+                    step.patchId = minmax(step.patchId + direction, engine.idStart, engine.idEnd);
+                }
+            },
             steps: [1, 10],
         },
     );

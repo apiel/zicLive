@@ -1,12 +1,12 @@
 import { readFile } from 'fs/promises';
 import { Color } from 'zic_node_ui';
-import { config } from './config';
+import { config, EngineType } from './config';
 import { color } from './style';
 
 export interface Track {
     id: number;
     name: string;
-    engine: string; // Type of patches (PD, zicSynth, midi, etc.)
+    engine: EngineType;
     color?: Color;
 }
 

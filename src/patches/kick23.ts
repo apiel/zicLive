@@ -1,15 +1,13 @@
 import path from 'path';
 import { getWavetable, Kick23, Wavetable } from 'zic_node';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
-import { loadPatchId, Patch, savePatch, savePatchAs } from '../patch';
+import { Patch } from '../patch';
 import { minmax } from '../util';
 import { config } from '../config';
 import { drawWavetable } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
-import { drawKeyboard } from '../draw/drawKeyboard';
-import { withInfo, withSuccess } from '../draw/drawMessage';
-import { rowNext, rowGet, rowReset, rowGetAndAdd } from '../draw/rowNext';
+import { rowNext, rowGet, rowGetAndAdd } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
 
 const fId = Kick23.FloatId;
@@ -25,8 +23,6 @@ const add = config.screen.col === 1 ? 3 : 1;
 const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet() + 1;
 
 export default function (patch: Patch, scrollY: number) {
-    rowReset();
-
     drawField(
         `Volume`,
         Math.round(patch.floats[fId.Volume] * 100).toString(),

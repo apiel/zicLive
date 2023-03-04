@@ -1,8 +1,7 @@
 import { clear, drawText, Events } from 'zic_node_ui';
-import { getPatch, loadPatchId, savePatch, savePatchAs } from '../patch';
+import { currentPatchId, getPatch, savePatchAs, setCurrentPatchId } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import { getTrack } from '../track';
 import kick23 from '../patches/kick23';
 import synth from '../patches/synth';
 import { eventEdit, eventSelector, getEditMode } from '../events';
@@ -11,11 +10,12 @@ import { config } from '../config';
 import { RenderOptions } from '../view';
 import { renderMessage, withInfo, withSuccess } from '../draw/drawMessage';
 import { drawField, drawFieldDual } from '../draw/drawField';
-import { rowNext } from '../draw/rowNext';
+import { rowNext, rowReset } from '../draw/rowNext';
 import { drawKeyboard } from '../draw/drawKeyboard';
+import { drawSeparator } from '../draw/drawSeparator';
 
 let scrollY = 0;
-let currentPatchId = -1;
+let lastCurrentPatchId = -1;
 let saveAs = '';
 const col = config.screen.col;
 
@@ -29,33 +29,46 @@ export async function patchView(options: RenderOptions = {}) {
         return;
     }
 
-    const { trackId, patchId } = sequence;
-    const { engine } = getTrack(trackId);
-    const patch = getPatch(engine, patchId);
+    rowReset();
 
-    if (currentPatchId !== patchId) {
+    const patch = getPatch(currentPatchId);
+
+    if (lastCurrentPatchId !== currentPatchId) {
         scrollY = 0;
-        currentPatchId = patchId;
+        lastCurrentPatchId = currentPatchId;
         saveAs = patch.name;
     }
 
-    switch (engine) {
+    drawField(
+        `Patch`,
+        currentPatchId.toString(),
+        rowNext(1),
+        {
+            edit: (direction) => {
+                setCurrentPatchId(currentPatchId + direction);
+            },
+            steps: [1, 10]
+        },
+        { scrollY, info: patch.name },
+    );
+
+    drawSeparator(patch.engine.name.charAt(0).toUpperCase() + patch.engine.name.slice(1), rowNext(1), {
+        scrollY,
+        color: color.white,
+    });
+
+    switch (patch.engine.name) {
         case 'synth':
             synth(patch, scrollY);
             break;
-        case 'pd':
-            // TODO #39 preset view for pd
-            drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
-            break;
         case 'midi':
             // TODO #38 preset view for midi
-            drawText(`Engine "${engine}", patch "${patch.name}"`, { x: 10, y: 10 });
+            drawText(`Engine "${patch.engine.name}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
-        case engine:
+        case 'kick23':
             kick23(patch, scrollY);
             break;
     }
-
 
     drawFieldDual(
         ``,
@@ -63,10 +76,10 @@ export async function patchView(options: RenderOptions = {}) {
         `Save`,
         rowNext(1),
         {
-            edit: withInfo('Loaded', () => loadPatchId(engine, patch.id)),
+            edit: withInfo('Loaded', () => patch.load()),
         },
         {
-            edit: withSuccess('Saved', () => savePatch(engine, patch.id)),
+            edit: withSuccess('Saved', () => patch.save()),
         },
         { scrollY },
     );
@@ -76,7 +89,7 @@ export async function patchView(options: RenderOptions = {}) {
         saveAs,
         rowNext(col),
         {
-            edit: withSuccess('Saved', () => savePatchAs(engine, patch, saveAs)),
+            edit: withSuccess('Saved', () => savePatchAs(patch, saveAs)),
         },
         {
             col,
@@ -89,7 +102,7 @@ export async function patchView(options: RenderOptions = {}) {
             if (char === 'DEL') {
                 saveAs = saveAs.slice(0, -1);
             } else if (char === 'DONE') {
-                return withSuccess('Saved', () => savePatchAs(engine, patch, saveAs))();
+                return withSuccess('Saved', () => savePatchAs(patch, saveAs))();
             } else {
                 if (saveAs.length < 10) {
                     saveAs += char;

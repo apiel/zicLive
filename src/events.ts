@@ -1,6 +1,8 @@
 import { Events } from 'zic_node_ui';
 import { View } from './def';
+import { currentPatchId, setCurrentPatchId } from './patch';
 import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } from './selector';
+import { incSelectedSequenceId } from './sequence';
 import { getView, setView } from './view';
 
 const KEY_UP = 82;
@@ -63,6 +65,7 @@ export function eventSelector(events: Events, findCloseFromSameColumn = false): 
     }
 }
 
+let menuMode = View.Sequencer;
 export function eventMenu(events: Events) {
     if (!keyState.menu && isEventMenuPressed(events)) {
         keyState.menu = true;
@@ -80,26 +83,44 @@ export function eventMenu(events: Events) {
                 if (getView() === View.Sequencer) {
                     return setView(View.SequencerEdit);
                 }
+                menuMode = View.Sequencer;
                 return setView(View.Sequencer);
             }
             return true;
         }
         if (isEventUpPressed(events)) {
             keyState.menuTime = 0;
-            return setView(View.Preset);
+            menuMode = View.Patch;
+            return setView(View.Patch);
         } else if (isEventDownPressed(events)) {
             keyState.menuTime = 0;
-            return setView(View.Pattern);
-        } else if (isEventLeftPressed(events)) {
-            keyState.menuTime = 0;
+            menuMode = View.Master;
             return setView(View.Master);
+        } else if (isEventLeftPressed(events)) {
+            return eventMenuLeftRight(-1);
         } else if (isEventRightPressed(events)) {
-            keyState.menuTime = 0;
-            // return setView(View.Project); // Might not even need Project, as everything can be done in master
-            return setView(View.SequencerEdit);
+            return eventMenuLeftRight(+1);
         }
     }
     return false;
+}
+
+function eventMenuLeftRight(direction: number) {
+    keyState.menuTime = 0;
+    switch (menuMode) {
+        case View.Sequencer:
+            const changed = setView(View.SequencerEdit);
+            if (!changed) {
+                incSelectedSequenceId(direction);
+            }
+            break;
+        case View.Patch:
+            setCurrentPatchId(currentPatchId + direction);
+            break;
+        case View.Master:
+            break;
+    }
+    return true;
 }
 
 export async function eventEdit(events: Events) {

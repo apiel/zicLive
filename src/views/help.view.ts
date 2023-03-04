@@ -31,13 +31,13 @@ export async function helpView(options: RenderOptions = {}) {
         { color: color.white, font: font.bold },
         { edit: () => setView(View.Project) },
     );
-    drawText('Menu + Down =', { x: 10, y: 70 }, { color: color.info });
-    drawSelectableText(
-        'Pattern',
-        { x: 150, y: 70 },
-        { color: color.white, font: font.bold },
-        { edit: () => setView(View.Pattern) },
-    );
+    // drawText('Menu + Down =', { x: 10, y: 70 }, { color: color.info });
+    // drawSelectableText(
+    //     'Pattern',
+    //     { x: 150, y: 70 },
+    //     { color: color.white, font: font.bold },
+    //     { edit: () => setView(View.Pattern) },
+    // );
     drawText('Menu + Left =', { x: 10, y: 90 }, { color: color.info });
     drawSelectableText(
         'Master',
@@ -47,10 +47,10 @@ export async function helpView(options: RenderOptions = {}) {
     );
     drawText('Menu + Up =', { x: 10, y: 110 }, { color: color.info });
     drawSelectableText(
-        'Preset',
+        'Patch',
         { x: 130, y: 110 },
         { color: color.white, font: font.bold },
-        { edit: () => setView(View.Preset) },
+        { edit: () => setView(View.Patch) },
     );
 
     renderMessage();

@@ -1,5 +1,5 @@
 import { clear, drawText, Events } from 'zic_node_ui';
-import { currentPatchId, getPatch, savePatchAs } from '../patch';
+import { currentPatchId, getPatch, savePatchAs, setCurrentPatchId } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import kick23 from '../patches/kick23';
@@ -10,8 +10,9 @@ import { config } from '../config';
 import { RenderOptions } from '../view';
 import { renderMessage, withInfo, withSuccess } from '../draw/drawMessage';
 import { drawField, drawFieldDual } from '../draw/drawField';
-import { rowNext } from '../draw/rowNext';
+import { rowNext, rowReset } from '../draw/rowNext';
 import { drawKeyboard } from '../draw/drawKeyboard';
+import { drawSeparator } from '../draw/drawSeparator';
 
 let scrollY = 0;
 let lastCurrentPatchId = -1;
@@ -28,6 +29,8 @@ export async function patchView(options: RenderOptions = {}) {
         return;
     }
 
+    rowReset();
+
     const patch = getPatch(currentPatchId);
 
     if (lastCurrentPatchId !== currentPatchId) {
@@ -35,6 +38,24 @@ export async function patchView(options: RenderOptions = {}) {
         lastCurrentPatchId = currentPatchId;
         saveAs = patch.name;
     }
+
+    drawField(
+        `Patch`,
+        currentPatchId.toString(),
+        rowNext(1),
+        {
+            edit: (direction) => {
+                setCurrentPatchId(currentPatchId + direction);
+            },
+            steps: [1, 10]
+        },
+        { scrollY, info: patch.name },
+    );
+
+    drawSeparator(patch.engine.name.charAt(0).toUpperCase() + patch.engine.name.slice(1), rowNext(1), {
+        scrollY,
+        color: color.white,
+    });
 
     switch (patch.engine.name) {
         case 'synth':
@@ -48,7 +69,6 @@ export async function patchView(options: RenderOptions = {}) {
             kick23(patch, scrollY);
             break;
     }
-
 
     drawFieldDual(
         ``,

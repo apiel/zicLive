@@ -7,7 +7,7 @@ import { config } from '../config';
 import { drawWavetable } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
-import { rowNext, rowGet, rowReset, rowGetAndAdd } from '../draw/rowNext';
+import { rowNext, rowGet, rowGetAndAdd } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
 
 const fId = Kick23.FloatId;
@@ -23,8 +23,6 @@ const add = config.screen.col === 1 ? 3 : 1;
 const rowAddGraph = config.screen.col === 1 ? () => rowGetAndAdd(add) : () => rowGet() + 1;
 
 export default function (patch: Patch, scrollY: number) {
-    rowReset();
-
     drawField(
         `Volume`,
         Math.round(patch.floats[fId.Volume] * 100).toString(),

@@ -27,8 +27,7 @@ export function sequencesNode(
         }
         const props = {
             ...seq,
-            titleColor: getTrackColor(trackId),
-            title: 'fixme',//getPatch(patchId).name, // FIXME
+            headerColor: getTrackColor(trackId),
             next,
             selected: selectedId === id,
         };
@@ -46,7 +45,7 @@ export function sequencesNode(
     });
     drawText(
         `+`,
-        { x: addRect.position.x - 10 + addRect.size.w / 2, y: addRect.position.y },
+        { x: addRect.position.x - 10 + addRect.size.w / 2, y: addRect.position.y - ((addRect.size.h - 30) / 2) },
         { color: color.info, size: 40, font: font.bold },
     );
 }

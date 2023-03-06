@@ -19,7 +19,7 @@ export const config = {
     screen,
     path,
     sequence: {
-        col: screen.col === 1 ? 3 : 5,
+        col: 5,
     },
     engines: {
         synth: {

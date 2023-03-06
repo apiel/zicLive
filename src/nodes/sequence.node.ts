@@ -26,21 +26,30 @@ export function sequenceNode(
 
     drawText(`${id + 1}`.padStart(3, '0'), { x: position.x + 2, y: position.y + 1 }, { color: headerColor, size: 10, font: font.bold });
 
-    drawText(
-        `${detune < 0 ? detune : `+${detune}`} x${repeat}${next !== undefined ? ` >${truncate(next, 10)}` : ''}`,
-        { x: position.x + 22, y: position.y + 1 },
+    if (next !== undefined) {
+        drawText(
+            `>${truncate(next, 10)}`,
+            { x: position.x + 22, y: position.y + 1 },
+            { color: color.sequencer.info, size: 10, font: font.regular },
+        );
+    }
+
+    const text = drawText(
+        `${detune < 0 ? detune : `+${detune}`} x${repeat}`,
+        { x: position.x + 2, y: position.y + 13 },
         { color: color.sequencer.info, size: 10, font: font.regular },
     );
 
+    const patternPosition = { x: position.x + 2, y: text.position.y + text.size.h + 1 };
     patternPreviewNode(
-        { x: position.x + 2, y: position.y + 15 },
-        { w: size.w, h: size.h - 20 },
+        patternPosition,
+        { w: size.w, h: size.h - (patternPosition.y - position.y) - 4 },
         stepCount,
         steps,
         playing,
     );
     if (activeStep !== undefined) {
-        renderActiveStep({ x: position.x + 2, y: position.y + 15 }, size, stepCount, activeStep);
+        renderActiveStep(patternPosition, size, stepCount, activeStep);
     }
 
     if (selected) {

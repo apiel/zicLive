@@ -45,7 +45,7 @@ export function sequencesNode(
     });
     drawText(
         `+`,
-        { x: addRect.position.x - 10 + addRect.size.w / 2, y: addRect.position.y - ((addRect.size.h - 30) / 2) },
+        { x: addRect.position.x - 10 + addRect.size.w / 2, y: addRect.position.y  },
         { color: color.info, size: 40, font: font.bold },
     );
 }

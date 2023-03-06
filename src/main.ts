@@ -8,6 +8,7 @@ import { loadPatches } from './patch';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
 import { getView, renderView, viewEventHandler } from './view';
+import './midi'
 
 open({ size: config.screen.size });
 start();

@@ -6,7 +6,7 @@ import { sequences } from '../sequence';
 import { SelectableOptions } from '../selector';
 
 const { margin } = unit;
-const height = unit.height * 2;
+const height = config.screen.size.h / config.sequence.row;
 
 const sequenceWidth = config.screen.size.w / config.sequence.col - margin;
 

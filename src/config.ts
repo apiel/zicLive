@@ -20,6 +20,7 @@ export const config = {
     path,
     sequence: {
         col: 5,
+        row: 5,
     },
     engines: {
         synth: {

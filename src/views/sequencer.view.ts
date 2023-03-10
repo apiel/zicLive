@@ -19,7 +19,9 @@ export async function sequencerView(options: RenderOptions = {}) {
     sequencesGridNode(col, scrollY, (id) => ({
         edit: () => toggleSequence(getSequence(id)),
         onSelected: () => {
-            setSelectedSequenceId(id);
+            if (id !== -1) {
+                setSelectedSequenceId(id);
+            }
             forceSelectedItem(View.SequencerEdit, id);
         },
     }));

@@ -1,0 +1,1 @@
+{"version":3,"file":"getDrawRect.d.ts","sourceRoot":"","sources":["../../src/draw/getDrawRect.ts"],"names":[],"mappings":"AAGA,wBAAgB,cAAc,CAAC,GAAG,EAAE,MAAM,UAEzC;AAED,MAAM,WAAW,WAAW;IACxB,GAAG,CAAC,EAAE,MAAM,CAAC;IACb,OAAO,CAAC,EAAE,MAAM,CAAC;IACjB,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,CAAC;CACf;AAQD,wBAAgB,WAAW,CAAC,EAAE,GAAO,EAAE,OAAW,EAAE,GAAO,EAAE,EAAE,WAAW;;;;;;;;;EAQzE"}

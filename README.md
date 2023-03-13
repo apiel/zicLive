@@ -22,6 +22,25 @@ npm install
 npm start
 ```
 
+## RPi
+
+### node 16
+
+```sh
+  if [ "$(uname -m)" != "armv6l" ]; then
+    curl -sL https://deb.nodesource.com/setup_16.x | bash -
+  else
+    wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/install-node-v16.3.0.sh | bash
+  fi
+  apt-get -y install nodejs
+```
+
+### font
+
+```sh
+sudo apt-get install fonts-liberation2
+```
+
 # Ressources
 
 - [ZicNode](https://github.com/apiel/zicNode) C++ NodeJs addon for the synth engine and sequencer.

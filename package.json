@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
+    "scp": "./scp.sh",
     "build": "tsc",
     "start": "node dist/main.js",
     "dev": "ts-node-dev src/main.ts"

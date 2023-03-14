@@ -2,6 +2,7 @@ import { getMidiDevices, MidiError, MidiMessage, setMidiCallback, subscribeMidiI
 import { Events, render } from 'zic_node_ui';
 import { drawError, renderMessage } from '../draw/drawMessage';
 import { KEY_DOWN, KEY_EDIT, KEY_LEFT, KEY_MENU, KEY_RIGHT, KEY_UP } from '../events';
+import { sendTcpMidi } from '../tcp';
 import { viewEventHandler } from '../view';
 import { akaiApcKey25 } from './akaiApcKey25';
 
@@ -81,14 +82,19 @@ async function basicUiEvent({ port, message: [type, padKey] }: MidiMessage) {
     return isUiEvent;
 }
 
+export async function handleMidi(data: MidiMessage) {
+    sendTcpMidi(data);
+    if (await basicUiEvent(data as MidiMessage)) {
+        return;
+    }
+}
+
 setMidiCallback(async (data) => {
     if ((data as MidiError).error) {
         console.error('midi error', data);
         return;
     }
-    if (await basicUiEvent(data as MidiMessage)) {
-        return;
-    }
+    await handleMidi(data as MidiMessage);
 });
 
 midiDevices.input.forEach((input) => {

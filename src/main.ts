@@ -7,11 +7,21 @@ import { drawError, renderMessage } from './draw/drawMessage';
 import { loadPatches } from './patch';
 import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } from './sequence';
 import { loadTracks } from './track';
+import { startClient, startServer } from './tcp';
 import { getView, renderView, viewEventHandler } from './view';
 import './midi'
 
 open({ size: config.screen.size });
 start();
+
+if (process.argv.includes('--server')) {
+    startServer();
+}
+
+if (process.argv.includes('--client')) {
+    const host = process.argv[process.argv.indexOf('--client') + 1];
+    startClient(host);
+}
 
 (async function () {
     await loadTracks();

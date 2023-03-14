@@ -16,16 +16,21 @@ const events: Events = {
     keysUp: [],
 };
 
+export interface MidiMsg extends MidiMessage {
+    isController?: boolean;
+    isKeyboard?: boolean;
+}
+
 const midiDevices = getMidiDevices();
 const midiInputController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 const midiInputKeyboard = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 K'));
 
-async function basicUiEvent({ port, message: [type, padKey] }: MidiMessage) {
+async function basicUiEvent({ isController, message: [type, padKey] }: MidiMsg) {
     // clear keysUp but not keysDown
     events.keysUp = [];
     if (type === MIDI_TYPE.KEY_PRESSED) {
         // pressed
-        if (port === midiInputController?.port) {
+        if (isController) {
             if (padKey === akaiApcKey25.pad.up) {
                 events.keysDown!.push(KEY_UP);
             } else if (padKey === akaiApcKey25.pad.down) {
@@ -42,7 +47,7 @@ async function basicUiEvent({ port, message: [type, padKey] }: MidiMessage) {
         }
     } else if (type === MIDI_TYPE.KEY_RELEASED) {
         // released
-        if (port === midiInputController?.port) {
+        if (isController) {
             if (padKey === akaiApcKey25.pad.up) {
                 events.keysDown = events.keysDown!.filter((key) => key !== KEY_UP);
                 events.keysUp.push(KEY_UP);
@@ -82,9 +87,9 @@ async function basicUiEvent({ port, message: [type, padKey] }: MidiMessage) {
     return isUiEvent;
 }
 
-export async function handleMidi(data: MidiMessage) {
+export async function handleMidi(data: MidiMsg) {
     sendTcpMidi(data);
-    if (await basicUiEvent(data as MidiMessage)) {
+    if (await basicUiEvent(data)) {
         return;
     }
 }
@@ -94,7 +99,15 @@ setMidiCallback(async (data) => {
         console.error('midi error', data);
         return;
     }
-    await handleMidi(data as MidiMessage);
+    const midiMsg = data as MidiMsg;
+    if (data.port === midiInputController?.port) {
+        midiMsg.isController = true;
+    } else if (data.port === midiInputKeyboard?.port) {
+        midiMsg.isKeyboard = true;
+    } else {
+        return;
+    }
+    await handleMidi(midiMsg);
 });
 
 midiDevices.input.forEach((input) => {

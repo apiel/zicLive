@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleMidi = void 0;
 const zic_node_1 = require("zic_node");
 const zic_node_ui_1 = require("zic_node_ui");
 const drawMessage_1 = require("../draw/drawMessage");
 const events_1 = require("../events");
+const tcp_1 = require("../tcp");
 const view_1 = require("../view");
 const akaiApcKey25_1 = require("./akaiApcKey25");
 var MIDI_TYPE;
@@ -18,12 +20,12 @@ const events = {
 const midiDevices = (0, zic_node_1.getMidiDevices)();
 const midiInputController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 const midiInputKeyboard = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 K'));
-async function basicUiEvent({ port, message: [type, padKey] }) {
+async function basicUiEvent({ isController, message: [type, padKey] }) {
     // clear keysUp but not keysDown
     events.keysUp = [];
     if (type === MIDI_TYPE.KEY_PRESSED) {
         // pressed
-        if (port === midiInputController?.port) {
+        if (isController) {
             if (padKey === akaiApcKey25_1.akaiApcKey25.pad.up) {
                 events.keysDown.push(events_1.KEY_UP);
             }
@@ -46,7 +48,7 @@ async function basicUiEvent({ port, message: [type, padKey] }) {
     }
     else if (type === MIDI_TYPE.KEY_RELEASED) {
         // released
-        if (port === midiInputController?.port) {
+        if (isController) {
             if (padKey === akaiApcKey25_1.akaiApcKey25.pad.up) {
                 events.keysDown = events.keysDown.filter((key) => key !== events_1.KEY_UP);
                 events.keysUp.push(events_1.KEY_UP);
@@ -89,14 +91,29 @@ async function basicUiEvent({ port, message: [type, padKey] }) {
     }
     return isUiEvent;
 }
+async function handleMidi(data) {
+    (0, tcp_1.sendTcpMidi)(data);
+    if (await basicUiEvent(data)) {
+        return;
+    }
+}
+exports.handleMidi = handleMidi;
 (0, zic_node_1.setMidiCallback)(async (data) => {
     if (data.error) {
         console.error('midi error', data);
         return;
     }
-    if (await basicUiEvent(data)) {
+    const midiMsg = data;
+    if (data.port === midiInputController?.port) {
+        midiMsg.isController = true;
+    }
+    else if (data.port === midiInputKeyboard?.port) {
+        midiMsg.isKeyboard = true;
+    }
+    else {
         return;
     }
+    await handleMidi(midiMsg);
 });
 midiDevices.input.forEach((input) => {
     if (input.name.startsWith('APC Key 25')) {

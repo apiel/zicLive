@@ -9,10 +9,18 @@ const drawMessage_1 = require("./draw/drawMessage");
 const patch_1 = require("./patch");
 const sequence_1 = require("./sequence");
 const track_1 = require("./track");
+const tcp_1 = require("./tcp");
 const view_1 = require("./view");
 require("./midi");
 (0, zic_node_ui_1.open)({ size: config_1.config.screen.size });
 (0, zic_node_1.start)();
+if (process.argv.includes('--server')) {
+    (0, tcp_1.startServer)();
+}
+if (process.argv.includes('--client')) {
+    const host = process.argv[process.argv.indexOf('--client') + 1];
+    (0, tcp_1.startClient)(host);
+}
 (async function () {
     await (0, track_1.loadTracks)();
     await (0, patch_1.loadPatches)();

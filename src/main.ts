@@ -45,6 +45,7 @@ if (process.argv.includes('--client')) {
                     }
                 }
             }
+            // Too slow on rpi0
             if (beatViews.includes(getView() as any)) {
                 await renderView({ beatRendering: true });
                 render();

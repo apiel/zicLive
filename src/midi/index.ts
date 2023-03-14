@@ -95,6 +95,7 @@ export async function handleMidi(data: MidiMsg) {
 }
 
 setMidiCallback(async (data) => {
+    // console.log('setMidiCallback', data);
     if ((data as MidiError).error) {
         console.error('midi error', data);
         return;

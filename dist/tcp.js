@@ -17,8 +17,8 @@ function startServer() {
                 for (const line of lines) {
                     if (line) {
                         const data = JSON.parse(line);
+                        console.log(data);
                         (0, midi_1.handleMidi)(data);
-                        // console.log(data);
                     }
                 }
             }
@@ -46,7 +46,6 @@ function sendTcpMidi(data) {
     }
 }
 exports.sendTcpMidi = sendTcpMidi;
-let retry = 0;
 function startClient(host) {
     console.log('connecting to server...');
     client = (0, net_1.connect)({ port, host }, () => {
@@ -54,15 +53,16 @@ function startClient(host) {
     });
     client.on('error', (error) => {
         console.log('TCP client error:', error);
-        if (retry++ < 5) {
-            setTimeout(() => {
-                startClient(host);
-            }, 3000);
-        }
+        setTimeout(() => {
+            startClient(host);
+        }, 3000);
     });
     client.on('end', function () {
         console.log('disconnected from server');
         client = undefined;
+        setTimeout(() => {
+            startClient(host);
+        }, 3000);
     });
 }
 exports.startClient = startClient;

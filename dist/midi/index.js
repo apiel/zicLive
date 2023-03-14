@@ -99,6 +99,7 @@ async function handleMidi(data) {
 }
 exports.handleMidi = handleMidi;
 (0, zic_node_1.setMidiCallback)(async (data) => {
+    // console.log('setMidiCallback', data);
     if (data.error) {
         console.error('midi error', data);
         return;

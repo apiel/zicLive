@@ -4,6 +4,7 @@ const process_1 = require("process");
 const zic_node_1 = require("zic_node");
 const zic_node_ui_1 = require("zic_node_ui");
 const config_1 = require("./config");
+const def_1 = require("./def");
 const drawMessage_1 = require("./draw/drawMessage");
 const patch_1 = require("./patch");
 const sequence_1 = require("./sequence");
@@ -39,11 +40,11 @@ if (process.argv.includes('--client')) {
                     }
                 }
             }
-            // // Too slow on rpi0
-            // if (beatViews.includes(getView() as any)) {
-            //     await renderView({ beatRendering: true });
-            //     render();
-            // }
+            // Too slow on rpi0
+            if (def_1.beatViews.includes((0, view_1.getView)())) {
+                await (0, view_1.renderView)({ beatRendering: true });
+                (0, zic_node_ui_1.render)();
+            }
         }
         catch (error) {
             console.error(error);

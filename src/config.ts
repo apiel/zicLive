@@ -2,10 +2,10 @@ const BASE_PATH = '.';
 export const DATA_PATH = `${BASE_PATH}/data`;
 
 const screen = {
-    // size: { w: 420, h: 300 },
-    // col: 2 as 1 | 2,
-    size: { w: 240, h: 240 },
-    col: 1 as 1 | 2,
+    size: { w: 480, h: 280 },
+    col: 2 as 1 | 2,
+    // size: { w: 240, h: 240 },
+    // col: 1 as 1 | 2,
 };
 
 const path = {
@@ -19,7 +19,7 @@ export const config = {
     screen,
     path,
     sequence: {
-        col: 5,
+        col: 6,
         row: 5,
     },
     engines: {

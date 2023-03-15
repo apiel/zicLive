@@ -1,3 +1,4 @@
+
 const padMatrix = [
     [0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27],
     [0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f],
@@ -25,6 +26,13 @@ const padMode = {
     blinking1_4: 0x9e,
     blinking1_2: 0x9f,
 };
+
+// #3151C6 92
+// #B21A7D 82
+// #004152 38
+// #005735 65
+// #A00000 120
+// #FF5400 9
 
 // Color Velocity Color Velocity Color Velocity
 // #000000 0 #142B00 19 #004152 38

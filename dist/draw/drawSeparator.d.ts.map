@@ -1,0 +1,1 @@
+{"version":3,"file":"drawSeparator.d.ts","sourceRoot":"","sources":["../../src/draw/drawSeparator.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAgC,MAAM,aAAa,CAAC;AAKlE,MAAM,WAAW,gBAAgB;IAC7B,KAAK,CAAC,EAAE,KAAK,CAAC;IACd,OAAO,CAAC,EAAE,MAAM,CAAC;CACpB;AAED,wBAAgB,aAAa,CAAC,IAAI,EAAE,MAAM,EAAE,GAAG,EAAE,MAAM,EAAE,EAAE,OAAO,EAAE,KAAK,EAAE,GAAE,gBAAqB,QAYjG"}

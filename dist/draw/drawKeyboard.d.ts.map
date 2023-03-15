@@ -1,0 +1,1 @@
+{"version":3,"file":"drawKeyboard.d.ts","sourceRoot":"","sources":["../../src/draw/drawKeyboard.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,WAAW,EAAe,MAAM,eAAe,CAAC;AAEzD,UAAU,eAAgB,SAAQ,WAAW;IACzC,IAAI,CAAC,EAAE,MAAM,CAAC;CACjB;AAED,wBAAgB,YAAY,CAAC,IAAI,EAAE,CAAC,IAAI,EAAE,MAAM,KAAK,IAAI,EAAE,OAAO,GAAE,eAAoB,QAyCvF"}

@@ -5,13 +5,12 @@ import { Direction, findNextSelectableItem, getSlectedItem, SelectableItem } fro
 import { incSelectedSequenceId } from './sequence';
 import { getView, setView } from './view';
 
-const KEY_UP = 82;
-const KEY_DOWN = 81;
-const KEY_LEFT = 80;
-const KEY_RIGHT = 79;
-const KEY_MENU = 4;
-const KEY_EDIT = 22;
-const KEY_ACTION = 20;
+export const KEY_UP = 82;
+export const KEY_DOWN = 81;
+export const KEY_LEFT = 80;
+export const KEY_RIGHT = 79;
+export const KEY_MENU = 4;
+export const KEY_EDIT = 22;
 
 const keyState = {
     edit: false,

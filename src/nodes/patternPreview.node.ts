@@ -4,7 +4,7 @@ import { color } from '../style';
 
 export function patternPreviewNode(position: Point, size: Size, stepCount: number, _steps: Steps, playing = false) {
     setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
-    const stepWidth = (size.w - 2) / stepCount;
+    const stepWidth = Math.max((size.w - 2) / stepCount, 2);
     const steps = _steps.map((voices) => voices.filter((v) => v)); // remove undefined/null
     const notes = steps.flatMap((voices) =>voices.map((v) => v!.note));
     const noteMin = Math.min(...notes);

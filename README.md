@@ -12,7 +12,7 @@ There is different kinds of track: 1 drum kick, 3 basic wavetable synth, and 4 M
 # Installation
 
 ```sh
-sudo apt-get install libsdl2-ttf-dev libsdl2-ttf-2.0-0 libsdl2-dev
+sudo apt-get -y install libsdl2-ttf-dev libsdl2-ttf-2.0-0 libsdl2-dev
 
 # TODO #15 fix recursive git repo
 # TODO add nodejs addon in repo and update package.json
@@ -38,7 +38,7 @@ npm start
 ### font
 
 ```sh
-sudo apt-get install fonts-liberation2
+sudo apt-get -y install fonts-liberation2
 ```
 
 # Ressources

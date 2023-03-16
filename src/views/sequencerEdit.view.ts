@@ -149,7 +149,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
 
     drawField(
         `Detune`,
-        detune < 0 ? detune.toString() : `+${detune}` + ' semitones',
+        (detune < 0 ? detune.toString() : `+${detune}`) + ' semitones',
         rowNext(1),
         {
             edit: (direction) => {

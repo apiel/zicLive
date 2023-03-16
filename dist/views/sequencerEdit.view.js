@@ -99,7 +99,7 @@ async function sequencerEditView(options = {}) {
         scrollY,
         col,
     });
-    (0, drawField_1.drawField)(`Detune`, detune < 0 ? detune.toString() : `+${detune}` + ' semitones', (0, rowNext_1.rowNext)(1), {
+    (0, drawField_1.drawField)(`Detune`, (detune < 0 ? detune.toString() : `+${detune}`) + ' semitones', (0, rowNext_1.rowNext)(1), {
         edit: (direction) => {
             sequence_1.sequences[selectedId].detune = (0, util_1.minmax)(detune + direction, -12, 12);
         },

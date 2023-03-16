@@ -14,8 +14,8 @@ import {
     Steps,
     STEP_CONDITIONS,
 } from '../sequence';
-import { currentPatchId, setCurrentPatchId } from '../patch';
-import { getTrack, getTrackColor, getTrackCount } from '../track';
+import { setCurrentPatchId } from '../patch';
+import { getTrack, getTrackCount, getTrackStyle } from '../track';
 import { minmax } from '../util';
 import { NOTE_END, NOTE_START } from 'zic_node';
 import { View } from '../def';
@@ -95,7 +95,7 @@ export async function sequencerEditView(options: RenderOptions = {}) {
             },
         },
         {
-            valueColor: getTrackColor(trackId),
+            valueColor: getTrackStyle(trackId).color,
             scrollY,
         },
     );

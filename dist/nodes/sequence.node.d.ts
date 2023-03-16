@@ -1,7 +1,7 @@
 import { Color, Rect } from 'zic_node_ui';
 import { Steps } from '../sequence';
 interface Props {
-    headerColor: Color;
+    trackColor: Color;
     playing: boolean;
     detune: number;
     next?: string;
@@ -11,6 +11,6 @@ interface Props {
     activeStep?: number;
     selected?: boolean;
 }
-export declare function sequenceNode(id: number, { position, size }: Rect, { headerColor, playing, detune, next, repeat, stepCount, steps, activeStep, selected }: Props): Rect;
+export declare function sequenceNode(id: number, { position, size }: Rect, { trackColor, playing, detune, next, repeat, stepCount, steps, activeStep, selected }: Props): Rect;
 export {};
 //# sourceMappingURL=sequence.node.d.ts.map

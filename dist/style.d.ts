@@ -16,7 +16,10 @@ export declare const color: {
             b: number;
         };
     };
-    tracks: import("zic_node_ui").Color[];
+    tracks: {
+        color: import("zic_node_ui").Color;
+        padColor: number;
+    }[];
     message: import("zic_node_ui").Color[];
     background: import("zic_node_ui").Color;
     foreground: import("zic_node_ui").Color;

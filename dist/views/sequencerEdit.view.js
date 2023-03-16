@@ -68,7 +68,7 @@ async function sequencerEditView(options = {}) {
             (0, selector_1.forceSelectedItem)(def_1.View.Sequencer, id);
         },
     }, {
-        valueColor: (0, track_1.getTrackColor)(trackId),
+        valueColor: (0, track_1.getTrackStyle)(trackId).color,
         scrollY,
     });
     (0, drawField_1.drawField)(`Track`, track.name, (0, rowNext_1.rowNext)(col), {

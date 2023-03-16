@@ -3,7 +3,7 @@ import { sequenceNode } from './sequence.node';
 import { drawSelectableRect } from '../draw/drawSelectable';
 import { newSequence, Sequence } from '../sequence';
 import { color, font } from '../style';
-import { getTrackColor } from '../track';
+import { getTrackStyle } from '../track';
 import { SelectableOptions } from '../selector';
 
 export interface SequenceNoteOptions {
@@ -27,13 +27,13 @@ export function sequencesNode(
         }
         const props = {
             ...seq,
-            headerColor: getTrackColor(trackId),
+            trackColor: getTrackStyle(trackId).color,
             next,
             selected: selectedId === id,
         };
         const rect = sequenceRect(i, scrollY);
         sequenceNode(id, rect, props);
-        drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
+        // drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
     }
     const addRect = sequenceRect(sequences.length, scrollY);
     setColor(color.foreground);

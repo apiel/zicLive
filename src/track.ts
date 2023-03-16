@@ -7,7 +7,6 @@ export interface Track {
     id: number;
     name: string;
     engine: EngineType;
-    color?: Color;
 }
 
 let tracks: Track[] = [];
@@ -16,12 +15,11 @@ export const getTracks = () => tracks;
 export const getTrack = (id: number) => tracks[id];
 export const getTrackCount = () => tracks.length;
 
-export const getTrackColor = (id: number) =>
-    tracks[id].color || color.tracks[id % color.tracks.length];
+export const getTrackStyle = (id: number) => color.tracks[id % color.tracks.length];
 
 export async function loadTracks() {
     try {
-        // Going through track folder is questionable as for the moment 
+        // Going through track folder is questionable as for the moment
         // tracks are hardcoded in the app... However, would be great to make track assignement dynamic!
         tracks = JSON.parse((await readFile(config.path.tracks)).toString());
     } catch (error) {

@@ -20,6 +20,7 @@ const events = {
 const midiDevices = (0, zic_node_1.getMidiDevices)();
 const midiInputController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 const midiInputKeyboard = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 K'));
+const midiOutController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 async function basicUiEvent({ isController, message: [type, padKey] }) {
     // clear keysUp but not keysDown
     events.keysUp = [];
@@ -121,3 +122,30 @@ midiDevices.input.forEach((input) => {
         (0, zic_node_1.subscribeMidiInput)(input.port);
     }
 });
+// const selection = [
+//     50, // #5b2cb5
+//     96, // #e0e310
+//     95, // #d5198a
+//     78, // #33bdff
+//     102, // #23afaf
+//     73, // #7ce793
+//     5, // #e12310
+//     84, // #f7980a
+//     3, // #aeecff
+//     117, // #4fa9c5
+//     4, // #ffb6b6
+//     32, // #5bfff7
+//     29, // #25d7d7
+//     58, // #a33590
+//     17, // #1ce110
+// ];
+// if (midiOutController !== undefined) {
+//     for (let i = 0; i < 40; i++) {
+//         sendMidiMessage(midiOutController.port, [0x96, 0x00 + i, 0 + i]);
+//     }
+// }
+// if (midiOutController !== undefined) {
+//     for (let i = 0; i < 40; i++) {
+//         sendMidiMessage(midiOutController.port, [0x96, 0x00 + i, selection[i] ?? 0]);
+//     }
+// }

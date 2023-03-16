@@ -5,7 +5,7 @@ import { truncate } from '../util';
 import { Steps } from '../sequence';
 
 interface Props {
-    headerColor: Color;
+    trackColor: Color;
     playing: boolean;
     detune: number;
     next?: string;
@@ -19,12 +19,16 @@ interface Props {
 export function sequenceNode(
     id: number,
     { position, size }: Rect,
-    { headerColor, playing, detune, next, repeat, stepCount, steps, activeStep, selected }: Props,
+    { trackColor, playing, detune, next, repeat, stepCount, steps, activeStep, selected }: Props,
 ): Rect {
     setColor(playing ? color.sequencer.playing : color.foreground);
     drawFilledRect({ position, size });
 
-    drawText(`${id + 1}`.padStart(3, '0'), { x: position.x + 2, y: position.y + 1 }, { color: headerColor, size: 10, font: font.bold });
+    drawText(
+        `${id + 1}`.padStart(3, '0'),
+        { x: position.x + 2, y: position.y + 1 },
+        { color: trackColor, size: 10, font: font.bold },
+    );
 
     if (next !== undefined) {
         drawText(
@@ -41,9 +45,13 @@ export function sequenceNode(
     );
 
     const patternPosition = { x: position.x + 2, y: text.position.y + text.size.h + 1 };
+    const patternSize = { w: size.w - 4, h: size.h - (patternPosition.y - position.y) - 4 };
+
+    setColor(trackColor);
+    drawFilledRect({ position: patternPosition, size: patternSize });
     patternPreviewNode(
-        patternPosition,
-        { w: size.w, h: size.h - (patternPosition.y - position.y) - 4 },
+        { x: patternPosition.x + 2, y: patternPosition.y + 2 },
+        { w: patternSize.w - 4, h: patternSize.h - 6 },
         stepCount,
         steps,
         playing,

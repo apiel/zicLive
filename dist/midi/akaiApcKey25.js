@@ -27,6 +27,12 @@ const padMode = {
     blinking1_4: 0x9e,
     blinking1_2: 0x9f,
 };
+// #3151C6 92
+// #B21A7D 82
+// #004152 38
+// #005735 65
+// #A00000 120
+// #FF5400 9
 // Color Velocity Color Velocity Color Velocity
 // #000000 0 #142B00 19 #004152 38
 // #1E1E1E 1 #4CFF4C 20 #001019 39

@@ -55,7 +55,7 @@ export const font = {
 };
 
 export const unit = {
-    margin: 1,
+    margin: 2,
     extraMargin: 5,
     height: 25,
     height2: 50,

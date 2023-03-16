@@ -24,7 +24,7 @@ function sequencesNode(sequences, scrollY, sequenceRect, getSelectableOptions = 
         };
         const rect = sequenceRect(i, scrollY);
         (0, sequence_node_1.sequenceNode)(id, rect, props);
-        // drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
+        (0, drawSelectable_1.drawSelectableRect)(rect, style_1.color.sequencer.selected, getSelectableOptions(id));
     }
     const addRect = sequenceRect(sequences.length, scrollY);
     (0, zic_node_ui_1.setColor)(style_1.color.foreground);

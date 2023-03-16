@@ -33,7 +33,7 @@ export function sequencesNode(
         };
         const rect = sequenceRect(i, scrollY);
         sequenceNode(id, rect, props);
-        // drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
+        drawSelectableRect(rect, color.sequencer.selected, getSelectableOptions(id));
     }
     const addRect = sequenceRect(sequences.length, scrollY);
     setColor(color.foreground);

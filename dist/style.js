@@ -52,7 +52,7 @@ exports.font = {
     regular: '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
 };
 exports.unit = {
-    margin: 1,
+    margin: 2,
     extraMargin: 5,
     height: 25,
     height2: 50,

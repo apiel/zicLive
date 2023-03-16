@@ -17,9 +17,11 @@ function sequenceNode(id, { position, size }, { trackColor, playing, detune, nex
     const patternSize = { w: size.w - 4, h: size.h - (patternPosition.y - position.y) - 4 };
     (0, zic_node_ui_1.setColor)(trackColor);
     (0, zic_node_ui_1.drawFilledRect)({ position: patternPosition, size: patternSize });
-    (0, patternPreview_node_1.patternPreviewNode)({ x: patternPosition.x + 2, y: patternPosition.y + 2 }, { w: patternSize.w - 4, h: patternSize.h - 6 }, stepCount, steps, playing);
+    const patternPreviewPosition = { x: patternPosition.x + 2, y: patternPosition.y + 2 };
+    const patternPreviewSize = { w: patternSize.w - 4, h: patternSize.h - 4 };
+    (0, patternPreview_node_1.patternPreviewNode)(patternPreviewPosition, patternPreviewSize, stepCount, steps, playing);
     if (activeStep !== undefined) {
-        renderActiveStep(patternPosition, size, stepCount, activeStep);
+        renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
     }
     if (selected) {
         (0, zic_node_ui_1.setColor)(style_1.color.secondarySelected);
@@ -30,6 +32,6 @@ function sequenceNode(id, { position, size }, { trackColor, playing, detune, nex
 exports.sequenceNode = sequenceNode;
 function renderActiveStep(position, size, stepCount, step) {
     (0, zic_node_ui_1.setColor)(style_1.color.sequencer.pattern.playing);
-    const stepWidth = (size.w - 2) / stepCount;
-    (0, zic_node_ui_1.drawLine)({ x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y }, { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + 20 });
+    const stepWidth = size.w / stepCount;
+    (0, zic_node_ui_1.drawLine)({ x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y }, { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + size.h - 1 });
 }

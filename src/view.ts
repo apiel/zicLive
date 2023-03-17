@@ -3,9 +3,10 @@ import { eventMenu } from './events';
 import { helpEventHandler, helpView } from './views/help.view';
 import { masterEventHandler, masterView } from './views/master.view';
 import { patchEventHandler, patchView } from './views/patch.view';
-import { sequencerEventHandler, sequencerView } from './views/sequencer.view';
+import { sequencerEventHandler, sequencerMidiHandler, sequencerView } from './views/sequencer.view';
 import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
 import { View } from './def';
+import { MidiMsg } from './midi';
 
 let view: View = View.Sequencer;
 
@@ -58,3 +59,16 @@ export const viewEventHandler = async (events: Events) => {
             return helpEventHandler(events);
     }
 };
+
+export async function viewMidiHandler(midiMsg: MidiMsg) {
+    switch (view) {
+        case View.Sequencer:
+            return sequencerMidiHandler(midiMsg);
+        // case View.SequencerEdit:
+        //     return sequencerEditMidiHandler(midiMsg);
+        // case View.Patch:
+        //     return patchMidiHandler(midiMsg);
+        // case View.Master:
+        //     return masterMidiHandler(midiMsg);
+    }
+}

@@ -12,7 +12,8 @@ import { getTrackStyle } from '../track';
 import { sequenceNode } from '../nodes/sequence.node';
 import { drawSelectableRect } from '../draw/drawSelectable';
 import { sendMidiMessage } from 'zic_node';
-import { midiOutController } from '../midi';
+import { MidiMsg, midiOutController, MIDI_TYPE } from '../midi';
+import { akaiApcKey25 } from '../midi/akaiApcKey25';
 
 let scrollY = 0;
 const col = config.sequence.col;
@@ -41,7 +42,7 @@ export async function sequencerView({ controllerRendering }: RenderOptions = {})
     cleanSelectableItems();
     clear(color.background);
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
         const rect = sequenceRect(i, scrollY);
         if (sequences[i]) {
             const { id, trackId, nextSequenceId, ...seq } = sequences[i];
@@ -82,17 +83,37 @@ const padBanks = [
 ];
 
 function sequencerController() {
-    if (midiOutController) {
-        for (let i = 0; i < 40; i++) {
+    if (midiOutController?.port) {
+        for (let i = 0; i < 30; i++) {
             if (sequences[i]) {
-                const { trackId } = sequences[i];
+                const { trackId, playing } = sequences[i];
                 const { padColor } = getTrackStyle(trackId);
-                sendMidiMessage(midiOutController.port, [0x96, padSeq[i], padColor]);
+                // TODO if pad seq still playing but will end, then it should be blink quickly
+                // if pad will start to play next, then it should be blink/pulse slowly?
+                const padMode = playing ? akaiApcKey25.padMode.pulsing1_4 : akaiApcKey25.padMode.on100pct;
+                sendMidiMessage(midiOutController.port, [padMode, padSeq[i], padColor]);
             } else {
-                sendMidiMessage(midiOutController.port, [0x96, padSeq[i], 0]);
+                sendMidiMessage(midiOutController.port, [akaiApcKey25.padMode.on100pct, padSeq[i], 0x00]);
             }
         }
     }
+}
+
+export async function sequencerMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
+    if (isController) {
+        if (type === MIDI_TYPE.KEY_RELEASED) {
+            const seqId = padSeq.indexOf(padKey);
+            if (seqId !== -1) {
+                const sequence = getSequence(seqId);
+                if (sequence) {
+                    toggleSequence(sequence);
+                    await sequencerView({ controllerRendering: true });
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 export async function sequencerEventHandler(events: Events) {

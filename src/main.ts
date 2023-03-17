@@ -9,7 +9,7 @@ import { cleanActiveStep, getSequence, loadSequences, setSelectedSequenceId } fr
 import { loadTracks } from './track';
 import { startClient, startServer } from './tcp';
 import { getView, renderView, viewEventHandler } from './view';
-import './midi'
+import './midi';
 
 open({ size: config.screen.size });
 start();
@@ -57,7 +57,7 @@ if (process.argv.includes('--client')) {
             render();
         }
     });
-    await renderView();
+    await renderView({ controllerRendering: true });
     render();
 })();
 

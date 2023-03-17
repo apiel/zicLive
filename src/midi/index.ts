@@ -24,7 +24,7 @@ export interface MidiMsg extends MidiMessage {
 const midiDevices = getMidiDevices();
 const midiInputController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 const midiInputKeyboard = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 K'));
-const midiOutController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
+export const midiOutController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 
 async function basicUiEvent({ isController, message: [type, padKey] }: MidiMsg) {
     // clear keysUp but not keysDown

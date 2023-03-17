@@ -21,6 +21,7 @@ export const setView = (newView: View) => {
 
 export interface RenderOptions {
     beatRendering?: boolean;
+    controllerRendering?: boolean;
 }
 
 export const renderView = (options: RenderOptions = {}) => {
@@ -41,7 +42,7 @@ export const renderView = (options: RenderOptions = {}) => {
 
 export const viewEventHandler = async (events: Events) => {
     if (eventMenu(events)) {
-        await renderView();
+        await renderView({ controllerRendering: true });
         return true;
     }
     switch (view) {

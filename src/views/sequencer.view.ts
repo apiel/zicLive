@@ -11,6 +11,8 @@ import { renderMessage } from '../draw/drawMessage';
 import { getTrackStyle } from '../track';
 import { sequenceNode } from '../nodes/sequence.node';
 import { drawSelectableRect } from '../draw/drawSelectable';
+import { sendMidiMessage } from 'zic_node';
+import { midiOutController } from '../midi';
 
 let scrollY = 0;
 const col = config.sequence.col;
@@ -32,7 +34,10 @@ const sequenceRect = (id: number, scrollY = 0): Rect => {
 };
 
 // TODO #49 optimize rendering and draw only visible items
-export async function sequencerView(options: RenderOptions = {}) {
+export async function sequencerView({ controllerRendering }: RenderOptions = {}) {
+    if (controllerRendering) {
+        sequencerController();
+    }
     cleanSelectableItems();
     clear(color.background);
 
@@ -56,6 +61,38 @@ export async function sequencerView(options: RenderOptions = {}) {
     }
 
     renderMessage();
+}
+
+// prettier-ignore
+const padSeq = [
+    0x20, 0x21, 0x22, 0x23, 0x24, 0x25,
+    0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
+    0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 
+    0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
+];
+
+// prettier-ignore
+const padBanks = [
+    0x26, 0x27,
+    0x1e, 0x1f, 
+    0x16, 0x17,
+    0x0e, 0x0f,
+    0x06, 0x07,
+];
+
+function sequencerController() {
+    if (midiOutController) {
+        for (let i = 0; i < 40; i++) {
+            if (sequences[i]) {
+                const { trackId } = sequences[i];
+                const { padColor } = getTrackStyle(trackId);
+                sendMidiMessage(midiOutController.port, [0x96, padSeq[i], padColor]);
+            } else {
+                sendMidiMessage(midiOutController.port, [0x96, padSeq[i], 0]);
+            }
+        }
+    }
 }
 
 export async function sequencerEventHandler(events: Events) {

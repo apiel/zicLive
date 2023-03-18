@@ -1,4 +1,4 @@
-import { drawFilledRect, drawText, Rect, setColor } from 'zic_node_ui';
+import { Color, drawFilledRect, drawText, Rect, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { color, font, unit } from '../style';
 
@@ -21,6 +21,8 @@ const getRect = (id: number): Rect => {
 
 export interface Encoder {
     title: string;
+    value: string;
+    valueColor?: Color;
 }
 
 export type Encoders = [
@@ -40,11 +42,17 @@ export function encoderNode(encoders: Encoders) {
         setColor(color.foreground);
         drawFilledRect(rect);
         if (encoders[i]) {
-            const { title } = encoders[i] as Encoder;
+            const { title, value, valueColor } = encoders[i] as Encoder;
             drawText(
                 title,
                 { x: rect.position.x + 4, y: rect.position.y + 1 },
                 { color: color.foreground3, size: 10, font: font.bold },
+            );
+
+            drawText(
+                value,
+                { x: rect.position.x + 4, y: rect.position.y + 35 },
+                { color: valueColor ?? color.info, size: 16, font: font.bold },
             );
         }
     }

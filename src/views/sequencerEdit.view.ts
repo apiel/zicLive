@@ -6,7 +6,7 @@ import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { sequencerController } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence } from '../sequence';
-import { getTrackStyle } from '../track';
+import { getTrack, getTrackStyle } from '../track';
 import { patternPreviewNode } from '../nodes/patternPreview.node';
 import { encoderNode } from '../nodes/encoder.node';
 
@@ -46,7 +46,7 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
         }
     }
 
-    const { trackId, stepCount, steps, playing } = getSelectedSequence();
+    const { id, trackId, stepCount, steps, playing } = getSelectedSequence();
     if (trackId !== undefined) {
         const patternPreviewPosition = { x: 165, y: margin };
         const patternPreviewRect = {
@@ -61,12 +61,14 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
         // }
     }
 
+    const seqColor = trackId !== undefined ? getTrackStyle(trackId).color : undefined;
+    const trackName = trackId !== undefined ? getTrack(trackId).name : 'No track';
     encoderNode([
-        {title: 'Sequence'},
+        { title: 'Sequence', value: `#${`${id + 1}`.padStart(3, '0')}`, valueColor: seqColor },
         null,
         null,
         null,
-        {title: 'Track'},
+        { title: 'Track', value: trackName },
         null,
         null,
         null,

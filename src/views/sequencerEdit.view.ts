@@ -48,10 +48,13 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
     const { trackId, stepCount, steps, playing } = getSelectedSequence();
     if (trackId !== undefined) {
         const patternPreviewPosition = { x: 165, y: margin };
-        const patternPreviewSize = { w: config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 };
+        const patternPreviewRect = {
+            position: patternPreviewPosition,
+            size: { w: config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 },
+        };
         setColor(color.foreground);
-        drawFilledRect({ position: patternPreviewPosition, size: patternPreviewSize });
-        patternPreviewNode(patternPreviewPosition, patternPreviewSize, stepCount, steps, playing);
+        drawFilledRect(patternPreviewRect);
+        patternPreviewNode(patternPreviewRect, stepCount, steps, playing);
         // if (activeStep !== undefined) {
         //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
         // }

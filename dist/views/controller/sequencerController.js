@@ -25,8 +25,8 @@ exports.padBanks = [
 function sequencerController() {
     if (midi_1.midiOutController?.port) {
         for (let i = 0; i < 30; i++) {
-            if (sequence_1.sequences[i]) {
-                const { trackId, playing } = sequence_1.sequences[i];
+            const { trackId, playing } = sequence_1.sequences[i];
+            if (trackId !== undefined) {
                 const { padColor } = (0, track_1.getTrackStyle)(trackId);
                 // TODO if pad seq still playing but will end, then it should be blink quickly
                 // if pad will start to play next, then it should be blink/pulse slowly?

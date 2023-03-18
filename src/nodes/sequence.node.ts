@@ -50,17 +50,14 @@ export function sequenceNode(
     setColor(trackColor);
     drawFilledRect({ position: patternPosition, size: patternSize });
 
-    const patternPreviewPosition = { x: patternPosition.x + 2, y: patternPosition.y + 2 }
-    const patternPreviewSize = { w: patternSize.w - 4, h: patternSize.h - 4 };
-    patternPreviewNode(
-        patternPreviewPosition,
-        patternPreviewSize,
-        stepCount,
-        steps,
-        playing,
-    );
+    const patternPreviewPosition = { x: patternPosition.x + 2, y: patternPosition.y + 2 };
+    const patternPreviewRect = {
+        position: patternPreviewPosition,
+        size: { w: patternSize.w - 4, h: patternSize.h - 4 },
+    };
+    patternPreviewNode(patternPreviewRect, stepCount, steps, playing);
     if (activeStep !== undefined) {
-        renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
+        renderActiveStep(patternPreviewRect, stepCount, activeStep);
     }
 
     if (selected) {
@@ -71,7 +68,7 @@ export function sequenceNode(
     return { position, size };
 }
 
-function renderActiveStep(position: Point, size: Size, stepCount: number, step: number) {
+function renderActiveStep({ position, size }: Rect, stepCount: number, step: number) {
     setColor(color.sequencer.pattern.playing);
     const stepWidth = size.w / stepCount;
     drawLine(

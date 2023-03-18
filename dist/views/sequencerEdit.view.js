@@ -9,9 +9,10 @@ const midi_1 = require("../midi");
 const sequencerController_1 = require("./controller/sequencerController");
 const sequence_1 = require("../sequence");
 const track_1 = require("../track");
-const margin = 1;
+const patternPreview_node_1 = require("../nodes/patternPreview.node");
+const { margin } = style_1.unit;
 const sequenceRect = (id) => {
-    const size = { w: 25, h: 15 - margin };
+    const size = { w: 25, h: 15 };
     return {
         position: {
             x: margin + (margin + size.w) * (id % config_1.config.sequence.col),
@@ -27,19 +28,26 @@ async function sequencerEditView({ controllerRendering } = {}) {
     (0, zic_node_ui_1.clear)(style_1.color.background);
     for (let i = 0; i < 30; i++) {
         const rect = sequenceRect(i);
-        if (sequence_1.sequences[i]) {
-            const { trackId } = sequence_1.sequences[i];
-            (0, zic_node_ui_1.setColor)((0, track_1.getTrackStyle)(trackId).color);
-        }
-        else {
-            (0, zic_node_ui_1.setColor)(style_1.color.foreground);
-        }
+        const { trackId } = sequence_1.sequences[i];
+        (0, zic_node_ui_1.setColor)(trackId !== undefined ? (0, track_1.getTrackStyle)(trackId).color : style_1.color.foreground);
         (0, zic_node_ui_1.drawFilledRect)(rect);
         (0, zic_node_ui_1.drawText)(`${i + 1}`.padStart(3, '0'), { x: rect.position.x + 4, y: rect.position.y + 1 }, { color: style_1.color.foreground3, size: 10, font: style_1.font.bold });
         if ((0, sequence_1.getSelectedSequenceId)() === i) {
+            // TODO find better selection color
             (0, zic_node_ui_1.setColor)(style_1.color.white);
             (0, zic_node_ui_1.drawRect)(rect);
         }
+    }
+    const { trackId, stepCount, steps, playing } = (0, sequence_1.getSelectedSequence)();
+    if (trackId !== undefined) {
+        const patternPreviewPosition = { x: 165, y: margin };
+        const patternPreviewSize = { w: config_1.config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 };
+        (0, zic_node_ui_1.setColor)(style_1.color.foreground);
+        (0, zic_node_ui_1.drawFilledRect)({ position: patternPreviewPosition, size: patternPreviewSize });
+        (0, patternPreview_node_1.patternPreviewNode)(patternPreviewPosition, patternPreviewSize, stepCount, steps, playing);
+        // if (activeStep !== undefined) {
+        //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
+        // }
     }
     (0, drawMessage_1.renderMessage)();
 }

@@ -83,18 +83,20 @@ exports.cleanActiveStep = cleanActiveStep;
 //     ) as number[];
 // }
 function playSequence(sequence, playing = true, next) {
-    if (playing) {
-        const playingSeq = getPlayingSequence(sequence.trackId);
-        if (playingSeq) {
-            playingSeq.playing = false;
+    if (sequence.trackId) {
+        if (playing) {
+            const playingSeq = getPlayingSequence(sequence.trackId);
+            if (playingSeq) {
+                playingSeq.playing = false;
+            }
         }
+        sequence.playing = playing;
+        (0, zic_node_1.setSequencerState)(sequence.trackId, sequence.id, playing, {
+            next,
+            detune: sequence.detune,
+            dataId: sequence.id,
+        });
     }
-    sequence.playing = playing;
-    (0, zic_node_1.setSequencerState)(sequence.trackId, sequence.id, playing, {
-        next,
-        detune: sequence.detune,
-        dataId: sequence.id,
-    });
 }
 exports.playSequence = playSequence;
 function toggleSequence(sequence) {
@@ -118,27 +120,40 @@ function initPattern({ id, stepCount, steps }) {
     }
 }
 async function loadSequence(id) {
-    const content = await (0, promises_1.readFile)(getFilepath(id), 'utf8');
-    const sequence = JSON.parse(content.toString());
-    // Fill missing step to pattern
-    sequence.steps = [
-        ...sequence.steps,
-        ...Array.from({ length: zic_node_1.MAX_STEPS_IN_PATTERN - sequence.steps.length }, () => []),
-    ];
-    initPattern(sequence);
-    if (sequence.playing) {
-        playSequence(sequence);
+    if (await (0, util_1.fileExist)(getFilepath(id))) {
+        const content = await (0, promises_1.readFile)(getFilepath(id), 'utf8');
+        const sequence = JSON.parse(content.toString());
+        // Fill missing step to pattern
+        sequence.steps = [
+            ...sequence.steps,
+            ...Array.from({ length: zic_node_1.MAX_STEPS_IN_PATTERN - sequence.steps.length }, () => []),
+        ];
+        initPattern(sequence);
+        if (sequence.playing) {
+            playSequence(sequence);
+        }
+        exports.sequences[sequence.id] = sequence;
     }
-    exports.sequences[sequence.id] = sequence;
+    else {
+        const sequence = {
+            id,
+            trackId: undefined,
+            playing: false,
+            detune: 0,
+            repeat: 0,
+            stepCount: 16,
+            steps: Array.from({ length: zic_node_1.MAX_STEPS_IN_PATTERN }, () => []),
+        };
+        initPattern(sequence);
+        exports.sequences[sequence.id] = sequence;
+    }
 }
 exports.loadSequence = loadSequence;
 async function loadSequences() {
     try {
         exports.sequences = [];
         for (let id = 0; id < zic_node_1.PATTERN_COUNT; id++) {
-            if (await (0, util_1.fileExist)(getFilepath(id))) {
-                await loadSequence(id);
-            }
+            await loadSequence(id);
         }
     }
     catch (error) {

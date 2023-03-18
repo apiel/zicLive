@@ -31,7 +31,7 @@ export declare enum StepCondition {
 export type Steps = (Step | null)[][];
 export interface Sequence {
     id: number;
-    trackId: number;
+    trackId?: number;
     playing: boolean;
     detune: number;
     repeat: number;

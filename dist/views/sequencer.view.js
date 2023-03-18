@@ -30,8 +30,8 @@ async function sequencerView({ controllerRendering } = {}) {
     (0, zic_node_ui_1.clear)(style_1.color.background);
     for (let i = 0; i < 30; i++) {
         const rect = sequenceRect(i);
-        if (sequence_1.sequences[i]) {
-            const { id, trackId, nextSequenceId, ...seq } = sequence_1.sequences[i];
+        const { id, trackId, nextSequenceId, ...seq } = sequence_1.sequences[i];
+        if (trackId !== undefined) {
             let next;
             if (nextSequenceId !== undefined) {
                 next = nextSequenceId.toString();

@@ -9,6 +9,7 @@ const baseColor = {
     header: rgb('#2f3645'),
     primary: rgb('#0d6efd'), // #3761a1
     white: { r: 255, g: 255, b: 255 },
+    // lightgrey: { r: 200, g: 200, b: 200 },
     info: { r: 150, g: 150, b: 150 },
     secondaryInfo: { r: 100, g: 100, b: 100 },
     selected: { r: 150, g: 150, b: 150 },

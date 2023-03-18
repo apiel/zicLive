@@ -1,8 +1,5 @@
-import { Events } from 'zic_node_ui';
-import { Engine } from '../config';
-import { Step } from '../sequence';
 import { RenderOptions } from '../view';
-export declare function sequencerEditView(options?: RenderOptions): Promise<void>;
-export declare function drawStep(step: Step | null, row: number, stepIndex: number, engine: Engine): void;
-export declare function sequencerEditEventHandler(events: Events): Promise<boolean>;
+import { MidiMsg } from '../midi';
+export declare function sequencerEditView({ controllerRendering }?: RenderOptions): Promise<void>;
+export declare function sequencerEditMidiHandler({ isController, message: [type, padKey] }: MidiMsg): Promise<boolean>;
 //# sourceMappingURL=sequencerEdit.view.d.ts.map

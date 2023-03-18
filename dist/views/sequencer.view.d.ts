@@ -1,5 +1,5 @@
-import { Events } from 'zic_node_ui';
 import { RenderOptions } from '../view';
-export declare function sequencerView(options?: RenderOptions): Promise<void>;
-export declare function sequencerEventHandler(events: Events): Promise<boolean>;
+import { MidiMsg } from '../midi';
+export declare function sequencerView({ controllerRendering }?: RenderOptions): Promise<void>;
+export declare function sequencerMidiHandler({ isController, message: [type, padKey] }: MidiMsg): Promise<boolean>;
 //# sourceMappingURL=sequencer.view.d.ts.map

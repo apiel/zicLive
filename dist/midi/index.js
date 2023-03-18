@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleMidi = void 0;
+exports.handleMidi = exports.midiOutController = exports.MIDI_TYPE = void 0;
 const zic_node_1 = require("zic_node");
 const zic_node_ui_1 = require("zic_node_ui");
 const drawMessage_1 = require("../draw/drawMessage");
@@ -12,7 +12,7 @@ var MIDI_TYPE;
 (function (MIDI_TYPE) {
     MIDI_TYPE[MIDI_TYPE["KEY_PRESSED"] = 144] = "KEY_PRESSED";
     MIDI_TYPE[MIDI_TYPE["KEY_RELEASED"] = 128] = "KEY_RELEASED";
-})(MIDI_TYPE || (MIDI_TYPE = {}));
+})(MIDI_TYPE = exports.MIDI_TYPE || (exports.MIDI_TYPE = {}));
 const events = {
     keysDown: [],
     keysUp: [],
@@ -20,7 +20,7 @@ const events = {
 const midiDevices = (0, zic_node_1.getMidiDevices)();
 const midiInputController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 const midiInputKeyboard = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 K'));
-const midiOutController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
+exports.midiOutController = midiDevices.input.find((input) => input.name.includes('APC Key 25 mk2 C'));
 async function basicUiEvent({ isController, message: [type, padKey] }) {
     // clear keysUp but not keysDown
     events.keysUp = [];
@@ -94,6 +94,11 @@ async function basicUiEvent({ isController, message: [type, padKey] }) {
 }
 async function handleMidi(data) {
     (0, tcp_1.sendTcpMidi)(data);
+    if (await (0, view_1.viewMidiHandler)(data)) {
+        (0, view_1.renderView)({ controllerRendering: true });
+        return;
+    }
+    console.log(data);
     if (await basicUiEvent(data)) {
         return;
     }

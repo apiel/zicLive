@@ -3,10 +3,11 @@ import { eventMenu } from './events';
 import { helpEventHandler, helpView } from './views/help.view';
 import { masterEventHandler, masterView } from './views/master.view';
 import { patchEventHandler, patchView } from './views/patch.view';
-import { sequencerEventHandler, sequencerMidiHandler, sequencerView } from './views/sequencer.view';
-import { sequencerEditEventHandler, sequencerEditView } from './views/sequencerEdit.view';
+import { sequencerMidiHandler, sequencerView } from './views/sequencer.view';
+import { sequencerEditMidiHandler, sequencerEditView } from './views/sequencerEdit.view';
 import { View } from './def';
-import { MidiMsg } from './midi';
+import { MidiMsg, MIDI_TYPE } from './midi';
+import { akaiApcKey25 } from './midi/akaiApcKey25';
 
 let view: View = View.Sequencer;
 
@@ -47,10 +48,8 @@ export const viewEventHandler = async (events: Events) => {
         return true;
     }
     switch (view) {
-        case View.Sequencer:
-            return sequencerEventHandler(events);
-        case View.SequencerEdit:
-            return sequencerEditEventHandler(events);
+        // case View.SequencerEdit:
+        //     return sequencerEditEventHandler(events);
         case View.Patch:
             return patchEventHandler(events);
         case View.Master:
@@ -60,12 +59,25 @@ export const viewEventHandler = async (events: Events) => {
     }
 };
 
+let viewPadPressed = false;
 export async function viewMidiHandler(midiMsg: MidiMsg) {
+    if (midiMsg.isController) {
+        switch (midiMsg.message[1]) {
+            case akaiApcKey25.pad.stopAllClips:
+                setView(View.Sequencer);
+                return true;
+            case akaiApcKey25.pad.select:
+                viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
+                setView(View.SequencerEdit);
+                return true;
+        }
+    }
+
     switch (view) {
         case View.Sequencer:
             return sequencerMidiHandler(midiMsg);
-        // case View.SequencerEdit:
-        //     return sequencerEditMidiHandler(midiMsg);
+        case View.SequencerEdit:
+            return sequencerEditMidiHandler(midiMsg);
         // case View.Patch:
         //     return patchMidiHandler(midiMsg);
         // case View.Master:

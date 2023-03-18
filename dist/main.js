@@ -53,7 +53,7 @@ if (process.argv.includes('--client')) {
             (0, zic_node_ui_1.render)();
         }
     });
-    await (0, view_1.renderView)();
+    await (0, view_1.renderView)({ controllerRendering: true });
     (0, zic_node_ui_1.render)();
 })();
 setInterval(async () => {

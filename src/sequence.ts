@@ -71,7 +71,7 @@ export type Steps = (Step | null)[][];
 // TODO refacto to use class
 export interface Sequence {
     id: number;
-    trackId: number;
+    trackId?: number;
     playing: boolean;
     detune: number;
     repeat: number;
@@ -115,18 +115,20 @@ export function cleanActiveStep(trackId: number) {
 // }
 
 export function playSequence(sequence: Sequence, playing = true, next?: boolean) {
-    if (playing) {
-        const playingSeq = getPlayingSequence(sequence.trackId);
-        if (playingSeq) {
-            playingSeq.playing = false;
+    if (sequence.trackId) {
+        if (playing) {
+            const playingSeq = getPlayingSequence(sequence.trackId);
+            if (playingSeq) {
+                playingSeq.playing = false;
+            }
         }
+        sequence.playing = playing;
+        setSequencerState(sequence.trackId, sequence.id, playing, {
+            next,
+            detune: sequence.detune,
+            dataId: sequence.id,
+        });
     }
-    sequence.playing = playing;
-    setSequencerState(sequence.trackId, sequence.id, playing, {
-        next,
-        detune: sequence.detune,
-        dataId: sequence.id,
-    });
 }
 
 export function toggleSequence(sequence: Sequence) {
@@ -152,27 +154,39 @@ function initPattern({ id, stepCount, steps }: Sequence) {
 }
 
 export async function loadSequence(id: number) {
-    const content = await readFile(getFilepath(id), 'utf8');
-    const sequence: Sequence = JSON.parse(content.toString());
-    // Fill missing step to pattern
-    sequence.steps = [
-        ...sequence.steps,
-        ...Array.from({ length: MAX_STEPS_IN_PATTERN - sequence.steps.length }, () => []),
-    ];
-    initPattern(sequence);
-    if (sequence.playing) {
-        playSequence(sequence);
+    if (await fileExist(getFilepath(id))) {
+        const content = await readFile(getFilepath(id), 'utf8');
+        const sequence: Sequence = JSON.parse(content.toString());
+        // Fill missing step to pattern
+        sequence.steps = [
+            ...sequence.steps,
+            ...Array.from({ length: MAX_STEPS_IN_PATTERN - sequence.steps.length }, () => []),
+        ];
+        initPattern(sequence);
+        if (sequence.playing) {
+            playSequence(sequence);
+        }
+        sequences[sequence.id] = sequence;
+    } else {
+        const sequence: Sequence = {
+            id,
+            trackId: undefined,
+            playing: false,
+            detune: 0,
+            repeat: 0,
+            stepCount: 16,
+            steps: Array.from({ length: MAX_STEPS_IN_PATTERN }, () => []),
+        };
+        initPattern(sequence);
+        sequences[sequence.id] = sequence;
     }
-    sequences[sequence.id] = sequence;
 }
 
 export async function loadSequences() {
     try {
         sequences = [];
         for (let id = 0; id < PATTERN_COUNT; id++) {
-            if (await fileExist(getFilepath(id))) {
-                await loadSequence(id);
-            }
+            await loadSequence(id);
         }
     } catch (error) {
         console.error(`Error while loading sequences`, error);

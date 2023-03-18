@@ -3,7 +3,7 @@ import { Events, render } from 'zic_node_ui';
 import { drawError, renderMessage } from '../draw/drawMessage';
 import { KEY_DOWN, KEY_EDIT, KEY_LEFT, KEY_MENU, KEY_RIGHT, KEY_UP } from '../events';
 import { sendTcpMidi } from '../tcp';
-import { viewEventHandler, viewMidiHandler } from '../view';
+import { renderView, viewEventHandler, viewMidiHandler } from '../view';
 import { akaiApcKey25 } from './akaiApcKey25';
 
 export enum MIDI_TYPE {
@@ -91,8 +91,10 @@ async function basicUiEvent({ isController, message: [type, padKey] }: MidiMsg) 
 export async function handleMidi(data: MidiMsg) {
     sendTcpMidi(data);
     if (await viewMidiHandler(data)) {
+        renderView({ controllerRendering: true });
         return;
     }
+    console.log(data);
     if (await basicUiEvent(data)) {
         return;
     }

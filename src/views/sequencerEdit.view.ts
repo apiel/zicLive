@@ -8,6 +8,7 @@ import { sequencerController } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence } from '../sequence';
 import { getTrackStyle } from '../track';
 import { patternPreviewNode } from '../nodes/patternPreview.node';
+import { encoderNode } from '../nodes/encoder.node';
 
 const { margin } = unit;
 
@@ -59,6 +60,17 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
         //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
         // }
     }
+
+    encoderNode([
+        {title: 'Sequence'},
+        null,
+        null,
+        null,
+        {title: 'Track'},
+        null,
+        null,
+        null,
+    ]);
 
     renderMessage();
 }

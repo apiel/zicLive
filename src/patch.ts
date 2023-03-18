@@ -36,8 +36,8 @@ export class Patch {
         this.strings[stringId] = value;
 
         const sequences = getPlayingSequencesForPatch(this.id);
-        for (const sequence of sequences) {
-            trackSetString(sequence.trackId, value, stringId);
+        for (const {trackId} of sequences) {
+            trackId && trackSetString(trackId, value, stringId);
         }
     }
 
@@ -46,8 +46,8 @@ export class Patch {
         this.floats[floatId] = value;
 
         const sequences = getPlayingSequencesForPatch(this.id);
-        for (const sequence of sequences) {
-            trackSetNumber(sequence.trackId, value, floatId);
+        for (const {trackId} of sequences) {
+            trackId && trackSetNumber(trackId, value, floatId);
         }
     }
 
@@ -56,8 +56,8 @@ export class Patch {
         this.cc[ccId] = value;
 
         const sequences = getPlayingSequencesForPatch(this.id);
-        for (const sequence of sequences) {
-            trackCc(sequence.trackId, value, ccId);
+        for (const {trackId} of sequences) {
+            trackId && trackCc(trackId, value, ccId);
         }
     }
 

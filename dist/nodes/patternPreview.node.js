@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.patternPreviewNode = void 0;
 const zic_node_ui_1 = require("zic_node_ui");
 const style_1 = require("../style");
-function patternPreviewNode(position, size, stepCount, _steps, playing = false) {
+function patternPreviewNode({ position, size }, stepCount, _steps, playing = false) {
     (0, zic_node_ui_1.setColor)(playing ? style_1.color.sequencer.pattern.playing : style_1.color.sequencer.pattern.waiting);
     const stepWidth = Math.max((size.w - 2) / stepCount, 2);
     const steps = _steps.map((voices) => voices.filter((v) => v)); // remove undefined/null

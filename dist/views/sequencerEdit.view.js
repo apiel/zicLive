@@ -10,6 +10,7 @@ const sequencerController_1 = require("./controller/sequencerController");
 const sequence_1 = require("../sequence");
 const track_1 = require("../track");
 const patternPreview_node_1 = require("../nodes/patternPreview.node");
+const encoder_node_1 = require("../nodes/encoder.node");
 const { margin } = style_1.unit;
 const sequenceRect = (id) => {
     const size = { w: 25, h: 15 };
@@ -41,14 +42,27 @@ async function sequencerEditView({ controllerRendering } = {}) {
     const { trackId, stepCount, steps, playing } = (0, sequence_1.getSelectedSequence)();
     if (trackId !== undefined) {
         const patternPreviewPosition = { x: 165, y: margin };
-        const patternPreviewSize = { w: config_1.config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 };
+        const patternPreviewRect = {
+            position: patternPreviewPosition,
+            size: { w: config_1.config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 },
+        };
         (0, zic_node_ui_1.setColor)(style_1.color.foreground);
-        (0, zic_node_ui_1.drawFilledRect)({ position: patternPreviewPosition, size: patternPreviewSize });
-        (0, patternPreview_node_1.patternPreviewNode)(patternPreviewPosition, patternPreviewSize, stepCount, steps, playing);
+        (0, zic_node_ui_1.drawFilledRect)(patternPreviewRect);
+        (0, patternPreview_node_1.patternPreviewNode)(patternPreviewRect, stepCount, steps, playing);
         // if (activeStep !== undefined) {
         //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
         // }
     }
+    (0, encoder_node_1.encoderNode)([
+        { title: 'Sequence' },
+        null,
+        null,
+        null,
+        { title: 'Track' },
+        null,
+        null,
+        null,
+    ]);
     (0, drawMessage_1.renderMessage)();
 }
 exports.sequencerEditView = sequencerEditView;

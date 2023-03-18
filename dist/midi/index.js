@@ -12,6 +12,7 @@ var MIDI_TYPE;
 (function (MIDI_TYPE) {
     MIDI_TYPE[MIDI_TYPE["KEY_PRESSED"] = 144] = "KEY_PRESSED";
     MIDI_TYPE[MIDI_TYPE["KEY_RELEASED"] = 128] = "KEY_RELEASED";
+    MIDI_TYPE[MIDI_TYPE["CC"] = 176] = "CC";
 })(MIDI_TYPE = exports.MIDI_TYPE || (exports.MIDI_TYPE = {}));
 const events = {
     keysDown: [],

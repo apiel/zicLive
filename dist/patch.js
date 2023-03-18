@@ -26,24 +26,24 @@ class Patch {
         this.isModified = true;
         this.strings[stringId] = value;
         const sequences = (0, sequence_1.getPlayingSequencesForPatch)(this.id);
-        for (const sequence of sequences) {
-            (0, zic_node_1.trackSetString)(sequence.trackId, value, stringId);
+        for (const { trackId } of sequences) {
+            trackId && (0, zic_node_1.trackSetString)(trackId, value, stringId);
         }
     }
     setNumber(floatId, value) {
         this.isModified = true;
         this.floats[floatId] = value;
         const sequences = (0, sequence_1.getPlayingSequencesForPatch)(this.id);
-        for (const sequence of sequences) {
-            (0, zic_node_1.trackSetNumber)(sequence.trackId, value, floatId);
+        for (const { trackId } of sequences) {
+            trackId && (0, zic_node_1.trackSetNumber)(trackId, value, floatId);
         }
     }
     setCc(ccId, value) {
         this.isModified = true;
         this.cc[ccId] = value;
         const sequences = (0, sequence_1.getPlayingSequencesForPatch)(this.id);
-        for (const sequence of sequences) {
-            (0, zic_node_1.trackCc)(sequence.trackId, value, ccId);
+        for (const { trackId } of sequences) {
+            trackId && (0, zic_node_1.trackCc)(trackId, value, ccId);
         }
     }
     constructor(id) {

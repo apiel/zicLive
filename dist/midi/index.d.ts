@@ -1,7 +1,8 @@
 import { MidiMessage } from 'zic_node';
 export declare enum MIDI_TYPE {
     KEY_PRESSED = 144,
-    KEY_RELEASED = 128
+    KEY_RELEASED = 128,
+    CC = 176
 }
 export interface MidiMsg extends MidiMessage {
     isController?: boolean;

@@ -25,8 +25,9 @@ function encoderNode(encoders) {
         (0, zic_node_ui_1.setColor)(style_1.color.foreground);
         (0, zic_node_ui_1.drawFilledRect)(rect);
         if (encoders[i]) {
-            const { title } = encoders[i];
+            const { title, value, valueColor } = encoders[i];
             (0, zic_node_ui_1.drawText)(title, { x: rect.position.x + 4, y: rect.position.y + 1 }, { color: style_1.color.foreground3, size: 10, font: style_1.font.bold });
+            (0, zic_node_ui_1.drawText)(value, { x: rect.position.x + 4, y: rect.position.y + 35 }, { color: valueColor ?? style_1.color.info, size: 16, font: style_1.font.bold });
         }
     }
 }

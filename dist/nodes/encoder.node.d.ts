@@ -1,5 +1,8 @@
+import { Color } from 'zic_node_ui';
 export interface Encoder {
     title: string;
+    value: string;
+    valueColor?: Color;
 }
 export type Encoders = [
     Encoder | null,

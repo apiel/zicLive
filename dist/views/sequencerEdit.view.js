@@ -11,6 +11,10 @@ const sequence_1 = require("../sequence");
 const track_1 = require("../track");
 const patternPreview_node_1 = require("../nodes/patternPreview.node");
 const encoder_node_1 = require("../nodes/encoder.node");
+const akaiApcKey25_1 = require("../midi/akaiApcKey25");
+const util_1 = require("../util");
+const selector_1 = require("../selector");
+const def_1 = require("../def");
 const { margin } = style_1.unit;
 const sequenceRect = (id) => {
     const size = { w: 25, h: 15 };
@@ -39,7 +43,7 @@ async function sequencerEditView({ controllerRendering } = {}) {
             (0, zic_node_ui_1.drawRect)(rect);
         }
     }
-    const { trackId, stepCount, steps, playing } = (0, sequence_1.getSelectedSequence)();
+    const { id, trackId, stepCount, steps, playing } = (0, sequence_1.getSelectedSequence)();
     if (trackId !== undefined) {
         const patternPreviewPosition = { x: 165, y: margin };
         const patternPreviewRect = {
@@ -53,12 +57,14 @@ async function sequencerEditView({ controllerRendering } = {}) {
         //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
         // }
     }
+    const seqColor = trackId !== undefined ? (0, track_1.getTrackStyle)(trackId).color : undefined;
+    const trackName = trackId !== undefined ? (0, track_1.getTrack)(trackId).name : 'No track';
     (0, encoder_node_1.encoderNode)([
-        { title: 'Sequence' },
+        { title: 'Sequence', value: `#${`${id + 1}`.padStart(3, '0')}`, valueColor: seqColor },
         null,
         null,
         null,
-        { title: 'Track' },
+        { title: 'Track', value: trackName },
         null,
         null,
         null,
@@ -66,18 +72,22 @@ async function sequencerEditView({ controllerRendering } = {}) {
     (0, drawMessage_1.renderMessage)();
 }
 exports.sequencerEditView = sequencerEditView;
-async function sequencerEditMidiHandler({ isController, message: [type, padKey] }) {
+let lastTimeK1 = 0;
+async function sequencerEditMidiHandler({ isController, message: [type, padKey, value] }) {
     if (isController) {
-        if (type === midi_1.MIDI_TYPE.KEY_RELEASED) {
-            // const seqId = padSeq.indexOf(padKey);
-            // if (seqId !== -1) {
-            //     const sequence = getSequence(seqId);
-            //     if (sequence) {
-            //         toggleSequence(sequence);
-            //         await sequencerView({ controllerRendering: true });
-            //         return true;
-            //     }
-            // }
+        if (type === midi_1.MIDI_TYPE.CC) {
+            switch (padKey) {
+                case akaiApcKey25_1.akaiApcKey25.knob.k1: {
+                    if (Date.now() > lastTimeK1 + 500) {
+                        lastTimeK1 = Date.now();
+                        const direction = value < 63 ? 1 : -1;
+                        const id = (0, util_1.minmax)((0, sequence_1.getSelectedSequenceId)() + direction, 0, sequence_1.sequences.length - 1);
+                        (0, sequence_1.setSelectedSequenceId)(id);
+                        (0, selector_1.forceSelectedItem)(def_1.View.Sequencer, id);
+                    }
+                    return true;
+                }
+            }
         }
     }
     return false;

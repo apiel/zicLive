@@ -5,10 +5,14 @@ import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { sequencerController } from './controller/sequencerController';
-import { sequences, getSelectedSequenceId, getSelectedSequence } from '../sequence';
+import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
 import { getTrack, getTrackStyle } from '../track';
 import { patternPreviewNode } from '../nodes/patternPreview.node';
 import { encoderNode } from '../nodes/encoder.node';
+import { akaiApcKey25 } from '../midi/akaiApcKey25';
+import { minmax } from '../util';
+import { forceSelectedItem } from '../selector';
+import { View } from '../def';
 
 const { margin } = unit;
 
@@ -77,18 +81,23 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
     renderMessage();
 }
 
-export async function sequencerEditMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
+let lastTimeK1 = 0;
+export async function sequencerEditMidiHandler({ isController, message: [type, padKey, value] }: MidiMsg) {
     if (isController) {
-        if (type === MIDI_TYPE.KEY_RELEASED) {
-            // const seqId = padSeq.indexOf(padKey);
-            // if (seqId !== -1) {
-            //     const sequence = getSequence(seqId);
-            //     if (sequence) {
-            //         toggleSequence(sequence);
-            //         await sequencerView({ controllerRendering: true });
-            //         return true;
-            //     }
-            // }
+        if (type === MIDI_TYPE.CC) {
+            switch (padKey) {
+                case akaiApcKey25.knob.k1: {
+                    // TODO optimize rendering!!! with debounce everything that is not realted to seq id
+                    if (Date.now() > lastTimeK1 + 250) {
+                        lastTimeK1 = Date.now();
+                        const direction = value < 63 ? 1 : -1;
+                        const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
+                        setSelectedSequenceId(id);
+                        forceSelectedItem(View.Sequencer, id);
+                    }
+                    return true;
+                }
+            }
         }
     }
     return false;

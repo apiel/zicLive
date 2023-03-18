@@ -9,6 +9,7 @@ import { akaiApcKey25 } from './akaiApcKey25';
 export enum MIDI_TYPE {
     KEY_PRESSED = 144,
     KEY_RELEASED = 128,
+    CC = 176,
 }
 
 const events: Events = {

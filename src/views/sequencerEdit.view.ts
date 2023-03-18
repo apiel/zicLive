@@ -38,12 +38,13 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
         const { trackId } = sequences[i];
         setColor(trackId !== undefined ? getTrackStyle(trackId).color : color.foreground);
         drawFilledRect(rect);
+        const isSelected = getSelectedSequenceId() === i;
         drawText(
             `${i + 1}`.padStart(3, '0'),
             { x: rect.position.x + 4, y: rect.position.y + 1 },
-            { color: color.foreground3, size: 10, font: font.bold },
+            { color: color.foreground3, size: 10, font: font.regular },
         );
-        if (getSelectedSequenceId() === i) {
+        if (isSelected) {
             // TODO find better selection color
             setColor(color.white);
             drawRect(rect);
@@ -87,7 +88,7 @@ export async function sequencerEditMidiHandler({ isController, message: [type, p
         if (type === MIDI_TYPE.CC) {
             switch (padKey) {
                 case akaiApcKey25.knob.k1: {
-                    if (Date.now() > lastTimeK1 + 250) {
+                    if (Date.now() > lastTimeK1 + 200) {
                         lastTimeK1 = Date.now();
                         const direction = value < 63 ? 1 : -1;
                         const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);

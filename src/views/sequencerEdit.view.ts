@@ -1,16 +1,18 @@
 import { clear, drawFilledRect, drawRect, drawText, Rect, setColor } from 'zic_node_ui';
 import { config } from '../config';
-import { color, font } from '../style';
+import { color, font, unit } from '../style';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { sequencerController } from './controller/sequencerController';
-import { sequences, getSelectedSequenceId } from '../sequence';
+import { sequences, getSelectedSequenceId, getSelectedSequence } from '../sequence';
 import { getTrackStyle } from '../track';
+import { patternPreviewNode } from '../nodes/patternPreview.node';
 
-const margin = 1;
+const { margin } = unit;
+
 const sequenceRect = (id: number): Rect => {
-    const size = { w: 25, h: 15 - margin };
+    const size = { w: 25, h: 15 };
     return {
         position: {
             x: margin + (margin + size.w) * (id % config.sequence.col),
@@ -37,13 +39,23 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
             { color: color.foreground3, size: 10, font: font.bold },
         );
         if (getSelectedSequenceId() === i) {
+            // TODO find better selection color
             setColor(color.white);
             drawRect(rect);
         }
     }
-    // if (sequences[i]) {
-    //     const { trackId } = sequences[i];
-    // }
+
+    const { trackId, stepCount, steps, playing } = getSelectedSequence();
+    if (trackId !== undefined) {
+        const patternPreviewPosition = { x: 165, y: margin };
+        const patternPreviewSize = { w: config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 };
+        setColor(color.foreground);
+        drawFilledRect({ position: patternPreviewPosition, size: patternPreviewSize });
+        patternPreviewNode(patternPreviewPosition, patternPreviewSize, stepCount, steps, playing);
+        // if (activeStep !== undefined) {
+        //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
+        // }
+    }
 
     renderMessage();
 }

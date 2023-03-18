@@ -87,15 +87,14 @@ export async function sequencerEditMidiHandler({ isController, message: [type, p
         if (type === MIDI_TYPE.CC) {
             switch (padKey) {
                 case akaiApcKey25.knob.k1: {
-                    // TODO optimize rendering!!! with debounce everything that is not realted to seq id
                     if (Date.now() > lastTimeK1 + 250) {
                         lastTimeK1 = Date.now();
                         const direction = value < 63 ? 1 : -1;
                         const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
                         setSelectedSequenceId(id);
                         forceSelectedItem(View.Sequencer, id);
+                        return true;
                     }
-                    return true;
                 }
             }
         }

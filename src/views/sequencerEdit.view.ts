@@ -13,7 +13,13 @@ import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 const encoders: Encoders = [
     {
         title: 'Sequence',
-        value: '',
+        getValue: () => {
+            const { id, trackId } = getSelectedSequence();
+            return {
+                value: `#${`${id + 1}`.padStart(3, '0')}`,
+                valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
+            };
+        },
         handler: async (direction) => {
             const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
             setSelectedSequenceId(id);
@@ -23,7 +29,10 @@ const encoders: Encoders = [
     },
     {
         title: 'Repeat',
-        value: '',
+        getValue: () => {
+            const { trackId, repeat } = getSelectedSequence();
+            return trackId === undefined ? '' : `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`;
+        },
         handler: async (direction) => {
             const sequence = getSelectedSequence();
             if (sequence.trackId === undefined) {
@@ -35,7 +44,10 @@ const encoders: Encoders = [
     },
     {
         title: 'Next sequence',
-        value: '',
+        getValue: () => {
+            const { trackId, nextSequenceId } = getSelectedSequence();
+            return trackId === undefined ? '' : nextSequenceId ? `#${`${nextSequenceId + 1}`.padStart(3, '0')}` : `---`;
+        },
         handler: async (direction) => {
             const sequence = getSelectedSequence();
             if (sequence.trackId === undefined) {
@@ -52,7 +64,10 @@ const encoders: Encoders = [
     undefined,
     {
         title: 'Track',
-        value: '',
+        getValue: () => {
+            const { trackId } = getSelectedSequence();
+            return trackId === undefined ? 'No track' : getTrack(trackId).name;
+        },
         handler: async (direction) => {
             const { trackId } = getSelectedSequence();
             if (trackId !== undefined) {
@@ -67,7 +82,10 @@ const encoders: Encoders = [
     },
     {
         title: 'Detune',
-        value: '',
+        getValue: () => {
+            const { trackId, detune } = getSelectedSequence();
+            return trackId === undefined ? '' : detune < 0 ? detune.toString() : `+${detune}`;
+        },
         unit: 'semitones',
         handler: async (direction) => {
             const sequence = getSelectedSequence();
@@ -80,7 +98,10 @@ const encoders: Encoders = [
     },
     {
         title: 'Pattern length',
-        value: '',
+        getValue: () => {
+            const { trackId, stepCount } = getSelectedSequence();
+            return trackId === undefined ? '' : `${stepCount}`;
+        },
         unit: 'steps',
         handler: async (direction) => {
             const sequence = getSelectedSequence();
@@ -98,28 +119,6 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
     if (controllerRendering) {
         sequencerController();
     }
-    const { id, trackId, repeat, nextSequenceId, detune, stepCount } = getSelectedSequence();
-
-    let seqColor;
-    let trackName = 'No track';
-
-    if (trackId !== undefined) {
-        seqColor = getTrackStyle(trackId).color;
-        trackName = getTrack(trackId).name;
-        encoders[1]!.value = `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`;
-        encoders[2]!.value = nextSequenceId ? `#${`${nextSequenceId + 1}`.padStart(3, '0')}` : `---`;
-        encoders[5]!.value = (detune < 0 ? detune.toString() : `+${detune}`);
-        encoders[6]!.value = `${stepCount}`;
-    } else {
-        encoders[1]!.value = '';
-        encoders[2]!.value = '';
-        encoders[5]!.value = '';
-        encoders[6]!.value = '';
-    }
-
-    encoders[0]!.value = `#${`${id + 1}`.padStart(3, '0')}`;
-    encoders[0]!.valueColor = seqColor;
-    encoders[4]!.value = trackName;
 
     encodersView(encoders);
     sequenceEditHeader();

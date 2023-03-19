@@ -20,29 +20,41 @@ const getRect = (id: number): Rect => {
     };
 };
 
-export interface Encoder {
-    title: string;
+export interface EncoderValue {
     value: string;
     valueColor?: Color;
+}
+
+export interface Encoder {
+    title: string;
+    getValue: () => EncoderValue | string;
     unit?: string;
 }
 
 export function encoderNode(index: number, encoder: Encoder | undefined) {
-        const rect = getRect(index);
-        setColor(color.foreground);
-        drawFilledRect(rect);
-        if (encoder) {
-            const { title, value, valueColor, unit } = encoder;
-            drawText(
-                title,
-                { x: rect.position.x + 4, y: rect.position.y + 1 },
-                { color: color.foreground3, size: 10, font: font.bold },
-            );
+    const rect = getRect(index);
+    setColor(color.foreground);
+    drawFilledRect(rect);
+    if (encoder) {
+        const { title, getValue, unit } = encoder;
+        drawText(
+            title,
+            { x: rect.position.x + 4, y: rect.position.y + 1 },
+            { color: color.foreground3, size: 10, font: font.bold },
+        );
+
+        const returnedValue = getValue();
+        const value = typeof returnedValue === 'string' ? returnedValue : returnedValue.value;
+        if (value) {
+            const valueColor =
+                typeof returnedValue === 'string' || returnedValue.valueColor === undefined
+                    ? color.info
+                    : returnedValue.valueColor;
 
             const valueRect = drawText(
                 value,
                 { x: rect.position.x + 4, y: rect.position.y + 35 },
-                { color: valueColor ?? color.info, size: 16, font: font.bold },
+                { color: valueColor, size: 16, font: font.bold },
             );
 
             if (unit) {
@@ -53,4 +65,5 @@ export function encoderNode(index: number, encoder: Encoder | undefined) {
                 );
             }
         }
+    }
 }

@@ -60,13 +60,28 @@ const encoders: Encoders = [
         },
     },
     {
+        title: 'Velocity',
+        getValue: () => {
+            const step = getSelectedSequence().steps[currentStep][0];
+            return step ? `${step.velocity.toString().padStart(3, ' ')}` : `---`;
+        },
+        handler: async (direction) => {
+            const step = getSelectedSequence().steps[currentStep][0];
+            if (step) {
+                step.velocity = minmax(step.velocity + direction, 1, 100);
+                return true;
+            }
+            return false;
+        },
+        unit: () => (getSelectedSequence().steps[currentStep][0] ? `%` : ``),
+    },
+    {
         title: 'Tie',
         getValue: () => `---`,
         handler: async (direction) => {
             return false;
         },
     },
-    undefined,
     {
         title: 'Step',
         getValue: () => `${currentStep + 1}`,

@@ -45,7 +45,7 @@ export function encodersHandler(encoders: Encoders, { message: [type, key, value
                 const { debounce = DEFAULT_DEBOUNCE } = encoder;
                 if (encoder.debounce === 0 || Date.now() > state.timing + debounce) {
                     state.timing = Date.now();
-                    const direction = value < 63 ? 1 : -1;
+                    const direction = value < 63 ? value : -(128 - value);
                     return encoder.handler(direction);
                 }
             }

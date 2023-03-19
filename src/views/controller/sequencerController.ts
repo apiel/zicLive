@@ -37,6 +37,12 @@ export function sequencerController() {
                 sendMidiMessage(midiOutController.port, [akaiApcKey25.padMode.on100pct, padSeq[i], 0x00]);
             }
         }
+
+        // TODO
+        // FIXME
+        padBanks.forEach((pad, i) => {
+            sendMidiMessage(midiOutController!.port, [akaiApcKey25.padMode.on100pct, pad, 0x00]);
+        });
     }
 }
 

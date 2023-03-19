@@ -8,6 +8,8 @@ const padMatrix = [
     [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07],
 ];
 
+const padMatrixFlat = padMatrix.flat();
+
 const padMode = {
     off: 0x00,
     on10pct: 0x90,
@@ -86,4 +88,5 @@ export const akaiApcKey25 = {
     encoderList,
     padMode,
     padMatrix,
+    padMatrixFlat,
 };

@@ -1,17 +1,18 @@
 import { Midi } from 'tonal';
 import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
-import { MidiMsg } from '../midi';
+import { cleanPadMatrix, MidiMsg, midiOutController } from '../midi';
 import { sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
 import { getSelectedSequence, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 import { sequenceEncoder } from './sequencerEdit.view';
-import { NOTE_END, NOTE_START } from 'zic_node';
-import { getTrack } from '../track';
+import { NOTE_END, NOTE_START, sendMidiMessage } from 'zic_node';
+import { getTrack, getTrackStyle } from '../track';
 import { config } from '../config';
 import { getPatch } from '../patch';
+import { akaiApcKey25 } from '../midi/akaiApcKey25';
 
 let currentStep = 0;
 
@@ -20,6 +21,8 @@ let currentStep = 0;
 // TODO save/reload sequence
 // withInfo('Sequence loaded', () => loadSequence(selectedId)),
 // withSuccess('Sequences saved', () => saveSequence(sequences[selectedId])),
+
+// TODO for note encoder, debounce only rendering but not change...
 
 const encoders: Encoders = [
     {
@@ -194,6 +197,21 @@ const encoders: Encoders = [
     undefined,
 ];
 
+function patternController() {
+    if (midiOutController !== undefined) {
+        const { steps, trackId, stepCount } = getSelectedSequence();
+        cleanPadMatrix();
+        if (trackId !== undefined) {
+            const { padColor } = getTrackStyle(trackId);
+            for (let i = 0; i < stepCount; i++) {
+                const step = steps[i][0];
+                    const pad = akaiApcKey25.padMatrixFlat[i];
+                    sendMidiMessage(midiOutController.port, [step ? akaiApcKey25.padMode.on100pct : akaiApcKey25.padMode.on10pct, pad, padColor]);
+            }
+        }
+    }
+}
+
 export async function sequencerPatternView({ controllerRendering }: RenderOptions = {}) {
     // TODO implement init option to reset currentStep
 
@@ -201,7 +219,7 @@ export async function sequencerPatternView({ controllerRendering }: RenderOption
         if (viewPadPressed) {
             sequencerController();
         } else {
-            // pattern...
+            patternController();
         }
     }
 

@@ -124,34 +124,16 @@ midiDevices.input.forEach((input) => {
     }
 });
 
-// const selection = [
-//     50, // #5b2cb5
-//     96, // #e0e310
-//     95, // #d5198a
-//     78, // #33bdff
-
-//     102, // #23afaf
-//     73, // #7ce793
-//     5, // #e12310
-//     84, // #f7980a
-
-//     3, // #aeecff
-//     117, // #4fa9c5
-//     4, // #ffb6b6
-//     32, // #5bfff7
-//     29, // #25d7d7
-//     58, // #a33590
-//     17, // #1ce110
-// ];
+export function cleanPadMatrix() {
+    if (midiOutController !== undefined) {
+        akaiApcKey25.padMatrixFlat.forEach((pad) => {
+            sendMidiMessage(midiOutController.port, [akaiApcKey25.padMode.on100pct, pad, 0]);
+        });
+    }
+}
 
 // if (midiOutController !== undefined) {
 //     for (let i = 0; i < 40; i++) {
 //         sendMidiMessage(midiOutController.port, [0x96, 0x00 + i, 0 + i]);
-//     }
-// }
-
-// if (midiOutController !== undefined) {
-//     for (let i = 0; i < 40; i++) {
-//         sendMidiMessage(midiOutController.port, [0x96, 0x00 + i, selection[i] ?? 0]);
 //     }
 // }

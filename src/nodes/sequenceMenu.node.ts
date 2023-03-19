@@ -16,7 +16,9 @@ const debounce = 250;
 const menuItems = [
     {
         text: 'Save',
-        handler:() => withSuccess('Sequences saved', () => saveSequence(getSelectedSequence()))(),
+        // FIXME to: 
+        // handler: withSuccess('Sequences saved', () => saveSequence(getSelectedSequence())),
+        handler: () => withSuccess('Sequences saved', () => saveSequence(getSelectedSequence()))(),
     },
     {
         text: 'Reload',

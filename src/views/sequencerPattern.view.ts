@@ -13,12 +13,9 @@ import { getTrack, getTrackStyle } from '../track';
 import { config } from '../config';
 import { getPatch } from '../patch';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
+import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
 
 let currentStep = 0;
-
-// TODO save/reload sequence
-// withInfo('Sequence loaded', () => loadSequence(selectedId)),
-// withSuccess('Sequences saved', () => saveSequence(sequences[selectedId])),
 
 // TODO for note encoder, debounce only rendering but not change...
 
@@ -233,6 +230,7 @@ export async function sequencerPatternView({ controllerRendering }: RenderOption
 
     encodersView(encoders);
     sequenceEditHeader(currentStep);
+    sequencerMenuNode();
 
     renderMessage();
 }
@@ -276,6 +274,11 @@ function midiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
 }
 
 export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
+    const menuStatus = await sequenceMenuHandler(midiMsg);
+    if (menuStatus !== false) {
+        return menuStatus !== undefined;
+    }
+
     if (sequenceSelectMidiHandler(midiMsg, _viewPadPressed)) {
         return true;
     }

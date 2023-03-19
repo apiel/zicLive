@@ -136,15 +136,16 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
 }
 
 export async function sequencerEditMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+    const menuStatus = await sequenceMenuHandler(midiMsg);
+    if (menuStatus !== false) {
+        return menuStatus !== undefined;
+    }
+    
     if (sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
         return true;
     }
     if (await sequenceToggleMidiHandler(midiMsg)) {
         return true;
-    }
-    const menuStatus = await sequenceMenuHandler(midiMsg);
-    if (menuStatus !== false) {
-        return menuStatus !== undefined;
     }
 
     return encodersHandler(encoders, midiMsg);

@@ -75,6 +75,7 @@ const encoders: Encoders = [
             return trackId === undefined ? 'No track' : getTrack(trackId).name;
         },
         handler: async (direction) => {
+            // TODO when changing track for a sequence, patch are not valid anymore
             const { trackId } = getSelectedSequence();
             if (trackId !== undefined) {
                 const id =

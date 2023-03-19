@@ -115,7 +115,7 @@ export function cleanActiveStep(trackId: number) {
 // }
 
 export function playSequence(sequence: Sequence, playing = true, next?: boolean) {
-    if (sequence.trackId) {
+    if (sequence.trackId !== undefined) {
         if (playing) {
             const playingSeq = getPlayingSequence(sequence.trackId);
             if (playingSeq) {

@@ -1,13 +1,13 @@
 import { clear, drawFilledRect, Rect, setColor } from 'zic_node_ui';
 import { config } from '../config';
 import { color, unit } from '../style';
-import { getSequence, sequences, toggleSequence } from '../sequence';
+import { sequences } from '../sequence';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { getTrackStyle } from '../track';
 import { sequenceNode } from '../nodes/sequence.node';
-import { MidiMsg, MIDI_TYPE } from '../midi';
-import { padSeq, sequencerController } from './controller/sequencerController';
+import { MidiMsg } from '../midi';
+import { sequencerController, sequenceToggleMidiHandler } from './controller/sequencerController';
 
 const { margin } = unit;
 const height = config.screen.size.h / config.sequence.row;
@@ -53,19 +53,6 @@ export async function sequencerView({ controllerRendering }: RenderOptions = {})
     renderMessage();
 }
 
-export async function sequencerMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
-    if (isController) {
-        if (type === MIDI_TYPE.KEY_RELEASED) {
-            const seqId = padSeq.indexOf(padKey);
-            if (seqId !== -1) {
-                const sequence = getSequence(seqId);
-                if (sequence) {
-                    toggleSequence(sequence);
-                    await sequencerView({ controllerRendering: true });
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+export function sequencerMidiHandler(midiMsg: MidiMsg) {
+    return sequenceToggleMidiHandler(midiMsg);
 }

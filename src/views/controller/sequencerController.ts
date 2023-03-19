@@ -1,8 +1,9 @@
-import { sendMidiMessage } from "zic_node";
-import { midiOutController } from "../../midi";
-import { akaiApcKey25 } from "../../midi/akaiApcKey25";
-import { sequences } from "../../sequence";
-import { getTrackStyle } from "../../track";
+import { sendMidiMessage } from 'zic_node';
+import { MidiMsg, midiOutController, MIDI_TYPE } from '../../midi';
+import { akaiApcKey25 } from '../../midi/akaiApcKey25';
+import { getSequence, sequences, setSelectedSequenceId, toggleSequence } from '../../sequence';
+import { getTrackStyle } from '../../track';
+import { sequencerView } from '../sequencer.view';
 
 // prettier-ignore
 export const padSeq = [
@@ -37,4 +38,35 @@ export function sequencerController() {
             }
         }
     }
+}
+
+export function sequenceSelectMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+    if (viewPadPressed && midiMsg.isController) {
+        const [type, padKey] = midiMsg.message;
+        if (type === MIDI_TYPE.KEY_RELEASED) {
+            const seqId = padSeq.indexOf(padKey);
+            if (seqId !== -1) {
+                setSelectedSequenceId(seqId);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+export async function sequenceToggleMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
+    if (isController) {
+        if (type === MIDI_TYPE.KEY_RELEASED) {
+            const seqId = padSeq.indexOf(padKey);
+            if (seqId !== -1) {
+                const sequence = getSequence(seqId);
+                if (sequence) {
+                    toggleSequence(sequence);
+                    await sequencerView({ controllerRendering: true });
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }

@@ -77,7 +77,7 @@ export async function viewMidiHandler(midiMsg: MidiMsg) {
         case View.Sequencer:
             return sequencerMidiHandler(midiMsg);
         case View.SequencerEdit:
-            return sequencerEditMidiHandler(midiMsg);
+            return sequencerEditMidiHandler(midiMsg, viewPadPressed);
         // case View.Patch:
         //     return patchMidiHandler(midiMsg);
         // case View.Master:

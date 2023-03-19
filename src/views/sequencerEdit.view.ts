@@ -1,7 +1,7 @@
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg } from '../midi';
-import { sequencerController } from './controller/sequencerController';
+import { sequencerController, sequenceSelectMidiHandler, sequenceToggleMidiHandler } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
 import { getTrack, getTrackCount, getTrackStyle } from '../track';
 import { minmax } from '../util';
@@ -126,6 +126,12 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
     renderMessage();
 }
 
-export function sequencerEditMidiHandler(midiMsg: MidiMsg) {
+export async function sequencerEditMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+    if(sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
+        return true;
+    }
+    if (await sequenceToggleMidiHandler(midiMsg)) {
+        return true;
+    }
     return encodersHandler(encoders, midiMsg);
 }

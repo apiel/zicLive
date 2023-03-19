@@ -37,7 +37,7 @@ export class Patch {
 
         const sequences = getPlayingSequencesForPatch(this.id);
         for (const {trackId} of sequences) {
-            trackId && trackSetString(trackId, value, stringId);
+            trackId !== undefined && trackSetString(trackId, value, stringId);
         }
     }
 
@@ -47,7 +47,7 @@ export class Patch {
 
         const sequences = getPlayingSequencesForPatch(this.id);
         for (const {trackId} of sequences) {
-            trackId && trackSetNumber(trackId, value, floatId);
+            trackId !== undefined && trackSetNumber(trackId, value, floatId);
         }
     }
 
@@ -57,7 +57,7 @@ export class Patch {
 
         const sequences = getPlayingSequencesForPatch(this.id);
         for (const {trackId} of sequences) {
-            trackId && trackCc(trackId, value, ccId);
+            trackId !== undefined && trackCc(trackId, value, ccId);
         }
     }
 

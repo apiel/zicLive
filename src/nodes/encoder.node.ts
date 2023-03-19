@@ -24,6 +24,7 @@ export interface Encoder {
     title: string;
     value: string;
     valueColor?: Color;
+    unit?: string;
 }
 
 export function encoderNode(index: number, encoder: Encoder | undefined) {
@@ -31,17 +32,25 @@ export function encoderNode(index: number, encoder: Encoder | undefined) {
         setColor(color.foreground);
         drawFilledRect(rect);
         if (encoder) {
-            const { title, value, valueColor } = encoder;
+            const { title, value, valueColor, unit } = encoder;
             drawText(
                 title,
                 { x: rect.position.x + 4, y: rect.position.y + 1 },
                 { color: color.foreground3, size: 10, font: font.bold },
             );
 
-            drawText(
+            const valueRect = drawText(
                 value,
                 { x: rect.position.x + 4, y: rect.position.y + 35 },
                 { color: valueColor ?? color.info, size: 16, font: font.bold },
             );
+
+            if (unit) {
+                drawText(
+                    unit,
+                    { x: valueRect.position.x + valueRect.size.w + 4, y: valueRect.position.y + 5 },
+                    { color: color.foreground3, size: 10, font: font.regular },
+                );
+            }
         }
 }

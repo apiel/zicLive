@@ -65,8 +65,32 @@ const encoders: Encoders = [
             return true;
         },
     },
-    undefined,
-    undefined,
+    {
+        title: 'Detune',
+        value: '',
+        unit: 'semitones',
+        handler: async (direction) => {
+            const sequence = getSelectedSequence();
+            if (sequence.trackId === undefined) {
+                return false;
+            }
+            sequence.detune = minmax(sequence.detune + direction, -12, 12);
+            return true;
+        },
+    },
+    {
+        title: 'Pattern length',
+        value: '',
+        unit: 'steps',
+        handler: async (direction) => {
+            const sequence = getSelectedSequence();
+            if (sequence.trackId === undefined) {
+                return false;
+            }
+            sequence.stepCount = minmax(sequence.stepCount + direction, 1, 64);
+            return true;
+        },
+    },
     undefined,
 ];
 
@@ -74,7 +98,7 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
     if (controllerRendering) {
         sequencerController();
     }
-    const { id, trackId, repeat, nextSequenceId } = getSelectedSequence();
+    const { id, trackId, repeat, nextSequenceId, detune, stepCount } = getSelectedSequence();
 
     let seqColor;
     let trackName = 'No track';
@@ -84,9 +108,13 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
         trackName = getTrack(trackId).name;
         encoders[1]!.value = `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`;
         encoders[2]!.value = nextSequenceId ? `#${`${nextSequenceId + 1}`.padStart(3, '0')}` : `---`;
+        encoders[5]!.value = (detune < 0 ? detune.toString() : `+${detune}`);
+        encoders[6]!.value = `${stepCount}`;
     } else {
         encoders[1]!.value = '';
         encoders[2]!.value = '';
+        encoders[5]!.value = '';
+        encoders[6]!.value = '';
     }
 
     encoders[0]!.value = `#${`${id + 1}`.padStart(3, '0')}`;

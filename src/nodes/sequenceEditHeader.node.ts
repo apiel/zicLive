@@ -7,8 +7,8 @@ import { sequenceMiniGridSelection } from './sequenceMiniGridSelection.node';
 
 const { margin } = unit;
 
-export function sequenceEditHeader() {
-    const { trackId, stepCount, steps, playing } = getSelectedSequence();
+export function sequenceEditHeader(currentStep?: number) {
+    const { trackId, stepCount, steps, playing, activeStep } = getSelectedSequence();
     sequenceMiniGridSelection();
 
     if (trackId !== undefined) {
@@ -19,9 +19,6 @@ export function sequenceEditHeader() {
         };
         setColor(color.foreground);
         drawFilledRect(patternPreviewRect);
-        patternPreviewNode(patternPreviewRect, stepCount, steps, playing);
-        // if (activeStep !== undefined) {
-        //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
-        // }
+        patternPreviewNode(patternPreviewRect, stepCount, steps, playing, activeStep);
     }
 }

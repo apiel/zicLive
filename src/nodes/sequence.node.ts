@@ -55,10 +55,7 @@ export function sequenceNode(
         position: patternPreviewPosition,
         size: { w: patternSize.w - 4, h: patternSize.h - 4 },
     };
-    patternPreviewNode(patternPreviewRect, stepCount, steps, playing);
-    if (activeStep !== undefined) {
-        renderActiveStep(patternPreviewRect, stepCount, activeStep);
-    }
+    patternPreviewNode(patternPreviewRect, stepCount, steps, playing, activeStep);
 
     if (selected) {
         setColor(color.secondarySelected);
@@ -66,13 +63,4 @@ export function sequenceNode(
     }
 
     return { position, size };
-}
-
-function renderActiveStep({ position, size }: Rect, stepCount: number, step: number) {
-    setColor(color.sequencer.pattern.playing);
-    const stepWidth = size.w / stepCount;
-    drawLine(
-        { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y },
-        { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + size.h - 1 },
-    );
 }

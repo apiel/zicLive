@@ -28,7 +28,7 @@ export interface EncoderValue {
 export interface Encoder {
     title: string;
     getValue: () => EncoderValue | string;
-    unit?: string;
+    unit?: string | (() => string);
 }
 
 export function encoderNode(index: number, encoder: Encoder | undefined) {
@@ -59,7 +59,7 @@ export function encoderNode(index: number, encoder: Encoder | undefined) {
 
             if (unit) {
                 drawText(
-                    unit,
+                    typeof unit === 'string' ? unit : unit(),
                     { x: valueRect.position.x + valueRect.size.w + 4, y: valueRect.position.y + 5 },
                     { color: color.foreground3, size: 10, font: font.regular },
                 );

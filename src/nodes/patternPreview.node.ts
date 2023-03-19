@@ -2,7 +2,13 @@ import { drawFilledRect, drawLine, Rect, setColor } from 'zic_node_ui';
 import { Steps } from '../sequence';
 import { color } from '../style';
 
-export function patternPreviewNode({ position, size }: Rect, stepCount: number, _steps: Steps, playing = false) {
+export function patternPreviewNode(
+    { position, size }: Rect,
+    stepCount: number,
+    _steps: Steps,
+    playing: boolean,
+    activeStep?: number,
+) {
     setColor(playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting);
     const stepWidth = Math.max((size.w - 2) / stepCount, 2);
     const steps = _steps.map((voices) => voices.filter((v) => v)); // remove undefined/null
@@ -42,5 +48,13 @@ export function patternPreviewNode({ position, size }: Rect, stepCount: number, 
                 drawLine(point1, point2);
             }
         }
+    }
+
+    if (activeStep !== undefined) {
+        setColor(color.sequencer.pattern.playing);
+        drawLine(
+            { x: position.x + activeStep * stepWidth + stepWidth * 0.5, y: position.y },
+            { x: position.x + activeStep * stepWidth + stepWidth * 0.5, y: position.y + size.h - 1 },
+        );
     }
 }

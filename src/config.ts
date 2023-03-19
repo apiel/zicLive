@@ -18,6 +18,9 @@ const path = {
 export const config = {
     screen,
     path,
+    encoder: {
+        perRow: 4,  
+    },
     sequence: {
         col: 6,
         row: 5,

@@ -1,3 +1,4 @@
+import { Tuple } from '../interface';
 
 const padMatrix = [
     [0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27],
@@ -49,7 +50,7 @@ const pad = {
 
 // sustain 0x40 port keynoard
 
-const knob = {
+const encoder = {
     k1: 0x30,
     k2: 0x31,
     k3: 0x32,
@@ -60,9 +61,29 @@ const knob = {
     k8: 0x37,
 };
 
+export type EncoderCount = 8;
+
+const encoderList: Tuple<
+    {
+        name: string;
+        midiKey: number;
+    },
+    EncoderCount
+> = [
+    { name: 'k1', midiKey: encoder.k1 },
+    { name: 'k2', midiKey: encoder.k2 },
+    { name: 'k3', midiKey: encoder.k3 },
+    { name: 'k4', midiKey: encoder.k4 },
+    { name: 'k5', midiKey: encoder.k5 },
+    { name: 'k6', midiKey: encoder.k6 },
+    { name: 'k7', midiKey: encoder.k7 },
+    { name: 'k8', midiKey: encoder.k8 },
+];
+
 export const akaiApcKey25 = {
     pad,
-    knob,
+    encoder,
+    encoderList,
     padMode,
     padMatrix,
 };

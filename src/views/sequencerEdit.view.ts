@@ -6,7 +6,7 @@ import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { sequencerController } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
-import { getTrack, getTrackStyle } from '../track';
+import { getTrack, getTrackCount, getTrackStyle } from '../track';
 import { patternPreviewNode } from '../nodes/patternPreview.node';
 import { encoderNode } from '../nodes/encoder.node';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
@@ -68,34 +68,60 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
 
     const seqColor = trackId !== undefined ? getTrackStyle(trackId).color : undefined;
     const trackName = trackId !== undefined ? getTrack(trackId).name : 'No track';
-    encoderNode([
+    const encoders = [
         { title: 'Sequence', value: `#${`${id + 1}`.padStart(3, '0')}`, valueColor: seqColor },
-        null,
-        null,
-        null,
+        undefined,
+        undefined,
+        undefined,
         { title: 'Track', value: trackName },
-        null,
-        null,
-        null,
-    ]);
+        undefined,
+        undefined,
+        undefined,
+    ];
+    for (let i = 0; i < encoders.length; i++) {
+        const encoder = encoders[i];
+        encoderNode(i, encoder);
+    }
 
     renderMessage();
 }
 
-let lastTimeK1 = 0;
+let encoderTiming: { [k: string]: number } = {
+    [akaiApcKey25.encoder.k1]: 0,
+    [akaiApcKey25.encoder.k5]: 0,
+};
 export async function sequencerEditMidiHandler({ isController, message: [type, padKey, value] }: MidiMsg) {
     if (isController) {
         if (type === MIDI_TYPE.CC) {
             switch (padKey) {
-                case akaiApcKey25.knob.k1: {
-                    if (Date.now() > lastTimeK1 + 200) {
-                        lastTimeK1 = Date.now();
+                case akaiApcKey25.encoder.k1: {
+                    if (Date.now() > encoderTiming[akaiApcKey25.encoder.k1] + 200) {
+                        encoderTiming[akaiApcKey25.encoder.k1] = Date.now();
                         const direction = value < 63 ? 1 : -1;
                         const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
                         setSelectedSequenceId(id);
                         forceSelectedItem(View.Sequencer, id);
                         return true;
                     }
+                    return false;
+                }
+                case akaiApcKey25.encoder.k5: {
+                    if (Date.now() > encoderTiming[akaiApcKey25.encoder.k5] + 200) {
+                        encoderTiming[akaiApcKey25.encoder.k5] = Date.now();
+                        const direction = value < 63 ? 1 : -1;
+                        const { trackId } = getSelectedSequence();
+                        if (trackId !== undefined) {
+                            const id =
+                                direction === -1 && trackId === 0
+                                    ? undefined
+                                    : minmax(trackId + direction, 0, getTrackCount() - 1);
+                            sequences[getSelectedSequenceId()].trackId = id;
+                        } else if (direction === 1) {
+                            sequences[getSelectedSequenceId()].trackId = 0;
+                        }
+                        return true;
+                    }
+                    return false;
                 }
             }
         }

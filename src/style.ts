@@ -24,9 +24,8 @@ export const color = {
         selected: baseColor.selected,
         playing: baseColor.foreground3,
         pattern: {
-            playing: baseColor.chart,
-            waiting: rgb('#3f444e'),
-            current: rgb('#ffffff'),
+            step: rgb('#595f6b'),
+            currentStep: rgb('#ffffff'),
         },
         info: baseColor.info,
     },

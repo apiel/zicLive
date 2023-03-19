@@ -55,7 +55,7 @@ export function sequenceNode(
         position: patternPreviewPosition,
         size: { w: patternSize.w - 4, h: patternSize.h - 4 },
     };
-    patternPreviewNode(patternPreviewRect, stepCount, steps, playing, activeStep);
+    patternPreviewNode(patternPreviewRect, stepCount, steps, activeStep);
 
     if (selected) {
         setColor(color.secondarySelected);

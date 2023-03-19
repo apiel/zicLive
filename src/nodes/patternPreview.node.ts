@@ -6,11 +6,9 @@ export function patternPreviewNode(
     { position, size }: Rect,
     stepCount: number,
     _steps: Steps,
-    playing: boolean,
     activeStep?: number,
     currentStep?: number,
 ) {
-    const stepColor = playing ? color.sequencer.pattern.playing : color.sequencer.pattern.waiting;
     const stepWidth = Math.max((size.w - 2) / stepCount, 2);
     const steps = _steps.map((voices) => voices.filter((v) => v)); // remove undefined/null
     const notes = steps.flatMap((voices) => voices.map((v) => v!.note));
@@ -19,18 +17,16 @@ export function patternPreviewNode(
 
     if (currentStep !== undefined) {
         setColor(color.foreground2);
-        drawFilledRect(
-            {
-                position: {
-                    x: position.x + currentStep * stepWidth,
-                    y: position.y,
-                },
-                size: {
-                    w: stepWidth - 1,
-                    h: size.h - 1,
-                },
-            }
-        );
+        drawFilledRect({
+            position: {
+                x: position.x + currentStep * stepWidth,
+                y: position.y,
+            },
+            size: {
+                w: stepWidth - 1,
+                h: size.h - 1,
+            },
+        });
     }
 
     if (noteRange === 0) {
@@ -46,7 +42,7 @@ export function patternPreviewNode(
                         h: 5,
                     },
                 };
-                setColor(currentStep === step ? color.sequencer.pattern.current : stepColor);
+                setColor(currentStep === step ? color.sequencer.pattern.currentStep : color.sequencer.pattern.step);
                 drawFilledRect(rect);
             }
         }
@@ -63,14 +59,14 @@ export function patternPreviewNode(
                     x: point1.x + stepWidth - 2,
                     y: point1.y,
                 };
-                setColor(currentStep === step ? color.sequencer.pattern.current : stepColor);
+                setColor(currentStep === step ? color.sequencer.pattern.currentStep : color.sequencer.pattern.step);
                 drawLine(point1, point2);
             }
         }
     }
 
     if (activeStep !== undefined) {
-        setColor(color.sequencer.pattern.playing);
+        setColor(color.sequencer.pattern.step);
         drawLine(
             { x: position.x + activeStep * stepWidth + stepWidth * 0.5, y: position.y },
             { x: position.x + activeStep * stepWidth + stepWidth * 0.5, y: position.y + size.h - 1 },

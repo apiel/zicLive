@@ -1,32 +1,38 @@
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg } from '../midi';
-import { sequencerController, sequenceSelectMidiHandler, sequenceToggleMidiHandler } from './controller/sequencerController';
+import {
+    sequencerController,
+    sequenceSelectMidiHandler,
+    sequenceToggleMidiHandler,
+} from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
 import { getTrack, getTrackCount, getTrackStyle } from '../track';
 import { minmax } from '../util';
 import { forceSelectedItem } from '../selector';
 import { View } from '../def';
-import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
+import { EncoderData, Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 
-const encoders: Encoders = [
-    {
-        title: 'Sequence',
-        getValue: () => {
-            const { id, trackId } = getSelectedSequence();
-            return {
-                value: `#${`${id + 1}`.padStart(3, '0')}`,
-                valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
-            };
-        },
-        handler: async (direction) => {
-            const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
-            setSelectedSequenceId(id);
-            forceSelectedItem(View.Sequencer, id);
-            return true;
-        },
+export const sequenceEncoder: EncoderData = {
+    title: 'Sequence',
+    getValue: () => {
+        const { id, trackId } = getSelectedSequence();
+        return {
+            value: `#${`${id + 1}`.padStart(3, '0')}`,
+            valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
+        };
     },
+    handler: async (direction) => {
+        const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
+        setSelectedSequenceId(id);
+        forceSelectedItem(View.Sequencer, id);
+        return true;
+    },
+};
+
+const encoders: Encoders = [
+    sequenceEncoder,
     {
         title: 'Repeat',
         getValue: () => {
@@ -127,7 +133,7 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
 }
 
 export async function sequencerEditMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
-    if(sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
+    if (sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
         return true;
     }
     if (await sequenceToggleMidiHandler(midiMsg)) {

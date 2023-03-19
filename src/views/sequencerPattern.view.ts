@@ -6,10 +6,21 @@ import { getSelectedSequence } from '../sequence';
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
+import { sequenceEncoder } from './sequencerEdit.view';
 
 let currentStep = 0;
 
 const encoders: Encoders = [
+    {
+        ...sequenceEncoder,
+        handler: (direction) => {
+            currentStep = 0;
+            return sequenceEncoder.handler(direction);
+        }
+    },
+    undefined,
+    undefined,
+    undefined,
     {
         title: 'step',
         getValue: () => `${currentStep + 1}`,
@@ -23,10 +34,6 @@ const encoders: Encoders = [
             return `/ ${stepCount}`;
         },
     },
-    undefined,
-    undefined,
-    undefined,
-    undefined,
     undefined,
     undefined,
     undefined,

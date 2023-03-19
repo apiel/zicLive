@@ -11,8 +11,15 @@ import { sequenceEncoder } from './sequencerEdit.view';
 import { NOTE_END, NOTE_START } from 'zic_node';
 import { getTrack } from '../track';
 import { config } from '../config';
+import { getPatch } from '../patch';
 
 let currentStep = 0;
+
+// TODO use keyboard to set note
+
+// TODO save/reload sequence
+// withInfo('Sequence loaded', () => loadSequence(selectedId)),
+// withSuccess('Sequences saved', () => saveSequence(sequences[selectedId])),
 
 const encoders: Encoders = [
     {
@@ -152,6 +159,14 @@ const encoders: Encoders = [
                 }
             }
             return false;
+        },
+        unit: () => {
+            const { steps } = getSelectedSequence();
+            const step = steps[currentStep][0];
+            if (step?.patchId) {
+                return getPatch(step.patchId).name;
+            }
+            return '';
         },
     },
     {

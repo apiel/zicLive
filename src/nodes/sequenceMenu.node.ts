@@ -1,6 +1,9 @@
 import { drawFilledRect, drawRect, drawText, setColor } from 'zic_node_ui';
 import { config } from '../config';
+import { withInfo, withSuccess } from '../draw/drawMessage';
 import { MidiMsg, MIDI_TYPE } from '../midi';
+import { akaiApcKey25 } from '../midi/akaiApcKey25';
+import { getSelectedSequence, getSelectedSequenceId, loadSequence, saveSequence } from '../sequence';
 import { color, font } from '../style';
 import { minmax } from '../util';
 
@@ -10,7 +13,16 @@ let debounceTime = 0;
 
 const rowSpacing = 30;
 const debounce = 250;
-const menuItems = ['Save', 'Reload'];
+const menuItems = [
+    {
+        text: 'Save',
+        handler:() => withSuccess('Sequences saved', () => saveSequence(getSelectedSequence()))(),
+    },
+    {
+        text: 'Reload',
+        handler: () => withInfo('Sequence loaded', () => loadSequence(getSelectedSequenceId()))(),
+    },
+];
 
 export function sequencerMenuNode() {
     if (showMenu) {
@@ -25,7 +37,7 @@ export function sequencerMenuNode() {
 
         for (let i = 0; i < menuItems.length; i++) {
             const position = { x: rect.position.x + 20, y: rect.position.y + 10 + rowSpacing * i };
-            drawText(menuItems[i], position, { size: 16, font: font.regular, color: color.info });
+            drawText(menuItems[i].text, position, { size: 16, font: font.regular, color: color.info });
         }
 
         const selectRect = {
@@ -36,17 +48,21 @@ export function sequencerMenuNode() {
     }
 }
 
-export function sequenceMenuHandler(midiMsg: MidiMsg) {
+export async function sequenceMenuHandler(midiMsg: MidiMsg) {
     if (midiMsg.isController) {
-        if (midiMsg.message[0] === MIDI_TYPE.KEY_RELEASED) {
+        const [type, key, value] = midiMsg.message;
+        if (key === akaiApcKey25.pad.record && type === MIDI_TYPE.KEY_RELEASED) {
             showMenu = !showMenu;
             selection = 0;
             return true;
         } else if (showMenu) {
-            if (midiMsg.message[0] === MIDI_TYPE.CC) {
+            if (key === akaiApcKey25.pad.play && type === MIDI_TYPE.KEY_RELEASED) {
+                await menuItems[selection].handler();
+                showMenu = false;
+                return true;
+            } else if (type === MIDI_TYPE.CC) {
                 if (Date.now() > debounceTime + debounce) {
                     debounceTime = Date.now();
-                    const value = midiMsg.message[2];
                     const direction = value < 63 ? value : -(128 - value);
                     selection = minmax(selection + direction, 0, menuItems.length - 1);
                     return true;

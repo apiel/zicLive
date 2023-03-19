@@ -6,12 +6,14 @@ import { Encoder, encoderNode } from '../../nodes/encoder.node';
 import { akaiApcKey25, EncoderCount } from '../../midi/akaiApcKey25';
 import { Tuple } from '../../interface';
 
-export interface EncoderData {
-    data: Encoder;
+const DEFAULT_DEBOUNCE = 200;
+
+export interface EncoderData extends Encoder {
     handler: (direction: number) => Promise<boolean>;
+    debounce?: number;
 }
 
-export type Encoders = Tuple<(EncoderData | null), EncoderCount>;
+export type Encoders = Tuple<EncoderData | undefined, EncoderCount>;
 
 const encoderStates = Object.fromEntries(
     akaiApcKey25.encoderList.map(({ midiKey }, index) => [
@@ -28,19 +30,20 @@ export async function encodersView(encoders: Encoders) {
 
     for (let i = 0; i < encoders.length; i++) {
         const encoder = encoders[i];
-        encoderNode(i, encoder?.data);
+        encoderNode(i, encoder);
     }
 
     renderMessage();
 }
 
-export async function encodersHandler(encoders: Encoders, { message: [type, key, value] }: MidiMsg) {
+export function encodersHandler(encoders: Encoders, { message: [type, key, value] }: MidiMsg) {
     if (type === MIDI_TYPE.CC) {
         const state = encoderStates[key];
         if (state) {
             const encoder = encoders[state.index];
             if (encoder?.handler) {
-                if (Date.now() > state.timing + 200) {
+                const { debounce = DEFAULT_DEBOUNCE } = encoder;
+                if (encoder.debounce === 0 || Date.now() > state.timing + debounce) {
                     state.timing = Date.now();
                     const direction = value < 63 ? 1 : -1;
                     return encoder.handler(direction);

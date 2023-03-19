@@ -77,10 +77,19 @@ const encoders: Encoders = [
     },
     {
         title: 'Tie',
-        getValue: () => `---`,
-        handler: async (direction) => {
+        getValue: () => {
+            const step = getSelectedSequence().steps[currentStep][0];
+            return step?.tie ? `Tie` : `---`;
+        },
+        handler: async () => {
+            const step = getSelectedSequence().steps[currentStep][0];
+            if (step) {
+                step.tie = !step.tie;
+                return true;
+            }
             return false;
         },
+        debounce: 1000,
     },
     {
         title: 'Step',

@@ -1,21 +1,15 @@
-import { drawFilledRect, drawRect, drawText, Rect, setColor } from 'zic_node_ui';
-import { config } from '../config';
-import { color, font, unit } from '../style';
+import { unit } from '../style';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg } from '../midi';
 import { sequencerController } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
 import { getTrack, getTrackCount, getTrackStyle } from '../track';
-import { patternPreviewNode } from '../nodes/patternPreview.node';
 import { minmax } from '../util';
 import { forceSelectedItem } from '../selector';
 import { View } from '../def';
 import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
-import { sequenceMiniGridSelection } from '../nodes/sequenceMiniGridSelection.node';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
-
-const { margin } = unit;
 
 const encoders: Encoders = [
     {

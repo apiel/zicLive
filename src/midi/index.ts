@@ -89,8 +89,17 @@ async function basicUiEvent({ isController, message: [type, padKey] }: MidiMsg) 
     return isUiEvent;
 }
 
+export let shiftPressed = false;
 export async function handleMidi(data: MidiMsg) {
     sendTcpMidi(data);
+    if (data.isController && data.message[1] === akaiApcKey25.pad.shift) {
+        const type = data.message[0];
+        if (type === MIDI_TYPE.KEY_PRESSED) {
+            shiftPressed = true;
+        } else if (type === MIDI_TYPE.KEY_RELEASED) {
+            shiftPressed = false;
+        } // else it's a CC
+    }
     if (await viewMidiHandler(data)) {
         renderView({ controllerRendering: true });
         return;

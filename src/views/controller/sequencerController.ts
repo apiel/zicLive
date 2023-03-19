@@ -61,16 +61,14 @@ export function sequenceSelectMidiHandler(midiMsg: MidiMsg, viewPadPressed: bool
 }
 
 export async function sequenceToggleMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
-    if (isController) {
-        if (type === MIDI_TYPE.KEY_RELEASED) {
-            const seqId = padSeq.indexOf(padKey);
-            if (seqId !== -1) {
-                const sequence = getSequence(seqId);
-                if (sequence) {
-                    toggleSequence(sequence);
-                    await sequencerView({ controllerRendering: true });
-                    return true;
-                }
+    if (isController && type === MIDI_TYPE.KEY_RELEASED) {
+        const seqId = padSeq.indexOf(padKey);
+        if (seqId !== -1) {
+            const sequence = getSequence(seqId);
+            if (sequence) {
+                toggleSequence(sequence);
+                await sequencerView({ controllerRendering: true });
+                return true;
             }
         }
     }

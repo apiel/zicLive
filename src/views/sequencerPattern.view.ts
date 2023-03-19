@@ -1,9 +1,9 @@
 import { Midi } from 'tonal';
 import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
-import { cleanPadMatrix, MidiMsg, midiOutController } from '../midi';
+import { cleanPadMatrix, MidiMsg, midiOutController, MIDI_TYPE, shiftPressed } from '../midi';
 import { sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
-import { getSelectedSequence, STEP_CONDITIONS } from '../sequence';
+import { getSelectedSequence, Steps, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
@@ -23,6 +23,22 @@ let currentStep = 0;
 // withSuccess('Sequences saved', () => saveSequence(sequences[selectedId])),
 
 // TODO for note encoder, debounce only rendering but not change...
+
+function initNote(steps: Steps, trackId: number) {
+    const previousStep = steps
+        .slice(0, currentStep)
+        .reverse()
+        .find((step) => step[0]?.note)?.[0];
+    steps[currentStep][0] = {
+        note: previousStep?.note ?? 60,
+        velocity: 100,
+        tie: false,
+        patchId:
+            previousStep?.patchId ??
+            steps.flat().find((s) => s)?.patchId ??
+            config.engines[getTrack(trackId).engine].idStart,
+    };
+}
 
 const encoders: Encoders = [
     {
@@ -56,19 +72,7 @@ const encoders: Encoders = [
                     }
                 } else if (direction === 1) {
                     // If no already existing step, create one if direction is positive
-                    const previousStep = steps
-                        .slice(0, currentStep)
-                        .reverse()
-                        .find((step) => step[0]?.note)?.[0];
-                    steps[currentStep][0] = {
-                        note: previousStep?.note ?? 60,
-                        velocity: 100,
-                        tie: false,
-                        patchId:
-                            previousStep?.patchId ??
-                            steps.flat().find((s) => s)?.patchId ??
-                            config.engines[getTrack(trackId).engine].idStart,
-                    };
+                    initNote(steps, trackId);
                 }
             }
             return false;
@@ -205,8 +209,12 @@ function patternController() {
             const { padColor } = getTrackStyle(trackId);
             for (let i = 0; i < stepCount; i++) {
                 const step = steps[i][0];
-                    const pad = akaiApcKey25.padMatrixFlat[i];
-                    sendMidiMessage(midiOutController.port, [step ? akaiApcKey25.padMode.on100pct : akaiApcKey25.padMode.on10pct, pad, padColor]);
+                const pad = akaiApcKey25.padMatrixFlat[i];
+                sendMidiMessage(midiOutController.port, [
+                    step ? akaiApcKey25.padMode.on100pct : akaiApcKey25.padMode.on10pct,
+                    pad,
+                    padColor,
+                ]);
             }
         }
     }
@@ -232,6 +240,25 @@ export async function sequencerPatternView({ controllerRendering }: RenderOption
 export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
     if (sequenceSelectMidiHandler(midiMsg, _viewPadPressed)) {
         return true;
+    }
+    const [type, padKey] = midiMsg.message;
+    if (midiMsg.isController && type === MIDI_TYPE.KEY_RELEASED) {
+        const stepIndex = akaiApcKey25.padMatrixFlat.indexOf(padKey);
+        if (stepIndex !== -1 && stepIndex < getSelectedSequence().stepCount) {
+            currentStep = stepIndex;
+            if (!shiftPressed) {
+                const { steps, trackId } = getSelectedSequence();
+                if (trackId !== undefined) {
+                    const step = steps[currentStep][0];
+                    if (step) {
+                        steps[currentStep][0] = null;
+                    } else {
+                        initNote(steps, trackId);
+                    }
+                }
+            }
+            return true;
+        }
     }
     return encodersHandler(encoders, midiMsg);
 }

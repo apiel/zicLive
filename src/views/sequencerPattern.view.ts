@@ -242,23 +242,34 @@ export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPres
         return true;
     }
     const [type, padKey] = midiMsg.message;
-    if (midiMsg.isController && type === MIDI_TYPE.KEY_RELEASED) {
-        const stepIndex = akaiApcKey25.padMatrixFlat.indexOf(padKey);
-        if (stepIndex !== -1 && stepIndex < getSelectedSequence().stepCount) {
-            currentStep = stepIndex;
-            if (!shiftPressed) {
-                const { steps, trackId } = getSelectedSequence();
-                if (trackId !== undefined) {
-                    const step = steps[currentStep][0];
-                    if (step) {
-                        steps[currentStep][0] = null;
-                    } else {
-                        initNote(steps, trackId);
+    if (type === MIDI_TYPE.KEY_RELEASED) {
+        if (midiMsg.isController) {
+            const stepIndex = akaiApcKey25.padMatrixFlat.indexOf(padKey);
+            if (stepIndex !== -1 && stepIndex < getSelectedSequence().stepCount) {
+                currentStep = stepIndex;
+                if (!shiftPressed) {
+                    const { steps, trackId } = getSelectedSequence();
+                    if (trackId !== undefined) {
+                        const step = steps[currentStep][0];
+                        if (step) {
+                            steps[currentStep][0] = null;
+                        } else {
+                            initNote(steps, trackId);
+                        }
                     }
                 }
+                return true;
             }
-            return true;
+        } else if (midiMsg.isKeyboard) {
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId !== undefined) {
+                const step = steps[currentStep][0];
+                if (step) {
+                    step.note = padKey;
+                }
+            }
         }
     }
+
     return encodersHandler(encoders, midiMsg);
 }

@@ -19,6 +19,6 @@ export function sequenceEditHeader(currentStep?: number) {
         };
         setColor(color.foreground);
         drawFilledRect(patternPreviewRect);
-        patternPreviewNode(patternPreviewRect, stepCount, steps, playing, activeStep);
+        patternPreviewNode(patternPreviewRect, stepCount, steps, playing, activeStep, currentStep);
     }
 }

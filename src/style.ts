@@ -26,6 +26,7 @@ export const color = {
         pattern: {
             playing: baseColor.chart,
             waiting: rgb('#3f444e'),
+            current: rgb('#ffffff'),
         },
         info: baseColor.info,
     },

@@ -3,7 +3,7 @@ import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg } from '../midi';
 import { sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
-import { getSelectedSequence } from '../sequence';
+import { getSelectedSequence, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
@@ -25,7 +25,10 @@ const encoders: Encoders = [
     {
         title: 'Note',
         getValue: () => {
-            const { steps } = getSelectedSequence();
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId === undefined) {
+                return '';
+            }
             const step = steps[currentStep][0];
             return step ? Midi.midiToNoteName(step.note, { sharps: true }) : `---`;
         },
@@ -33,28 +36,30 @@ const encoders: Encoders = [
             // TODO using shift could switch per octave
             // TODO need a quick way to set a note to null
             const { steps, trackId } = getSelectedSequence();
-            const step = steps[currentStep][0];
-            if (step) {
-                if (direction < 0 && step.note <= NOTE_START) {
-                    steps[currentStep][0] = null;
-                } else {
-                    step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+            if (trackId !== undefined) {
+                const step = steps[currentStep][0];
+                if (step) {
+                    if (direction < 0 && step.note <= NOTE_START) {
+                        steps[currentStep][0] = null;
+                    } else {
+                        step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+                    }
+                } else if (direction === 1) {
+                    // If no already existing step, create one if direction is positive
+                    const previousStep = steps
+                        .slice(0, currentStep)
+                        .reverse()
+                        .find((step) => step[0]?.note)?.[0];
+                    steps[currentStep][0] = {
+                        note: previousStep?.note ?? 60,
+                        velocity: 100,
+                        tie: false,
+                        patchId:
+                            previousStep?.patchId ??
+                            steps.flat().find((s) => s)?.patchId ??
+                            config.engines[getTrack(trackId).engine].idStart,
+                    };
                 }
-            } else if (direction === 1) {
-                // If no already existing step, create one if direction is positive
-                const previousStep = steps
-                    .slice(0, currentStep)
-                    .reverse()
-                    .find((step) => step[0]?.note)?.[0];
-                steps[currentStep][0] = {
-                    note: previousStep?.note ?? 60,
-                    velocity: 100,
-                    tie: false,
-                    patchId:
-                        previousStep?.patchId ??
-                        steps.flat().find((s) => s)?.patchId ??
-                        (trackId !== undefined ? config.engines[getTrack(trackId).engine].idStart : 0),
-                };
             }
             return false;
         },
@@ -62,14 +67,21 @@ const encoders: Encoders = [
     {
         title: 'Velocity',
         getValue: () => {
-            const step = getSelectedSequence().steps[currentStep][0];
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId === undefined) {
+                return '';
+            }
+            const step = steps[currentStep][0];
             return step ? `${step.velocity.toString().padStart(3, ' ')}` : `---`;
         },
         handler: async (direction) => {
-            const step = getSelectedSequence().steps[currentStep][0];
-            if (step) {
-                step.velocity = minmax(step.velocity + direction, 1, 100);
-                return true;
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId !== undefined) {
+                const step = steps[currentStep][0];
+                if (step) {
+                    step.velocity = minmax(step.velocity + direction, 1, 100);
+                    return true;
+                }
             }
             return false;
         },
@@ -78,14 +90,21 @@ const encoders: Encoders = [
     {
         title: 'Tie',
         getValue: () => {
-            const step = getSelectedSequence().steps[currentStep][0];
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId === undefined) {
+                return '';
+            }
+            const step = steps[currentStep][0];
             return step?.tie ? `Tie` : `---`;
         },
         handler: async () => {
-            const step = getSelectedSequence().steps[currentStep][0];
-            if (step) {
-                step.tie = !step.tie;
-                return true;
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId !== undefined) {
+                const step = steps[currentStep][0];
+                if (step) {
+                    step.tie = !step.tie;
+                    return true;
+                }
             }
             return false;
         },
@@ -93,10 +112,18 @@ const encoders: Encoders = [
     },
     {
         title: 'Step',
-        getValue: () => `${currentStep + 1}`,
+        getValue: () => {
+            const { trackId } = getSelectedSequence();
+            if (trackId === undefined) {
+                return '';
+            }
+            return `${currentStep + 1}`;
+        },
         handler: async (direction) => {
-            const { stepCount } = getSelectedSequence();
-            currentStep = minmax(currentStep + direction, 0, stepCount - 1);
+            const { trackId, stepCount } = getSelectedSequence();
+            if (trackId !== undefined) {
+                currentStep = minmax(currentStep + direction, 0, stepCount - 1);
+            }
             return true;
         },
         unit: () => {
@@ -105,16 +132,47 @@ const encoders: Encoders = [
         },
     },
     {
-        title: 'Condition',
-        getValue: () => `---`,
+        title: 'Patch',
+        getValue: () => {
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId === undefined) {
+                return '';
+            }
+            const step = steps[currentStep][0];
+            return step?.patchId ? '#' + step.patchId.toString().padStart(3, '0') : '---';
+        },
         handler: async (direction) => {
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId !== undefined) {
+                const step = steps[currentStep][0];
+                if (step) {
+                    const engine = config.engines[getTrack(trackId).engine];
+                    step.patchId = minmax(step.patchId + direction, engine.idStart, engine.idEnd);
+                    return true;
+                }
+            }
             return false;
         },
     },
     {
-        title: 'Patch',
-        getValue: () => `---`,
+        title: 'Condition',
+        getValue: () => {
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId === undefined) {
+                return '';
+            }
+            const step = steps[currentStep][0];
+            return step?.condition ? STEP_CONDITIONS[step.condition] : '---';
+        },
         handler: async (direction) => {
+            const { steps, trackId } = getSelectedSequence();
+            if (trackId !== undefined) {
+                const step = steps[currentStep][0];
+                if (step) {
+                    step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
+                    return true;
+                }
+            }
             return false;
         },
     },

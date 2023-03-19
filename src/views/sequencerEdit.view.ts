@@ -1,6 +1,6 @@
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
-import { MidiMsg } from '../midi';
+import { MidiMsg, MIDI_TYPE } from '../midi';
 import {
     sequencerController,
     sequenceSelectMidiHandler,
@@ -13,6 +13,10 @@ import { forceSelectedItem } from '../selector';
 import { View } from '../def';
 import { EncoderData, Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
+import { drawFilledRect, drawRect, setColor } from 'zic_node_ui';
+import { color } from '../style';
+import { config } from '../config';
+import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
 
 export const sequenceEncoder: EncoderData = {
     title: 'Sequence',
@@ -129,6 +133,7 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
 
     encodersView(encoders);
     sequenceEditHeader();
+    sequencerMenuNode();
 
     renderMessage();
 }
@@ -140,5 +145,10 @@ export async function sequencerEditMidiHandler(midiMsg: MidiMsg, viewPadPressed:
     if (await sequenceToggleMidiHandler(midiMsg)) {
         return true;
     }
+    const menuStatus = sequenceMenuHandler(midiMsg);
+    if (menuStatus !== false) {
+        return menuStatus !== undefined;
+    }
+
     return encodersHandler(encoders, midiMsg);
 }

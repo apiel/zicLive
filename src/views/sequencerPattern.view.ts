@@ -16,8 +16,6 @@ import { akaiApcKey25 } from '../midi/akaiApcKey25';
 
 let currentStep = 0;
 
-// TODO use keyboard to set note
-
 // TODO save/reload sequence
 // withInfo('Sequence loaded', () => loadSequence(selectedId)),
 // withSuccess('Sequences saved', () => saveSequence(sequences[selectedId])),
@@ -59,8 +57,6 @@ const encoders: Encoders = [
             return step ? Midi.midiToNoteName(step.note, { sharps: true }) : `---`;
         },
         handler: async (direction) => {
-            // TODO using shift could switch per octave
-            // TODO need a quick way to set a note to null
             const { steps, trackId } = getSelectedSequence();
             if (trackId !== undefined) {
                 const step = steps[currentStep][0];
@@ -68,7 +64,11 @@ const encoders: Encoders = [
                     if (direction < 0 && step.note <= NOTE_START) {
                         steps[currentStep][0] = null;
                     } else {
-                        step.note = minmax(step.note + direction, NOTE_START, NOTE_END);
+                        step.note = minmax(
+                            step.note + (shiftPressed ? direction * 12 : direction),
+                            NOTE_START,
+                            NOTE_END,
+                        );
                     }
                 } else if (direction === 1) {
                     // If no already existing step, create one if direction is positive

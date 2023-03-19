@@ -50,7 +50,9 @@ const pad = {
     shift: 0x62,
 };
 
-// sustain 0x40 port keynoard
+const keyboardCC = {
+    sustain: 0x40,
+}
 
 const encoder = {
     k1: 0x30,
@@ -89,4 +91,5 @@ export const akaiApcKey25 = {
     padMode,
     padMatrix,
     padMatrixFlat,
+    keyboardCC,
 };

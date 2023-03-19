@@ -241,10 +241,10 @@ export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPres
     if (sequenceSelectMidiHandler(midiMsg, _viewPadPressed)) {
         return true;
     }
-    const [type, padKey] = midiMsg.message;
-    if (type === MIDI_TYPE.KEY_RELEASED) {
-        if (midiMsg.isController) {
-            const stepIndex = akaiApcKey25.padMatrixFlat.indexOf(padKey);
+    const [type, key, value] = midiMsg.message;
+    if (midiMsg.isController) {
+        if (type === MIDI_TYPE.KEY_RELEASED) {
+            const stepIndex = akaiApcKey25.padMatrixFlat.indexOf(key);
             if (stepIndex !== -1 && stepIndex < getSelectedSequence().stepCount) {
                 currentStep = stepIndex;
                 if (!shiftPressed) {
@@ -260,13 +260,15 @@ export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPres
                 }
                 return true;
             }
-        } else if (midiMsg.isKeyboard) {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId !== undefined) {
-                const step = steps[currentStep][0];
-                if (step) {
-                    step.note = padKey;
-                }
+        }
+    } else if (midiMsg.isKeyboard) {
+        const { steps, trackId } = getSelectedSequence();
+        const step = steps[currentStep][0];
+        if (trackId !== undefined && step) {
+            if (type === MIDI_TYPE.KEY_RELEASED) {
+                step.note = key;
+            } else if (type === MIDI_TYPE.CC && key === akaiApcKey25.keyboardCC.sustain && value === 127) {
+                step.tie = !step.tie;
             }
         }
     }

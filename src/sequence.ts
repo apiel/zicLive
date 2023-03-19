@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'fs/promises';
 import {
+    cleanPatternStep,
     MAX_STEPS_IN_PATTERN,
     MAX_VOICES_IN_PATTERN,
     PATTERN_COUNT,
@@ -141,13 +142,15 @@ function getFilepath(id: number) {
 }
 
 // FIXME should we instead load sequence in memory
-function initPattern({ id, stepCount, steps }: Sequence) {
+export function initPattern({ id, stepCount, steps }: Sequence) {
     setPatternLength(id, stepCount);
     for (let stepIndex = 0; stepIndex < MAX_STEPS_IN_PATTERN; stepIndex++) {
         for (let voice = 0; voice < MAX_VOICES_IN_PATTERN; voice++) {
             const step = steps[stepIndex]?.[voice];
             if (step) {
                 setPatternStep(id, stepIndex, step.note, step.velocity, step.tie, step.patchId, voice);
+            } else {
+                cleanPatternStep(id, stepIndex, voice);
             }
         }
     }

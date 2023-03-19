@@ -3,7 +3,7 @@ import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { cleanPadMatrix, MidiMsg, midiOutController, MIDI_TYPE, shiftPressed } from '../midi';
 import { sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
-import { getSelectedSequence, Steps, STEP_CONDITIONS } from '../sequence';
+import { getSelectedSequence, initPattern, Steps, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
@@ -237,10 +237,7 @@ export async function sequencerPatternView({ controllerRendering }: RenderOption
     renderMessage();
 }
 
-export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
-    if (sequenceSelectMidiHandler(midiMsg, _viewPadPressed)) {
-        return true;
-    }
+function midiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
     const [type, key, value] = midiMsg.message;
     if (midiMsg.isController) {
         if (type === MIDI_TYPE.KEY_RELEASED) {
@@ -267,11 +264,29 @@ export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPres
         if (trackId !== undefined && step) {
             if (type === MIDI_TYPE.KEY_RELEASED) {
                 step.note = key;
+                return true;
             } else if (type === MIDI_TYPE.CC && key === akaiApcKey25.keyboardCC.sustain && value === 127) {
                 step.tie = !step.tie;
+                return true;
             }
         }
     }
 
     return encodersHandler(encoders, midiMsg);
+}
+
+export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
+    if (sequenceSelectMidiHandler(midiMsg, _viewPadPressed)) {
+        return true;
+    }
+    const result = midiHandler(midiMsg, _viewPadPressed);
+
+    if (result) {
+        const sequence = getSelectedSequence();
+        if (sequence.trackId !== undefined) {
+            initPattern(sequence);
+        }
+    }
+
+    return result;
 }

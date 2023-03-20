@@ -25,8 +25,8 @@ exports.color = {
         selected: baseColor.selected,
         playing: baseColor.foreground3,
         pattern: {
-            playing: baseColor.chart,
-            waiting: (0, zic_node_ui_1.rgb)('#3f444e'),
+            step: (0, zic_node_ui_1.rgb)('#595f6b'),
+            currentStep: (0, zic_node_ui_1.rgb)('#ffffff'),
         },
         info: baseColor.info,
     },

@@ -8,7 +8,6 @@ const sequence_1 = require("../sequence");
 const drawMessage_1 = require("../draw/drawMessage");
 const track_1 = require("../track");
 const sequence_node_1 = require("../nodes/sequence.node");
-const midi_1 = require("../midi");
 const sequencerController_1 = require("./controller/sequencerController");
 const { margin } = style_1.unit;
 const height = config_1.config.screen.size.h / config_1.config.sequence.row;
@@ -50,20 +49,7 @@ async function sequencerView({ controllerRendering } = {}) {
     (0, drawMessage_1.renderMessage)();
 }
 exports.sequencerView = sequencerView;
-async function sequencerMidiHandler({ isController, message: [type, padKey] }) {
-    if (isController) {
-        if (type === midi_1.MIDI_TYPE.KEY_RELEASED) {
-            const seqId = sequencerController_1.padSeq.indexOf(padKey);
-            if (seqId !== -1) {
-                const sequence = (0, sequence_1.getSequence)(seqId);
-                if (sequence) {
-                    (0, sequence_1.toggleSequence)(sequence);
-                    await sequencerView({ controllerRendering: true });
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+function sequencerMidiHandler(midiMsg) {
+    return (0, sequencerController_1.sequenceToggleMidiHandler)(midiMsg);
 }
 exports.sequencerMidiHandler = sequencerMidiHandler;

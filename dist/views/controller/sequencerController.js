@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sequencerController = exports.padBanks = exports.padSeq = void 0;
+exports.sequenceToggleMidiHandler = exports.sequenceSelectMidiHandler = exports.sequencerController = exports.padBanks = exports.padSeq = void 0;
 const zic_node_1 = require("zic_node");
 const midi_1 = require("../../midi");
 const akaiApcKey25_1 = require("../../midi/akaiApcKey25");
 const sequence_1 = require("../../sequence");
 const track_1 = require("../../track");
+const sequencer_view_1 = require("../sequencer.view");
 // prettier-ignore
 exports.padSeq = [
     0x20, 0x21, 0x22, 0x23, 0x24, 0x25,
@@ -37,6 +38,40 @@ function sequencerController() {
                 (0, zic_node_1.sendMidiMessage)(midi_1.midiOutController.port, [akaiApcKey25_1.akaiApcKey25.padMode.on100pct, exports.padSeq[i], 0x00]);
             }
         }
+        // TODO
+        // FIXME
+        exports.padBanks.forEach((pad, i) => {
+            (0, zic_node_1.sendMidiMessage)(midi_1.midiOutController.port, [akaiApcKey25_1.akaiApcKey25.padMode.on100pct, pad, 0x00]);
+        });
     }
 }
 exports.sequencerController = sequencerController;
+function sequenceSelectMidiHandler(midiMsg, viewPadPressed) {
+    if (viewPadPressed && midiMsg.isController) {
+        const [type, padKey] = midiMsg.message;
+        if (type === midi_1.MIDI_TYPE.KEY_RELEASED) {
+            const seqId = exports.padSeq.indexOf(padKey);
+            if (seqId !== -1) {
+                (0, sequence_1.setSelectedSequenceId)(seqId);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+exports.sequenceSelectMidiHandler = sequenceSelectMidiHandler;
+async function sequenceToggleMidiHandler({ isController, message: [type, padKey] }) {
+    if (isController && type === midi_1.MIDI_TYPE.KEY_RELEASED) {
+        const seqId = exports.padSeq.indexOf(padKey);
+        if (seqId !== -1) {
+            const sequence = (0, sequence_1.getSequence)(seqId);
+            if (sequence) {
+                (0, sequence_1.toggleSequence)(sequence);
+                await (0, sequencer_view_1.sequencerView)({ controllerRendering: true });
+                return true;
+            }
+        }
+    }
+    return false;
+}
+exports.sequenceToggleMidiHandler = sequenceToggleMidiHandler;

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.akaiApcKey25 = void 0;
+// https://cdn.inmusicbrands.com/akai/attachments/APC%20Key%2025%20mk2%20-%20Communication%20Protocol%20-%20v1.1.pdf
 const padMatrix = [
     [0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27],
     [0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f],
@@ -8,6 +9,7 @@ const padMatrix = [
     [0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f],
     [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07],
 ];
+const padMatrixFlat = padMatrix.flat();
 const padMode = {
     off: 0x00,
     on10pct: 0x90,
@@ -46,8 +48,10 @@ const pad = {
     record: 0x5d,
     shift: 0x62,
 };
-// sustain 0x40 port keynoard
-const knob = {
+const keyboardCC = {
+    sustain: 0x40,
+};
+const encoder = {
     k1: 0x30,
     k2: 0x31,
     k3: 0x32,
@@ -57,9 +61,22 @@ const knob = {
     k7: 0x36,
     k8: 0x37,
 };
+const encoderList = [
+    { name: 'k1', midiKey: encoder.k1 },
+    { name: 'k2', midiKey: encoder.k2 },
+    { name: 'k3', midiKey: encoder.k3 },
+    { name: 'k4', midiKey: encoder.k4 },
+    { name: 'k5', midiKey: encoder.k5 },
+    { name: 'k6', midiKey: encoder.k6 },
+    { name: 'k7', midiKey: encoder.k7 },
+    { name: 'k8', midiKey: encoder.k8 },
+];
 exports.akaiApcKey25 = {
     pad,
-    knob,
+    encoder,
+    encoderList,
     padMode,
     padMatrix,
+    padMatrixFlat,
+    keyboardCC,
 };

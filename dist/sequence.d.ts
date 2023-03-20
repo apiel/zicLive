@@ -48,6 +48,7 @@ export declare function getSequencesForPatchId(patchId: number): Sequence[];
 export declare function cleanActiveStep(trackId: number): void;
 export declare function playSequence(sequence: Sequence, playing?: boolean, next?: boolean): void;
 export declare function toggleSequence(sequence: Sequence): void;
+export declare function initPattern({ id, stepCount, steps }: Sequence): void;
 export declare function loadSequence(id: number): Promise<void>;
 export declare function loadSequences(): Promise<void>;
 export declare function saveSequence(sequence: Sequence): Promise<void>;

@@ -9,5 +9,7 @@ export interface MidiMsg extends MidiMessage {
     isKeyboard?: boolean;
 }
 export declare const midiOutController: import("zic_node").MidiDeviceInfo | undefined;
+export declare let shiftPressed: boolean;
 export declare function handleMidi(data: MidiMsg): Promise<void>;
+export declare function cleanPadMatrix(): void;
 //# sourceMappingURL=index.d.ts.map

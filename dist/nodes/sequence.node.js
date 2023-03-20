@@ -22,10 +22,7 @@ function sequenceNode(id, { position, size }, { trackColor, playing, detune, nex
         position: patternPreviewPosition,
         size: { w: patternSize.w - 4, h: patternSize.h - 4 },
     };
-    (0, patternPreview_node_1.patternPreviewNode)(patternPreviewRect, stepCount, steps, playing);
-    if (activeStep !== undefined) {
-        renderActiveStep(patternPreviewRect, stepCount, activeStep);
-    }
+    (0, patternPreview_node_1.patternPreviewNode)(patternPreviewRect, stepCount, steps, activeStep);
     if (selected) {
         (0, zic_node_ui_1.setColor)(style_1.color.secondarySelected);
         (0, zic_node_ui_1.drawRect)({ position, size });
@@ -33,8 +30,3 @@ function sequenceNode(id, { position, size }, { trackColor, playing, detune, nex
     return { position, size };
 }
 exports.sequenceNode = sequenceNode;
-function renderActiveStep({ position, size }, stepCount, step) {
-    (0, zic_node_ui_1.setColor)(style_1.color.sequencer.pattern.playing);
-    const stepWidth = size.w / stepCount;
-    (0, zic_node_ui_1.drawLine)({ x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y }, { x: position.x + step * stepWidth + stepWidth * 0.5, y: position.y + size.h - 1 });
-}

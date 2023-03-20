@@ -13,6 +13,9 @@ export declare const config: {
         sequences: string;
         wavetables: string;
     };
+    encoder: {
+        perRow: number;
+    };
     sequence: {
         col: number;
         row: number;

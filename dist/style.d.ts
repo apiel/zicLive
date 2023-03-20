@@ -7,8 +7,8 @@ export declare const color: {
         };
         playing: import("zic_node_ui").Color;
         pattern: {
-            playing: import("zic_node_ui").Color;
-            waiting: import("zic_node_ui").Color;
+            step: import("zic_node_ui").Color;
+            currentStep: import("zic_node_ui").Color;
         };
         info: {
             r: number;

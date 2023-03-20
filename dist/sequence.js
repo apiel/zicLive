@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.incSelectedSequenceId = exports.setSelectedSequenceId = exports.getSelectedSequence = exports.getSelectedSequenceId = exports.newSequence = exports.saveSequences = exports.saveSequence = exports.loadSequences = exports.loadSequence = exports.toggleSequence = exports.playSequence = exports.cleanActiveStep = exports.getSequencesForPatchId = exports.getPlayingSequencesForPatch = exports.getPlayingSequence = exports.getSequence = exports.sequences = exports.StepCondition = exports.STEP_CONDITIONS = exports.playing = void 0;
+exports.incSelectedSequenceId = exports.setSelectedSequenceId = exports.getSelectedSequence = exports.getSelectedSequenceId = exports.newSequence = exports.saveSequences = exports.saveSequence = exports.loadSequences = exports.loadSequence = exports.initPattern = exports.toggleSequence = exports.playSequence = exports.cleanActiveStep = exports.getSequencesForPatchId = exports.getPlayingSequencesForPatch = exports.getPlayingSequence = exports.getSequence = exports.sequences = exports.StepCondition = exports.STEP_CONDITIONS = exports.playing = void 0;
 const promises_1 = require("fs/promises");
 const zic_node_1 = require("zic_node");
 const config_1 = require("./config");
@@ -83,7 +83,7 @@ exports.cleanActiveStep = cleanActiveStep;
 //     ) as number[];
 // }
 function playSequence(sequence, playing = true, next) {
-    if (sequence.trackId) {
+    if (sequence.trackId !== undefined) {
         if (playing) {
             const playingSeq = getPlayingSequence(sequence.trackId);
             if (playingSeq) {
@@ -116,9 +116,13 @@ function initPattern({ id, stepCount, steps }) {
             if (step) {
                 (0, zic_node_1.setPatternStep)(id, stepIndex, step.note, step.velocity, step.tie, step.patchId, voice);
             }
+            else {
+                (0, zic_node_1.cleanPatternStep)(id, stepIndex, voice);
+            }
         }
     }
 }
+exports.initPattern = initPattern;
 async function loadSequence(id) {
     if (await (0, util_1.fileExist)(getFilepath(id))) {
         const content = await (0, promises_1.readFile)(getFilepath(id), 'utf8');

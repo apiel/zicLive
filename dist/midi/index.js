@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleMidi = exports.midiOutController = exports.MIDI_TYPE = void 0;
+exports.cleanPadMatrix = exports.handleMidi = exports.shiftPressed = exports.midiOutController = exports.MIDI_TYPE = void 0;
 const zic_node_1 = require("zic_node");
 const zic_node_ui_1 = require("zic_node_ui");
 const drawMessage_1 = require("../draw/drawMessage");
@@ -93,8 +93,18 @@ async function basicUiEvent({ isController, message: [type, padKey] }) {
     }
     return isUiEvent;
 }
+exports.shiftPressed = false;
 async function handleMidi(data) {
     (0, tcp_1.sendTcpMidi)(data);
+    if (data.isController && data.message[1] === akaiApcKey25_1.akaiApcKey25.pad.shift) {
+        const type = data.message[0];
+        if (type === MIDI_TYPE.KEY_PRESSED) {
+            exports.shiftPressed = true;
+        }
+        else if (type === MIDI_TYPE.KEY_RELEASED) {
+            exports.shiftPressed = false;
+        } // else it's a CC
+    }
     if (await (0, view_1.viewMidiHandler)(data)) {
         (0, view_1.renderView)({ controllerRendering: true });
         return;
@@ -128,30 +138,16 @@ midiDevices.input.forEach((input) => {
         (0, zic_node_1.subscribeMidiInput)(input.port);
     }
 });
-// const selection = [
-//     50, // #5b2cb5
-//     96, // #e0e310
-//     95, // #d5198a
-//     78, // #33bdff
-//     102, // #23afaf
-//     73, // #7ce793
-//     5, // #e12310
-//     84, // #f7980a
-//     3, // #aeecff
-//     117, // #4fa9c5
-//     4, // #ffb6b6
-//     32, // #5bfff7
-//     29, // #25d7d7
-//     58, // #a33590
-//     17, // #1ce110
-// ];
+function cleanPadMatrix() {
+    if (exports.midiOutController !== undefined) {
+        akaiApcKey25_1.akaiApcKey25.padMatrixFlat.forEach((pad) => {
+            (0, zic_node_1.sendMidiMessage)(exports.midiOutController.port, [akaiApcKey25_1.akaiApcKey25.padMode.on100pct, pad, 0]);
+        });
+    }
+}
+exports.cleanPadMatrix = cleanPadMatrix;
 // if (midiOutController !== undefined) {
 //     for (let i = 0; i < 40; i++) {
 //         sendMidiMessage(midiOutController.port, [0x96, 0x00 + i, 0 + i]);
-//     }
-// }
-// if (midiOutController !== undefined) {
-//     for (let i = 0; i < 40; i++) {
-//         sendMidiMessage(midiOutController.port, [0x96, 0x00 + i, selection[i] ?? 0]);
 //     }
 // }

@@ -9,5 +9,6 @@ export interface RenderOptions {
 }
 export declare const renderView: (options?: RenderOptions) => Promise<void>;
 export declare const viewEventHandler: (events: Events) => Promise<boolean | undefined>;
+export declare let viewPadPressed: boolean;
 export declare function viewMidiHandler(midiMsg: MidiMsg): Promise<boolean | undefined>;
 //# sourceMappingURL=view.d.ts.map

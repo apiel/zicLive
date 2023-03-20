@@ -71,10 +71,6 @@ function eventMenu(events) {
     }
     if (keyState.menu) {
         // Could show help if menuTime over 500?
-        if (keyState.menuTime && Date.now() - keyState.menuTime > 1000) {
-            keyState.menuTime = 0;
-            return (0, view_1.setView)(def_1.View.Help);
-        }
         if (events.keysUp?.includes(exports.KEY_MENU)) {
             keyState.menu = false;
             if (keyState.menuTime && Date.now() - keyState.menuTime < 500) {

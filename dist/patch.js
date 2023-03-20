@@ -27,7 +27,7 @@ class Patch {
         this.strings[stringId] = value;
         const sequences = (0, sequence_1.getPlayingSequencesForPatch)(this.id);
         for (const { trackId } of sequences) {
-            trackId && (0, zic_node_1.trackSetString)(trackId, value, stringId);
+            trackId !== undefined && (0, zic_node_1.trackSetString)(trackId, value, stringId);
         }
     }
     setNumber(floatId, value) {
@@ -35,7 +35,7 @@ class Patch {
         this.floats[floatId] = value;
         const sequences = (0, sequence_1.getPlayingSequencesForPatch)(this.id);
         for (const { trackId } of sequences) {
-            trackId && (0, zic_node_1.trackSetNumber)(trackId, value, floatId);
+            trackId !== undefined && (0, zic_node_1.trackSetNumber)(trackId, value, floatId);
         }
     }
     setCc(ccId, value) {
@@ -43,7 +43,7 @@ class Patch {
         this.cc[ccId] = value;
         const sequences = (0, sequence_1.getPlayingSequencesForPatch)(this.id);
         for (const { trackId } of sequences) {
-            trackId && (0, zic_node_1.trackCc)(trackId, value, ccId);
+            trackId !== undefined && (0, zic_node_1.trackCc)(trackId, value, ccId);
         }
     }
     constructor(id) {

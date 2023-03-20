@@ -1,95 +1,143 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sequencerEditMidiHandler = exports.sequencerEditView = void 0;
-const zic_node_ui_1 = require("zic_node_ui");
-const config_1 = require("../config");
-const style_1 = require("../style");
+exports.sequencerEditMidiHandler = exports.sequencerEditView = exports.sequenceEncoder = void 0;
 const drawMessage_1 = require("../draw/drawMessage");
-const midi_1 = require("../midi");
 const sequencerController_1 = require("./controller/sequencerController");
 const sequence_1 = require("../sequence");
 const track_1 = require("../track");
-const patternPreview_node_1 = require("../nodes/patternPreview.node");
-const encoder_node_1 = require("../nodes/encoder.node");
-const akaiApcKey25_1 = require("../midi/akaiApcKey25");
 const util_1 = require("../util");
 const selector_1 = require("../selector");
 const def_1 = require("../def");
-const { margin } = style_1.unit;
-const sequenceRect = (id) => {
-    const size = { w: 25, h: 15 };
-    return {
-        position: {
-            x: margin + (margin + size.w) * (id % config_1.config.sequence.col),
-            y: margin + (margin + size.h) * Math.floor(id / config_1.config.sequence.col),
-        },
-        size,
-    };
+const encoders_layout_1 = require("./layout/encoders.layout");
+const sequenceEditHeader_node_1 = require("../nodes/sequenceEditHeader.node");
+const sequenceMenu_node_1 = require("../nodes/sequenceMenu.node");
+exports.sequenceEncoder = {
+    title: 'Sequence',
+    getValue: () => {
+        const { id, trackId } = (0, sequence_1.getSelectedSequence)();
+        return {
+            value: `#${`${id + 1}`.padStart(3, '0')}`,
+            valueColor: trackId === undefined ? undefined : (0, track_1.getTrackStyle)(trackId).color,
+        };
+    },
+    handler: async (direction) => {
+        const id = (0, util_1.minmax)((0, sequence_1.getSelectedSequenceId)() + direction, 0, sequence_1.sequences.length - 1);
+        (0, sequence_1.setSelectedSequenceId)(id);
+        (0, selector_1.forceSelectedItem)(def_1.View.Sequencer, id);
+        return true;
+    },
 };
+const encoders = [
+    exports.sequenceEncoder,
+    {
+        title: 'Repeat',
+        getValue: () => {
+            const { trackId, repeat } = (0, sequence_1.getSelectedSequence)();
+            return trackId === undefined ? '' : `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`;
+        },
+        handler: async (direction) => {
+            const sequence = (0, sequence_1.getSelectedSequence)();
+            if (sequence.trackId === undefined) {
+                return false;
+            }
+            sequence.repeat = (0, util_1.minmax)(sequence.repeat + direction, 0, 16);
+            return true;
+        },
+    },
+    {
+        title: 'Next sequence',
+        getValue: () => {
+            const { trackId, nextSequenceId } = (0, sequence_1.getSelectedSequence)();
+            return trackId === undefined ? '' : nextSequenceId ? `#${`${nextSequenceId + 1}`.padStart(3, '0')}` : `---`;
+        },
+        handler: async (direction) => {
+            const sequence = (0, sequence_1.getSelectedSequence)();
+            if (sequence.trackId === undefined) {
+                return false;
+            }
+            const selectedId = (0, sequence_1.getSelectedSequenceId)();
+            const ids = sequence_1.sequences.filter((s) => s.trackId === sequence.trackId && s.id !== selectedId).map((s) => s.id);
+            let idx = sequence.nextSequenceId !== undefined ? ids.indexOf(sequence.nextSequenceId) : -1;
+            idx = (0, util_1.minmax)(idx + direction, -1, ids.length - 1);
+            sequence.nextSequenceId = idx === -1 ? undefined : ids[idx];
+            return true;
+        },
+    },
+    undefined,
+    {
+        title: 'Track',
+        getValue: () => {
+            const { trackId } = (0, sequence_1.getSelectedSequence)();
+            return trackId === undefined ? 'No track' : (0, track_1.getTrack)(trackId).name;
+        },
+        handler: async (direction) => {
+            // TODO when changing track for a sequence, patch are not valid anymore
+            const { trackId } = (0, sequence_1.getSelectedSequence)();
+            if (trackId !== undefined) {
+                const id = direction === -1 && trackId === 0 ? undefined : (0, util_1.minmax)(trackId + direction, 0, (0, track_1.getTrackCount)() - 1);
+                sequence_1.sequences[(0, sequence_1.getSelectedSequenceId)()].trackId = id;
+            }
+            else if (direction === 1) {
+                sequence_1.sequences[(0, sequence_1.getSelectedSequenceId)()].trackId = 0;
+            }
+            return true;
+        },
+    },
+    {
+        title: 'Detune',
+        getValue: () => {
+            const { trackId, detune } = (0, sequence_1.getSelectedSequence)();
+            return trackId === undefined ? '' : detune < 0 ? detune.toString() : `+${detune}`;
+        },
+        unit: 'semitones',
+        handler: async (direction) => {
+            const sequence = (0, sequence_1.getSelectedSequence)();
+            if (sequence.trackId === undefined) {
+                return false;
+            }
+            sequence.detune = (0, util_1.minmax)(sequence.detune + direction, -12, 12);
+            return true;
+        },
+    },
+    {
+        title: 'Pattern length',
+        getValue: () => {
+            const { trackId, stepCount } = (0, sequence_1.getSelectedSequence)();
+            return trackId === undefined ? '' : `${stepCount}`;
+        },
+        unit: 'steps',
+        handler: async (direction) => {
+            const sequence = (0, sequence_1.getSelectedSequence)();
+            if (sequence.trackId === undefined) {
+                return false;
+            }
+            sequence.stepCount = (0, util_1.minmax)(sequence.stepCount + direction, 1, 64);
+            return true;
+        },
+    },
+    undefined,
+];
 async function sequencerEditView({ controllerRendering } = {}) {
     if (controllerRendering) {
         (0, sequencerController_1.sequencerController)();
     }
-    (0, zic_node_ui_1.clear)(style_1.color.background);
-    for (let i = 0; i < 30; i++) {
-        const rect = sequenceRect(i);
-        const { trackId } = sequence_1.sequences[i];
-        (0, zic_node_ui_1.setColor)(trackId !== undefined ? (0, track_1.getTrackStyle)(trackId).color : style_1.color.foreground);
-        (0, zic_node_ui_1.drawFilledRect)(rect);
-        (0, zic_node_ui_1.drawText)(`${i + 1}`.padStart(3, '0'), { x: rect.position.x + 4, y: rect.position.y + 1 }, { color: style_1.color.foreground3, size: 10, font: style_1.font.bold });
-        if ((0, sequence_1.getSelectedSequenceId)() === i) {
-            // TODO find better selection color
-            (0, zic_node_ui_1.setColor)(style_1.color.white);
-            (0, zic_node_ui_1.drawRect)(rect);
-        }
-    }
-    const { id, trackId, stepCount, steps, playing } = (0, sequence_1.getSelectedSequence)();
-    if (trackId !== undefined) {
-        const patternPreviewPosition = { x: 165, y: margin };
-        const patternPreviewRect = {
-            position: patternPreviewPosition,
-            size: { w: config_1.config.screen.size.w - (patternPreviewPosition.x + margin * 2), h: 83 },
-        };
-        (0, zic_node_ui_1.setColor)(style_1.color.foreground);
-        (0, zic_node_ui_1.drawFilledRect)(patternPreviewRect);
-        (0, patternPreview_node_1.patternPreviewNode)(patternPreviewRect, stepCount, steps, playing);
-        // if (activeStep !== undefined) {
-        //     renderActiveStep(patternPreviewPosition, patternPreviewSize, stepCount, activeStep);
-        // }
-    }
-    const seqColor = trackId !== undefined ? (0, track_1.getTrackStyle)(trackId).color : undefined;
-    const trackName = trackId !== undefined ? (0, track_1.getTrack)(trackId).name : 'No track';
-    (0, encoder_node_1.encoderNode)([
-        { title: 'Sequence', value: `#${`${id + 1}`.padStart(3, '0')}`, valueColor: seqColor },
-        null,
-        null,
-        null,
-        { title: 'Track', value: trackName },
-        null,
-        null,
-        null,
-    ]);
+    (0, encoders_layout_1.encodersView)(encoders);
+    (0, sequenceEditHeader_node_1.sequenceEditHeader)();
+    (0, sequenceMenu_node_1.sequencerMenuNode)();
     (0, drawMessage_1.renderMessage)();
 }
 exports.sequencerEditView = sequencerEditView;
-let lastTimeK1 = 0;
-async function sequencerEditMidiHandler({ isController, message: [type, padKey, value] }) {
-    if (isController) {
-        if (type === midi_1.MIDI_TYPE.CC) {
-            switch (padKey) {
-                case akaiApcKey25_1.akaiApcKey25.knob.k1: {
-                    if (Date.now() > lastTimeK1 + 500) {
-                        lastTimeK1 = Date.now();
-                        const direction = value < 63 ? 1 : -1;
-                        const id = (0, util_1.minmax)((0, sequence_1.getSelectedSequenceId)() + direction, 0, sequence_1.sequences.length - 1);
-                        (0, sequence_1.setSelectedSequenceId)(id);
-                        (0, selector_1.forceSelectedItem)(def_1.View.Sequencer, id);
-                    }
-                    return true;
-                }
-            }
-        }
+async function sequencerEditMidiHandler(midiMsg, viewPadPressed) {
+    const menuStatus = await (0, sequenceMenu_node_1.sequenceMenuHandler)(midiMsg);
+    if (menuStatus !== false) {
+        return menuStatus !== undefined;
     }
-    return false;
+    if ((0, sequencerController_1.sequenceSelectMidiHandler)(midiMsg, viewPadPressed)) {
+        return true;
+    }
+    if (await (0, sequencerController_1.sequenceToggleMidiHandler)(midiMsg)) {
+        return true;
+    }
+    return (0, encoders_layout_1.encodersHandler)(encoders, midiMsg);
 }
 exports.sequencerEditMidiHandler = sequencerEditMidiHandler;

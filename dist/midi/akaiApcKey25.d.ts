@@ -1,3 +1,4 @@
+export type EncoderCount = 8;
 export declare const akaiApcKey25: {
     pad: {
         up: number;
@@ -18,7 +19,7 @@ export declare const akaiApcKey25: {
         record: number;
         shift: number;
     };
-    knob: {
+    encoder: {
         k1: number;
         k2: number;
         k3: number;
@@ -28,6 +29,31 @@ export declare const akaiApcKey25: {
         k7: number;
         k8: number;
     };
+    encoderList: [{
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }, {
+        name: string;
+        midiKey: number;
+    }];
     padMode: {
         off: number;
         on10pct: number;
@@ -48,5 +74,9 @@ export declare const akaiApcKey25: {
         blinking1_2: number;
     };
     padMatrix: number[][];
+    padMatrixFlat: number[];
+    keyboardCC: {
+        sustain: number;
+    };
 };
 //# sourceMappingURL=akaiApcKey25.d.ts.map

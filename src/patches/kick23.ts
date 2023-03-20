@@ -11,6 +11,8 @@ import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
 import { currentPatchId, getPatch, setCurrentPatchId } from '../patch';
 import { Kick23 } from 'zic_node';
+import { drawText } from 'zic_node_ui';
+import { color, font } from '../style';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -98,6 +100,8 @@ export async function kick23View({ controllerRendering }: RenderOptions = {}) {
     }
 
     encodersView(encoders);
+
+    drawText('Kick 23', { x: 30, y: 10 }, { size: 64, color: color.foreground3, font: font.regular });
 
     renderMessage();
 }

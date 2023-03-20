@@ -116,8 +116,8 @@ export const patches: Patch[] = Array(PATCH_COUNT)
     .map((_, id) => new Patch(id));
 
 export const getPatch = (patchId: number) => {
-    const id = minmax(patchId, 0, patches.length - 1);
-    return patches[id];
+    // const id = minmax(patchId, 0, patches.length - 1);
+    return patches[patchId];
 };
 
 export async function loadPatches() {

@@ -1,10 +1,10 @@
 import { clear } from 'zic_node_ui';
-import { color } from '../../style';
-import { renderMessage } from '../../draw/drawMessage';
-import { MidiMsg, MIDI_TYPE } from '../../midi';
-import { Encoder, encoderNode } from '../../nodes/encoder.node';
-import { akaiApcKey25, EncoderCount } from '../../midi/akaiApcKey25';
-import { Tuple } from '../../interface';
+import { color } from '../style';
+import { renderMessage } from '../draw/drawMessage';
+import { MidiMsg, MIDI_TYPE } from '../midi';
+import { Encoder, encoderNode } from '../nodes/encoder.node';
+import { akaiApcKey25, EncoderCount } from '../midi/akaiApcKey25';
+import { Tuple } from '../interface';
 
 const DEFAULT_DEBOUNCE = 200;
 

@@ -5,7 +5,7 @@ import { cleanPadMatrix, MidiMsg, midiOutController, MIDI_TYPE, shiftPressed } f
 import { sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
 import { getSelectedSequence, initPattern, Steps, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
-import { Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
+import { Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 import { sequenceEncoder } from './sequencerEdit.view';
 import { NOTE_END, NOTE_START, sendMidiMessage } from 'zic_node';

@@ -8,6 +8,7 @@ import { View } from './def';
 import { MidiMsg, MIDI_TYPE } from './midi';
 import { akaiApcKey25 } from './midi/akaiApcKey25';
 import { sequencerPatternMidiHandler, sequencerPatternView } from './views/sequencerPattern.view';
+import { patchMidiHandler } from './patches/kick23';
 
 let view: View = View.Sequencer;
 
@@ -39,7 +40,8 @@ export const renderView = (options: RenderOptions = {}) => {
         case View.Master:
             return masterView(options);
     }
-    return sequencerView(options);
+    // Set view to sequencer if view is not found
+    setView(View.Sequencer);
 };
 
 export const viewEventHandler = async (events: Events) => {
@@ -70,6 +72,14 @@ export async function viewMidiHandler(midiMsg: MidiMsg) {
                 viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
                 setView(View.SequencerPattern);
                 return true;
+            case akaiApcKey25.pad.mute:
+                // viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
+                setView(View.Patch);
+                return true;
+            case akaiApcKey25.pad.solo:
+                // viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
+                setView(View.Master);
+                return true;
         }
     }
 
@@ -80,8 +90,8 @@ export async function viewMidiHandler(midiMsg: MidiMsg) {
             return sequencerEditMidiHandler(midiMsg, viewPadPressed);
         case View.SequencerPattern:
             return sequencerPatternMidiHandler(midiMsg, viewPadPressed);
-        // case View.Patch:
-        //     return patchMidiHandler(midiMsg);
+        case View.Patch:
+            return patchMidiHandler(midiMsg, viewPadPressed);
         // case View.Master:
         //     return masterMidiHandler(midiMsg);
     }

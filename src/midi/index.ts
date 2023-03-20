@@ -102,6 +102,7 @@ export async function handleMidi(data: MidiMsg) {
     }
     if (await viewMidiHandler(data)) {
         renderView({ controllerRendering: true });
+        render();
         return;
     }
     console.log(data);

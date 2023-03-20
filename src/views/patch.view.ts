@@ -2,7 +2,7 @@ import { clear, drawText, Events } from 'zic_node_ui';
 import { currentPatchId, getPatch, savePatchAs, setCurrentPatchId } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import kick23 from '../patches/kick23';
+import { kick23View } from '../patches/kick23';
 import synth from '../patches/synth';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
@@ -66,51 +66,51 @@ export async function patchView(options: RenderOptions = {}) {
             drawText(`Engine "${patch.engine.name}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'kick23':
-            kick23(patch, scrollY);
+            kick23View();
             break;
     }
 
-    drawFieldDual(
-        ``,
-        `Reload`,
-        `Save`,
-        rowNext(1),
-        {
-            edit: withInfo('Loaded', () => patch.load()),
-        },
-        {
-            edit: withSuccess('Saved', () => patch.save()),
-        },
-        { scrollY },
-    );
+    // drawFieldDual(
+    //     ``,
+    //     `Reload`,
+    //     `Save`,
+    //     rowNext(1),
+    //     {
+    //         edit: withInfo('Loaded', () => patch.load()),
+    //     },
+    //     {
+    //         edit: withSuccess('Saved', () => patch.save()),
+    //     },
+    //     { scrollY },
+    // );
 
-    drawField(
-        `Save as`,
-        saveAs,
-        rowNext(col),
-        {
-            edit: withSuccess('Saved', () => savePatchAs(patch, saveAs)),
-        },
-        {
-            col,
-            scrollY,
-        },
-    );
+    // drawField(
+    //     `Save as`,
+    //     saveAs,
+    //     rowNext(col),
+    //     {
+    //         edit: withSuccess('Saved', () => savePatchAs(patch, saveAs)),
+    //     },
+    //     {
+    //         col,
+    //         scrollY,
+    //     },
+    // );
 
-    drawKeyboard(
-        (char) => {
-            if (char === 'DEL') {
-                saveAs = saveAs.slice(0, -1);
-            } else if (char === 'DONE') {
-                return withSuccess('Saved', () => savePatchAs(patch, saveAs))();
-            } else {
-                if (saveAs.length < 10) {
-                    saveAs += char;
-                }
-            }
-        },
-        { row: rowNext(1), col, scrollY, done: 'SAVE' },
-    );
+    // drawKeyboard(
+    //     (char) => {
+    //         if (char === 'DEL') {
+    //             saveAs = saveAs.slice(0, -1);
+    //         } else if (char === 'DONE') {
+    //             return withSuccess('Saved', () => savePatchAs(patch, saveAs))();
+    //         } else {
+    //             if (saveAs.length < 10) {
+    //                 saveAs += char;
+    //             }
+    //         }
+    //     },
+    //     { row: rowNext(1), col, scrollY, done: 'SAVE' },
+    // );
 
     renderMessage();
 }

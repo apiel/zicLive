@@ -11,7 +11,7 @@ import { getTrack, getTrackCount, getTrackStyle } from '../track';
 import { minmax } from '../util';
 import { forceSelectedItem } from '../selector';
 import { View } from '../def';
-import { EncoderData, Encoders, encodersHandler, encodersView } from './layout/encoders.layout';
+import { EncoderData, Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
 

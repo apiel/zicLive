@@ -29,6 +29,7 @@ export interface Encoder {
     title: string;
     getValue: () => EncoderValue | string;
     unit?: string | (() => string);
+    info?: string | (() => string);
 }
 
 export function encoderNode(index: number, encoder: Encoder | undefined) {
@@ -36,7 +37,7 @@ export function encoderNode(index: number, encoder: Encoder | undefined) {
     setColor(color.foreground);
     drawFilledRect(rect);
     if (encoder) {
-        const { title, getValue, unit } = encoder;
+        const { title, getValue, unit, info } = encoder;
         drawText(
             title,
             { x: rect.position.x + 4, y: rect.position.y + 1 },
@@ -61,6 +62,14 @@ export function encoderNode(index: number, encoder: Encoder | undefined) {
                 drawText(
                     typeof unit === 'string' ? unit : unit(),
                     { x: valueRect.position.x + valueRect.size.w + 4, y: valueRect.position.y + 5 },
+                    { color: color.foreground3, size: 10, font: font.regular },
+                );
+            }
+
+            if (info) {
+                drawText(
+                    typeof info === 'string' ? info : info(),
+                    { x: rect.position.x + 4, y: rect.position.y + 65 },
                     { color: color.foreground3, size: 10, font: font.regular },
                 );
             }

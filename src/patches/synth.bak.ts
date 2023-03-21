@@ -4,7 +4,7 @@ import { getNextWaveTable } from '../helpers/getNextWavetable';
 import { Patch } from '../patch';
 import { minmax } from '../util';
 import { config } from '../config';
-import { drawWavetable } from '../draw/drawWavetable';
+import { drawWavetable2 } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
 import { rowGetAndAdd, rowGet, rowNext } from '../draw/rowNext';
@@ -110,7 +110,7 @@ export default function (patch: Patch, scrollY: number) {
     drawSeparator('Oscillator 1', rowNext(1), { scrollY });
 
     let wavetable = wavetables[sId.oscWavetable];
-    drawWavetable(wavetable.wavetable.data, { row: rowAddGraph(), col, scrollY });
+    drawWavetable2(wavetable.wavetable.data, { row: rowAddGraph(), col, scrollY });
     drawField(
         `Wavetable`,
         path.parse(wavetable.name).name,
@@ -188,7 +188,7 @@ export default function (patch: Patch, scrollY: number) {
     );
 
     let wavetable2 = wavetables[sId.osc2Wavetable];
-    drawWavetable(wavetable2.wavetable.data, { row: rowAddGraph(), col, scrollY });
+    drawWavetable2(wavetable2.wavetable.data, { row: rowAddGraph(), col, scrollY });
     drawField(
         `Wavetable`,
         path.parse(wavetable2.name).name,

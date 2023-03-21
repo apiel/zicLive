@@ -1,10 +1,9 @@
-import { drawFilledRect, drawLine, Point, setColor } from 'zic_node_ui';
+import { drawFilledRect, drawLine, Point, Rect, setColor } from 'zic_node_ui';
 import { color } from '../style';
 import { DrawOptions, getDrawRect } from './getDrawRect';
 
-export function drawWavetable(wavetable: number[], options: DrawOptions = {}) {
+export function drawWavetable(rect: Rect, wavetable: number[]) {
     setColor(color.foreground);
-    const rect = getDrawRect(options);
     drawFilledRect(rect);
     setColor(color.chart);
     const f = wavetable.length / rect.size.w;
@@ -24,4 +23,8 @@ export function drawWavetable(wavetable: number[], options: DrawOptions = {}) {
         }
         prevPoint = point;
     }
+}
+
+export function drawWavetable2(wavetable: number[], options: DrawOptions = {}) {
+    drawWavetable(getDrawRect(options), wavetable);
 }

@@ -4,7 +4,7 @@ import { getNextWaveTable } from '../helpers/getNextWavetable';
 import { Patch } from '../patch';
 import { minmax } from '../util';
 import { config } from '../config';
-import { drawWavetable } from '../draw/drawWavetable';
+import { drawWavetable2 } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
 import { drawEnvelope } from '../draw/drawEnvelope';
 import { rowNext, rowGet, rowGetAndAdd } from '../draw/rowNext';
@@ -108,7 +108,7 @@ export default function (patch: Patch, scrollY: number) {
         lastMorph = patch.floats[fId.Morph];
         wavetable = getWavetable(lastWavetable, lastMorph);
     }
-    drawWavetable(wavetable.data, { row: rowAddGraph(), col, scrollY });
+    drawWavetable2(wavetable.data, { row: rowAddGraph(), col, scrollY });
     drawField(
         `Wavetable`,
         path.parse(patch.strings[sId.Wavetable]).name,

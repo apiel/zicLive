@@ -9,6 +9,7 @@ import { MidiMsg, MIDI_TYPE } from './midi';
 import { akaiApcKey25 } from './midi/akaiApcKey25';
 import { sequencerPatternMidiHandler, sequencerPatternView } from './views/sequencerPattern.view';
 import { patchMidiHandler } from './patches/kick23';
+import { patchEventHandlerBak, patchViewBak } from './views/patch2.view';
 
 let view: View = View.Sequencer;
 
@@ -37,6 +38,8 @@ export const renderView = (options: RenderOptions = {}) => {
             return sequencerPatternView(options);
         case View.Patch:
             return patchView(options);
+        case View.PatchBak:
+            return patchViewBak(options);
         case View.Master:
             return masterView(options);
     }
@@ -51,7 +54,7 @@ export const viewEventHandler = async (events: Events) => {
     }
     switch (view) {
         case View.Patch:
-            return patchEventHandler(events);
+            return patchEventHandlerBak(events);
         case View.Master:
             return masterEventHandler(events);
     }

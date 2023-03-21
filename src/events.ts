@@ -85,8 +85,8 @@ export function eventMenu(events: Events) {
         }
         if (isEventUpPressed(events)) {
             keyState.menuTime = 0;
-            menuMode = View.Patch;
-            return setView(View.Patch);
+            menuMode = View.PatchBak;
+            return setView(View.PatchBak);
         } else if (isEventDownPressed(events)) {
             keyState.menuTime = 0;
             menuMode = View.Master;

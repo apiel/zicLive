@@ -2,7 +2,7 @@ import { clear, drawText, Events } from 'zic_node_ui';
 import { currentPatchId, getPatch, savePatchAs, setCurrentPatchId } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import { kick23View } from '../patches/kick23';
+import kick23 from '../patches/kick23.bak';
 import synth from '../patches/synth.bak';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
@@ -19,7 +19,7 @@ let lastCurrentPatchId = -1;
 let saveAs = '';
 const col = config.screen.col;
 
-export async function patchView(options: RenderOptions = {}) {
+export async function patchViewBak(options: RenderOptions = {}) {
     cleanSelectableItems();
     clear(color.background);
 
@@ -66,65 +66,65 @@ export async function patchView(options: RenderOptions = {}) {
             drawText(`Engine "${patch.engine.name}", patch "${patch.name}"`, { x: 10, y: 10 });
             break;
         case 'kick23':
-            kick23View();
+            kick23(patch, scrollY);
             break;
     }
 
-    // drawFieldDual(
-    //     ``,
-    //     `Reload`,
-    //     `Save`,
-    //     rowNext(1),
-    //     {
-    //         edit: withInfo('Loaded', () => patch.load()),
-    //     },
-    //     {
-    //         edit: withSuccess('Saved', () => patch.save()),
-    //     },
-    //     { scrollY },
-    // );
+    drawFieldDual(
+        ``,
+        `Reload`,
+        `Save`,
+        rowNext(1),
+        {
+            edit: withInfo('Loaded', () => patch.load()),
+        },
+        {
+            edit: withSuccess('Saved', () => patch.save()),
+        },
+        { scrollY },
+    );
 
-    // drawField(
-    //     `Save as`,
-    //     saveAs,
-    //     rowNext(col),
-    //     {
-    //         edit: withSuccess('Saved', () => savePatchAs(patch, saveAs)),
-    //     },
-    //     {
-    //         col,
-    //         scrollY,
-    //     },
-    // );
+    drawField(
+        `Save as`,
+        saveAs,
+        rowNext(col),
+        {
+            edit: withSuccess('Saved', () => savePatchAs(patch, saveAs)),
+        },
+        {
+            col,
+            scrollY,
+        },
+    );
 
-    // drawKeyboard(
-    //     (char) => {
-    //         if (char === 'DEL') {
-    //             saveAs = saveAs.slice(0, -1);
-    //         } else if (char === 'DONE') {
-    //             return withSuccess('Saved', () => savePatchAs(patch, saveAs))();
-    //         } else {
-    //             if (saveAs.length < 10) {
-    //                 saveAs += char;
-    //             }
-    //         }
-    //     },
-    //     { row: rowNext(1), col, scrollY, done: 'SAVE' },
-    // );
+    drawKeyboard(
+        (char) => {
+            if (char === 'DEL') {
+                saveAs = saveAs.slice(0, -1);
+            } else if (char === 'DONE') {
+                return withSuccess('Saved', () => savePatchAs(patch, saveAs))();
+            } else {
+                if (saveAs.length < 10) {
+                    saveAs += char;
+                }
+            }
+        },
+        { row: rowNext(1), col, scrollY, done: 'SAVE' },
+    );
 
     renderMessage();
 }
 
-export async function patchEventHandler(events: Events) {
+export async function patchEventHandlerBak(events: Events) {
     const editMode = await getEditMode(events);
     if (editMode.refreshScreen) {
-        await patchView();
+        await patchViewBak();
         return true;
     }
     if (editMode.edit) {
         const updated = await eventEdit(events);
         if (updated) {
-            await patchView();
+            await patchViewBak();
             return true;
         }
         return false;
@@ -136,7 +136,7 @@ export async function patchEventHandler(events: Events) {
             } else if (item.position.y < 60 && scrollY < 0) {
                 scrollY += 60;
             }
-            await patchView();
+            await patchViewBak();
             return true;
         }
     }

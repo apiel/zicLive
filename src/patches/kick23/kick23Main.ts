@@ -1,31 +1,12 @@
-import { RenderOptions } from '../view';
-import { renderMessage } from '../draw/drawMessage';
-import { MidiMsg } from '../midi';
-import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
-import { getTrack, getTrackCount, getTrackStyle } from '../track';
-import { minmax } from '../util';
-import { forceSelectedItem } from '../selector';
-import { View } from '../def';
-import { EncoderData, Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
-import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
-import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
-import { currentPatchId, getPatch, setCurrentPatchId } from '../patch';
+import { minmax } from '../../util';
+import { Encoders } from '../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
+import { patchEncoder } from '../patchEncoder';
 import { drawText } from 'zic_node_ui';
-import { color, font } from '../style';
+import { color, font } from '../../style';
 
 const fId = Kick23.FloatId;
-const sId = Kick23.StringId;
-
-export const patchEncoder: EncoderData = {
-    title: 'Patch',
-    getValue: () => `#${`${currentPatchId}`.padStart(3, '0')}`,
-    handler: async (direction) => {
-        setCurrentPatchId(currentPatchId + direction);
-        return true;
-    },
-    unit: () => getPatch(currentPatchId).name,
-};
 
 const encoders: Encoders = [
     patchEncoder,
@@ -94,18 +75,9 @@ const encoders: Encoders = [
     undefined,
 ];
 
-export async function kick23View({ controllerRendering }: RenderOptions = {}) {
-    if (controllerRendering) {
-        // sequencerController();
-    }
-
-    encodersView(encoders);
-
-    drawText('Kick 23', { x: 30, y: 10 }, { size: 64, color: color.foreground3, font: font.regular });
-
-    renderMessage();
-}
-
-export async function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
-    return encodersHandler(encoders, midiMsg);
-}
+export const kick23Main = {
+    header: () => {
+        drawText('Kick 23', { x: 30, y: 10 }, { size: 64, color: color.foreground3, font: font.regular });
+    },
+    encoders,
+};

@@ -6,7 +6,8 @@ import { getKick23 } from '../patches/kick23';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { encodersHandler, encodersView } from '../layout/encoders.layout';
-import { MidiMsg } from '../midi';
+import { MidiMsg, MIDI_TYPE } from '../midi';
+import { akaiApcKey25 } from '../midi/akaiApcKey25';
 
 function getPatchView() {
     const patch = getPatch(currentPatchId);
@@ -53,6 +54,24 @@ export function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
     const view = getPatchView();
     if (!view) {
         return false;
+    }
+    if (midiMsg.isController) {
+        switch (midiMsg.message[1]) {
+            case akaiApcKey25.pad.down: {
+                if (midiMsg.message[0] === MIDI_TYPE.KEY_RELEASED) {
+                    view.changeView(+1);
+                    return true;
+                }
+                return false;
+            }
+            case akaiApcKey25.pad.up: {
+                if (midiMsg.message[0] === MIDI_TYPE.KEY_RELEASED) {
+                    view.changeView(-1);
+                    return true;
+                }
+                return false;
+            }
+        }
     }
     return encodersHandler(view.encoders, midiMsg);
 }

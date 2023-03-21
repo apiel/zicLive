@@ -52,7 +52,7 @@ export const viewEventHandler = async (events: Events) => {
         return true;
     }
     switch (view) {
-        case View.Patch:
+        case View.PatchBak:
             return patchEventHandlerBak(events);
         case View.Master:
             return masterEventHandler(events);

@@ -1,10 +1,9 @@
-import { drawFilledRect, drawLine, setColor } from 'zic_node_ui';
+import { drawFilledRect, drawLine, Rect, setColor } from 'zic_node_ui';
 import { color } from '../style';
 import { DrawOptions, getDrawRect } from './getDrawRect';
 
-export function drawEnvelope(envelope: [number, number][], options: DrawOptions = {}) {
+export function drawEnvelope(rect: Rect, envelope: [number, number][]) {
     setColor(color.foreground);
-    const rect = getDrawRect(options);
     drawFilledRect(rect);
     setColor(color.chart);
     for (let i = 0; i < envelope.length - 1; i++) {
@@ -21,4 +20,8 @@ export function drawEnvelope(envelope: [number, number][], options: DrawOptions 
             },
         );
     }
+}
+
+export function drawEnvelope2(envelope: [number, number][], options: DrawOptions = {}) {
+    drawFilledRect(getDrawRect(options));
 }

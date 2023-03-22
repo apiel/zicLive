@@ -6,7 +6,7 @@ import { minmax } from '../util';
 import { config } from '../config';
 import { drawWavetable2 } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
-import { drawEnvelope } from '../draw/drawEnvelope';
+import { drawEnvelope2 } from '../draw/drawEnvelope';
 import { rowGetAndAdd, rowGet, rowNext } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
 import { drawSliderField } from '../draw/drawSlider';
@@ -301,7 +301,7 @@ export default function (patch: Patch, scrollY: number) {
 
     const envMs = patch.floats[fId.envAttack] + patch.floats[fId.envDecay] + patch.floats[fId.envRelease];
     const env = (envMs / 4) * 5;
-    drawEnvelope(
+    drawEnvelope2(
         env
             ? [
                   [0, 0],

@@ -6,7 +6,7 @@ import { minmax } from '../util';
 import { config } from '../config';
 import { drawWavetable2 } from '../draw/drawWavetable';
 import { drawField, drawFieldDual } from '../draw/drawField';
-import { drawEnvelope } from '../draw/drawEnvelope';
+import { drawEnvelope2 } from '../draw/drawEnvelope';
 import { rowNext, rowGet, rowGetAndAdd } from '../draw/rowNext';
 import { drawSeparator } from '../draw/drawSeparator';
 
@@ -148,7 +148,7 @@ export default function (patch: Patch, scrollY: number) {
 
     drawSeparator('Envelope Amplitude', rowNext(1), { scrollY });
 
-    drawEnvelope(
+    drawEnvelope2(
         [
             [0, 0],
             [1, 0.01], // Force to have a very short ramp up to avoid clicks
@@ -232,7 +232,7 @@ export default function (patch: Patch, scrollY: number) {
 
     drawSeparator('Envelope Frequency', rowNext(1), { scrollY });
 
-    drawEnvelope(
+    drawEnvelope2(
         [
             [1.0, 0.0],
             [patch.floats[fId.envFreq1], patch.floats[fId.envFreq1Time]],

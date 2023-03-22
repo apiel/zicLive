@@ -6,8 +6,7 @@ import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import path from 'path';
 import { getNextWaveTable } from '../../helpers/getNextWavetable';
-import { drawWavetable, drawWavetable2 } from '../../draw/drawWavetable';
-import { config } from '../../config';
+import { drawWavetable } from '../../draw/drawWavetable';
 import { kick23GraphRect } from './kick23GraphRect';
 import { shiftPressed } from '../../midi';
 
@@ -80,6 +79,7 @@ export const kick23Wavetable = {
     header: () => {
         const patch = getPatch(currentPatchId);
         drawWavetable(kick23GraphRect, getPatchWavetable(patch).data);
+        drawText('Wavetable oscillator', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
     },
     encoders,
 };

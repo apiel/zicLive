@@ -5,6 +5,7 @@ import { Kick23 } from 'zic_node';
 import { patchEncoder } from '../patchEncoder';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
+import { shiftPressed } from '../../midi';
 
 const fId = Kick23.FloatId;
 
@@ -18,7 +19,7 @@ const encoders: Encoders = [
         },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction * 0.01, 0, 1));
+            patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
             return true;
         },
         unit: '%',
@@ -47,7 +48,7 @@ const encoders: Encoders = [
         getValue: () => getPatch(currentPatchId).floats[fId.filterCutoff].toString(),
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction * 10, 200, 8000));
+            patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction * (shiftPressed ? 100 : 10), 200, 8000));
             return true;
         },
         unit: 'hz',
@@ -67,7 +68,7 @@ const encoders: Encoders = [
         getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction, 10, 5000));
+            patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction * (shiftPressed ? 10 : 1), 10, 5000));
             return true;
         },
         unit: 'ms (t)',

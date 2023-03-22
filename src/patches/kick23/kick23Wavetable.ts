@@ -9,6 +9,7 @@ import { getNextWaveTable } from '../../helpers/getNextWavetable';
 import { drawWavetable, drawWavetable2 } from '../../draw/drawWavetable';
 import { config } from '../../config';
 import { kick23GraphRect } from './kick23GraphRect';
+import { shiftPressed } from '../../midi';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
@@ -43,7 +44,7 @@ const encoders: Encoders = [
         },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction * 0.1, 0, 64));
+            patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction * (shiftPressed ? 1 : 0.1), 0, 64));
             return true;
         },
         unit() {
@@ -60,7 +61,10 @@ const encoders: Encoders = [
         getValue: () => getPatch(currentPatchId).floats[fId.Frequency].toString(),
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Frequency, minmax(patch.floats[fId.Frequency] + direction, 10, 2000));
+            patch.setNumber(
+                fId.Frequency,
+                minmax(patch.floats[fId.Frequency] + direction * (shiftPressed ? 10 : 1), 10, 2000),
+            );
             return true;
         },
         unit: 'hz',

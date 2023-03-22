@@ -1,10 +1,11 @@
 import { currentPatchId } from '../../patch';
 import { minmax } from '../../util';
 import { kick23EnvAmp } from './kick23EnvAmp';
+import { kick23EnvFreq } from './kick23EnvFreq';
 import { kick23Main } from './kick23Main';
 import { kick23Wavetable } from './kick23Wavetable';
 
-const kick23Views = [kick23Main, kick23Wavetable, kick23EnvAmp];
+const kick23Views = [kick23Main, kick23Wavetable, kick23EnvAmp, kick23EnvFreq];
 
 let currentView = 0;
 let lastPatchId = currentPatchId;

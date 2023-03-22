@@ -9,6 +9,7 @@ import { shiftPressed } from '../../midi';
 import { drawEnvelope } from '../../draw/drawEnvelope';
 
 // TODO add one more step envelope
+// TODO forbid to set time before the previous one
 
 const fId = Kick23.FloatId;
 
@@ -52,7 +53,19 @@ const encoders: Encoders = [
         },
         unit: '%',
     },
-    undefined,
+    {
+        title: 'Mod4 level',
+        getValue: () => Math.round(getPatch(currentPatchId).floats[fId.envAmp4] * 100).toString(),
+        handler: async (direction) => {
+            const patch = getPatch(currentPatchId);
+            patch.setNumber(
+                fId.envAmp4,
+                minmax(patch.floats[fId.envAmp4] + direction * (shiftPressed ? 0.01 : 0.1), 0, 1),
+            );
+            return true;
+        },
+        unit: '%',
+    },
     {
         title: 'Mod1 time',
         getValue: () => Math.round(getPatch(currentPatchId).floats[fId.envAmp1Time] * 100).toString(),
@@ -92,7 +105,19 @@ const encoders: Encoders = [
         },
         unit: '%',
     },
-    undefined,
+    {
+        title: 'Mod4 time',
+        getValue: () => Math.round(getPatch(currentPatchId).floats[fId.envAmp4Time] * 100).toString(),
+        handler: async (direction) => {
+            const patch = getPatch(currentPatchId);
+            patch.setNumber(
+                fId.envAmp4Time,
+                minmax(patch.floats[fId.envAmp4Time] + direction * (shiftPressed ? 0.01 : 0.1), 0, 1),
+            );
+            return true;
+        },
+        unit: '%',
+    },
 ];
 
 export const kick23EnvAmp = {
@@ -104,6 +129,7 @@ export const kick23EnvAmp = {
             [patch.floats[fId.envAmp1], patch.floats[fId.envAmp1Time]],
             [patch.floats[fId.envAmp2], patch.floats[fId.envAmp2Time]],
             [patch.floats[fId.envAmp3], patch.floats[fId.envAmp3Time]],
+            [patch.floats[fId.envAmp4], patch.floats[fId.envAmp4Time]],
             [0.0, 1.0],
         ]);
         drawText('Envelope Amplitude', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });

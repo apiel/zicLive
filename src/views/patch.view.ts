@@ -2,23 +2,24 @@ import { clear, drawText } from 'zic_node_ui';
 import { currentPatchId, getPatch } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import { getKick23 } from '../patches/kick23';
+import { kick23 } from '../patches/kick23';
 import { RenderOptions } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { encodersHandler, encodersView } from '../layout/encoders.layout';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
+import { synth } from '../patches/synth';
 
 function getPatchView() {
     const patch = getPatch(currentPatchId);
 
     switch (patch.engine.name) {
         case 'synth':
-            break;
+            return synth;
         case 'midi':
             break;
         case 'kick23':
-            return getKick23();
+            return kick23;
     }
 }
 
@@ -42,7 +43,7 @@ export async function patchView(options: RenderOptions = {}) {
         return;
     }
 
-    const { encoders, header } = getKick23();
+    const { encoders, header } = view.data;
     encodersView(encoders);
 
     await header();
@@ -73,5 +74,5 @@ export function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
             }
         }
     }
-    return encodersHandler(view.encoders, midiMsg);
+    return encodersHandler(view.data.encoders, midiMsg);
 }

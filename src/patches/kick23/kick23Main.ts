@@ -2,7 +2,7 @@ import { minmax } from '../../util';
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
-import { patchEncoder } from '../patchEncoder';
+import { filterCutoffEncoder, filterResonanceEncoder, patchEncoder, volumeEncoder } from '../encoders';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { shiftPressed } from '../../midi';
@@ -11,19 +11,7 @@ const fId = Kick23.FloatId;
 
 const encoders: Encoders = [
     patchEncoder,
-    {
-        title: 'Volume',
-        getValue: () => {
-            const patch = getPatch(currentPatchId);
-            return Math.round(patch.floats[fId.Volume] * 100).toString();
-        },
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Volume, minmax(patch.floats[fId.Volume] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
-            return true;
-        },
-        unit: '%',
-    },
+    volumeEncoder(fId.Volume),
     {
         title: 'Distortion',
         getValue: () => getPatch(currentPatchId).floats[fId.distortion].toString(),
@@ -43,26 +31,8 @@ const encoders: Encoders = [
             return true;
         },
     },
-    {
-        title: 'Filter',
-        getValue: () => getPatch(currentPatchId).floats[fId.filterCutoff].toString(),
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.filterCutoff, minmax(patch.floats[fId.filterCutoff] + direction * (shiftPressed ? 100 : 10), 200, 8000));
-            return true;
-        },
-        unit: 'hz',
-    },
-    {
-        title: 'Resonance',
-        getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.filterResonance] * 100)}`,
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.filterResonance, minmax(patch.floats[fId.filterResonance] + direction * 0.01, 0, 1));
-            return true;
-        },
-        unit: '%',
-    },
+    filterCutoffEncoder(fId.filterCutoff),
+    filterResonanceEncoder(fId.filterResonance),
     {
         title: 'Duration',
         getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),

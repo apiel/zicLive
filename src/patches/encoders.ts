@@ -29,7 +29,7 @@ export const volumeEncoder = (fId: number): EncoderData => ({
 
 
 export const filterCutoffEncoder = (fId: number): EncoderData => ({
-    title: 'Filter',
+    title: 'Filter Cutoff',
     getValue: () => getPatch(currentPatchId).floats[fId].toString(),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
@@ -40,7 +40,7 @@ export const filterCutoffEncoder = (fId: number): EncoderData => ({
 });
 
 export const filterResonanceEncoder = (fId: number): EncoderData => ({
-    title: 'Resonance',
+    title: 'Filter Resonance',
     getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);

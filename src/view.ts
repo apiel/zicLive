@@ -75,11 +75,11 @@ export async function viewMidiHandler(midiMsg: MidiMsg) {
                 setView(View.SequencerPattern);
                 return true;
             case akaiApcKey25.pad.mute:
-                // viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
+                viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
                 setView(View.Patch);
                 return true;
             case akaiApcKey25.pad.solo:
-                // viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
+                viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
                 setView(View.Master);
                 return true;
         }

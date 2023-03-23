@@ -9,6 +9,7 @@ import { encodersHandler, encodersView } from '../layout/encoders.layout';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
 import { synth } from '../patches/synth';
+import { sequencerController, sequenceSelectMidiHandler, sequenceToggleMidiHandler } from './controller/sequencerController';
 
 function getPatchView() {
     const patch = getPatch(currentPatchId);
@@ -23,10 +24,10 @@ function getPatchView() {
     }
 }
 
-export async function patchView(options: RenderOptions = {}) {
-    // if (controllerRendering) {
-    //     // sequencerController();
-    // }
+export async function patchView({ controllerRendering }: RenderOptions = {}) {
+    if (controllerRendering) {
+        sequencerController();
+    }
 
     clear(color.background);
 
@@ -46,12 +47,19 @@ export async function patchView(options: RenderOptions = {}) {
     const { encoders, header } = view.data;
     encodersView(encoders);
 
-    await header();
+    header();
 
     renderMessage();
 }
 
-export function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+export async function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+    if (sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
+        return true;
+    }
+    if (await sequenceToggleMidiHandler(midiMsg)) {
+        return true;
+    }
+
     const view = getPatchView();
     if (!view) {
         return false;

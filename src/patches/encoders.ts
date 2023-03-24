@@ -6,6 +6,7 @@ import { EncoderData } from '../layout/encoders.layout';
 import { shiftPressed } from '../midi';
 import { currentPatchId, getPatch, Patch, setCurrentPatchId } from '../patch';
 import { minmax } from '../util';
+import { PatchWavetable } from './PatchWavetable';
 
 export const patchEncoder: EncoderData = {
     title: 'Patch',
@@ -68,7 +69,7 @@ export const wavetableEncoder = (sId: number): EncoderData => ({
     },
 });
 
-export const morphEncoder = (fId: number, getPatchWavetable: (patch: Patch) => Wavetable): EncoderData => ({
+export const morphEncoder = (fId: number, patchWavetable: PatchWavetable): EncoderData => ({
     title: 'Morph',
     getValue() {
         const patch = getPatch(currentPatchId);
@@ -81,11 +82,11 @@ export const morphEncoder = (fId: number, getPatchWavetable: (patch: Patch) => W
     },
     unit() {
         const patch = getPatch(currentPatchId);
-        return `/${getPatchWavetable(patch).wavetableCount}`;
+        return `/${patchWavetable.get(patch).wavetableCount}`;
     },
     info() {
         const patch = getPatch(currentPatchId);
-        return `${getPatchWavetable(patch).wavetableSampleCount} samples`;
+        return `${patchWavetable.get(patch).wavetableSampleCount} samples`;
     },
 });
 
@@ -104,10 +105,10 @@ export const wavetableEncoders = (
     sIdWavteable: number,
     fIdMorph: number,
     fIdFrequency: number,
-    getPatchWavetable: (patch: Patch) => Wavetable,
+    patchWavetable: PatchWavetable,
 ): Tuple<EncoderData, 3> => [
     wavetableEncoder(sIdWavteable),
-    morphEncoder(fIdMorph, getPatchWavetable),
+    morphEncoder(fIdMorph, patchWavetable),
     frequencyEncoder(fIdFrequency),
 ];
 

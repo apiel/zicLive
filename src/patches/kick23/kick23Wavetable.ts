@@ -1,73 +1,20 @@
-import { minmax } from '../../util';
 import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch, Patch } from '../../patch';
-import { getWavetable, Kick23, Wavetable } from 'zic_node';
+import { currentPatchId, getPatch } from '../../patch';
+import { Kick23 } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
-import path from 'path';
-import { getNextWaveTable } from '../../helpers/getNextWavetable';
 import { drawWavetable } from '../../draw/drawWavetable';
 import { graphRect } from '../graphRect';
-import { shiftPressed } from '../../midi';
+import { wavetableEncoders } from '../encoders';
+import { PatchWavetable } from '../PatchWavetable';
 
 const fId = Kick23.FloatId;
 const sId = Kick23.StringId;
 
-let wavetable: Wavetable;
-let lastWavetable = '';
-let lastMorph = 0;
-function getPatchWavetable(patch: Patch) {
-    if (patch.strings[sId.Wavetable] !== lastWavetable || patch.floats[fId.Morph] !== lastMorph) {
-        lastWavetable = patch.strings[sId.Wavetable];
-        lastMorph = patch.floats[fId.Morph];
-        wavetable = getWavetable(lastWavetable, lastMorph);
-    }
-    return wavetable;
-}
+const patchWavetable = new PatchWavetable(sId.Wavetable, fId.Morph);
 
 const encoders: Encoders = [
-    {
-        title: 'Wavetable',
-        getValue: () => path.parse(getPatch(currentPatchId).strings[sId.Wavetable]).name,
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setString(sId.Wavetable, await getNextWaveTable(direction, patch.strings[sId.Wavetable]));
-            return true;
-        },
-    },
-    {
-        title: 'Morph',
-        getValue() {
-            const patch = getPatch(currentPatchId);
-            return patch.floats[fId.Morph].toFixed(1);
-        },
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Morph, minmax(patch.floats[fId.Morph] + direction * (shiftPressed ? 1 : 0.1), 0, 64));
-            return true;
-        },
-        unit() {
-            const patch = getPatch(currentPatchId);
-            return `/${getPatchWavetable(patch).wavetableCount}`;
-        },
-        info() {
-            const patch = getPatch(currentPatchId);
-            return `${getPatchWavetable(patch).wavetableSampleCount} samples`;
-        },
-    },
-    {
-        title: 'Frequency',
-        getValue: () => getPatch(currentPatchId).floats[fId.Frequency].toString(),
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.Frequency,
-                minmax(patch.floats[fId.Frequency] + direction * (shiftPressed ? 10 : 1), 10, 2000),
-            );
-            return true;
-        },
-        unit: 'hz',
-    },
+    ...wavetableEncoders(sId.Wavetable, fId.Morph, fId.Frequency, patchWavetable),
     undefined,
     undefined,
     undefined,
@@ -78,7 +25,7 @@ const encoders: Encoders = [
 export const kick23Wavetable = {
     header: () => {
         const patch = getPatch(currentPatchId);
-        drawWavetable(graphRect, getPatchWavetable(patch).data);
+        drawWavetable(graphRect, patchWavetable.get(patch).data);
         drawText('Wavetable oscillator', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
     },
     encoders,

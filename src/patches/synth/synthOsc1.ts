@@ -43,7 +43,10 @@ const encoders: Encoders = [
         },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.OscMorph, minmax(patch.floats[fId.OscMorph] + direction * (shiftPressed ? 1 : 0.1), 0, 64));
+            patch.setNumber(
+                fId.OscMorph,
+                minmax(patch.floats[fId.OscMorph] + direction * (shiftPressed ? 1 : 0.1), 0, 64),
+            );
             return true;
         },
         unit() {
@@ -69,7 +72,19 @@ const encoders: Encoders = [
         unit: 'hz',
     },
     undefined,
-    undefined,
+    {
+        title: 'Amplitude',
+        getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.OscAmplitude] * 100)}`,
+        handler: async (direction) => {
+            const patch = getPatch(currentPatchId);
+            patch.setNumber(
+                fId.OscAmplitude,
+                minmax(patch.floats[fId.OscAmplitude] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1),
+            );
+            return true;
+        },
+        unit: '%',
+    },
     undefined,
     undefined,
     undefined,

@@ -4,7 +4,7 @@ import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
-import { kick23GraphRect } from './kick23GraphRect';
+import { graphRect } from '../graphRect';
 import { shiftPressed } from '../../midi';
 import { drawEnvelope } from '../../draw/drawEnvelope';
 
@@ -123,7 +123,7 @@ const encoders: Encoders = [
 export const kick23EnvAmp = {
     header: () => {
         const patch = getPatch(currentPatchId);
-        drawEnvelope(kick23GraphRect, [
+        drawEnvelope(graphRect, [
             [0, 0],
             [1, 0.01], // Force to have a very short ramp up to avoid clicks
             [patch.floats[fId.envAmp1], patch.floats[fId.envAmp1Time]],

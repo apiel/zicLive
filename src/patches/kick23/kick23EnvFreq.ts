@@ -4,7 +4,7 @@ import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
-import { kick23GraphRect } from './kick23GraphRect';
+import { graphRect } from '../graphRect';
 import { shiftPressed } from '../../midi';
 import { drawEnvelope } from '../../draw/drawEnvelope';
 
@@ -122,7 +122,7 @@ const encoders: Encoders = [
 export const kick23EnvFreq = {
     header: () => {
         const patch = getPatch(currentPatchId);
-        drawEnvelope(kick23GraphRect, [
+        drawEnvelope(graphRect, [
             [1.0, 0.0],
             [patch.floats[fId.envFreq1], patch.floats[fId.envFreq1Time]],
             [patch.floats[fId.envFreq2], patch.floats[fId.envFreq2Time]],

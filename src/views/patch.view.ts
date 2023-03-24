@@ -1,6 +1,5 @@
 import { clear, drawText } from 'zic_node_ui';
 import { currentPatchId, getPatch } from '../patch';
-import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import { kick23 } from '../patches/kick23';
 import { RenderOptions, viewPadPressed } from '../view';
@@ -15,9 +14,9 @@ import {
     sequencePlayStopMidiHandler,
     bankController,
 } from './controller/sequencerController';
-import { patchController } from './controller/patchController';
+import { patchController, patchPadMidiHandler } from './controller/patchController';
 
-function getPatchView() {
+export function getPatchView() {
     const patch = getPatch(currentPatchId);
 
     switch (patch.engine.name) {
@@ -63,9 +62,7 @@ export async function patchMidiHandler(midiMsg: MidiMsg) {
         return true;
     }
 
-    // TODO instead to select bank for sequence
-    // the 10 pad on the right should be used to select the patch view
-    if (sequenceSelectMidiHandler(midiMsg)) {
+    if (sequenceSelectMidiHandler(midiMsg) || patchPadMidiHandler(midiMsg)) {
         return true;
     }
 

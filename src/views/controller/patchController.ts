@@ -1,15 +1,8 @@
 import { sendMidiMessage } from 'zic_node';
-import { midiOutController } from '../../midi';
+import { MidiMsg, midiOutController, MIDI_TYPE } from '../../midi';
 import { akaiApcKey25 } from '../../midi/akaiApcKey25';
-
-// prettier-ignore
-export const padBanks = [
-    0x26, 0x27,
-    0x1e, 0x1f, 
-    0x16, 0x17,
-    0x0e, 0x0f,
-    0x06, 0x07,
-];
+import { getPatchView } from '../patch.view';
+import { padBanks } from './sequencerController';
 
 export function patchController(count = 0, active = 0) {
     if (midiOutController?.port) {
@@ -21,4 +14,18 @@ export function patchController(count = 0, active = 0) {
             ]);
         });
     }
+}
+
+export function patchPadMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
+    if (isController) {
+        if (type === MIDI_TYPE.KEY_RELEASED) {
+            const index = padBanks.findIndex((p) => p === padKey);
+            if (index !== -1) {
+                console.log('set patch view', index);
+                getPatchView()?.setView(index);
+                return true;
+            }
+        }
+    }
+    return false;
 }

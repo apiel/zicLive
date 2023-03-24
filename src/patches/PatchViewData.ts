@@ -12,8 +12,12 @@ export class PatchViewData {
     currentView = 0;
     lastPatchId = currentPatchId;
 
+    setView(index: number) {
+        this.currentView = minmax(index, 0, this.views.length - 1);
+    }
+
     changeView(direction: number) {
-        this.currentView = minmax(this.currentView + direction, 0, this.views.length - 1);
+        this.setView(this.currentView + direction);
     }
 
     resetView() {

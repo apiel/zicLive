@@ -21,7 +21,6 @@ export function patchPadMidiHandler({ isController, message: [type, padKey] }: M
         if (type === MIDI_TYPE.KEY_RELEASED) {
             const index = padBanks.findIndex((p) => p === padKey);
             if (index !== -1) {
-                console.log('set patch view', index);
                 getPatchView()?.setView(index);
                 return true;
             }

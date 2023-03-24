@@ -2,7 +2,7 @@ import { minmax } from '../../util';
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { FilterMode, FilterNames, SynthDualOsc } from 'zic_node';
-import { filterCutoffEncoder, filterResonanceEncoder, patchEncoder, volumeEncoder } from '../encoders';
+import { filterEncoders, patchEncoder, volumeEncoder } from '../encoders';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 
@@ -13,8 +13,7 @@ const encoders: Encoders = [
     volumeEncoder(fId.Volume),
     undefined,
     undefined,
-    filterCutoffEncoder(fId.filterCutoff),
-    filterResonanceEncoder(fId.filterResonance),
+    ...filterEncoders(fId.filterCutoff, fId.filterResonance),
     {
         title: 'Filter Type',
         getValue: () => `${FilterNames[getPatch(currentPatchId).floats[fId.filterMode]]}`,

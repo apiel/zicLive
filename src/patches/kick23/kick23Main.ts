@@ -2,7 +2,7 @@ import { minmax } from '../../util';
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
-import { filterCutoffEncoder, filterResonanceEncoder, patchEncoder, volumeEncoder } from '../encoders';
+import { filterEncoders, patchEncoder, volumeEncoder } from '../encoders';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { shiftPressed } from '../../midi';
@@ -31,8 +31,7 @@ const encoders: Encoders = [
             return true;
         },
     },
-    filterCutoffEncoder(fId.filterCutoff),
-    filterResonanceEncoder(fId.filterResonance),
+    ...filterEncoders(fId.filterCutoff, fId.filterResonance),
     {
         title: 'Duration',
         getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),

@@ -16,28 +16,28 @@ let wavetable: Wavetable;
 let lastWavetable = '';
 let lastMorph = 0;
 function getPatchWavetable(patch: Patch) {
-    if (patch.strings[sId.oscWavetable] !== lastWavetable || patch.floats[fId.OscMorph] !== lastMorph) {
-        lastWavetable = patch.strings[sId.oscWavetable];
-        lastMorph = patch.floats[fId.OscMorph];
+    if (patch.strings[sId.osc2Wavetable] !== lastWavetable || patch.floats[fId.Osc2Morph] !== lastMorph) {
+        lastWavetable = patch.strings[sId.osc2Wavetable];
+        lastMorph = patch.floats[fId.Osc2Morph];
         wavetable = getWavetable(lastWavetable, lastMorph);
     }
     return wavetable;
 }
 
 const encoders: Encoders = [
-    ...wavetableEncoders(sId.oscWavetable, fId.OscMorph, fId.OscFrequency, getPatchWavetable),
+    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, getPatchWavetable),
     undefined,
-    amplitudeEncoder(fId.OscAmplitude),
+    amplitudeEncoder(fId.Osc2Amplitude),
     undefined,
     undefined,
     undefined,
 ];
 
-export const synthOsc1 = {
+export const synthOsc2Lfo = {
     header: () => {
         const patch = getPatch(currentPatchId);
         drawWavetable(graphRect, getPatchWavetable(patch).data);
-        drawText('Oscillator 1', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
+        drawText('Oscillator 2 / LFO', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
     },
     encoders,
 };

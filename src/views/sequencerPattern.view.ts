@@ -2,7 +2,7 @@ import { Midi } from 'tonal';
 import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { cleanPadMatrix, MidiMsg, midiOutController, MIDI_TYPE, shiftPressed } from '../midi';
-import { sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
+import { bankController, sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
 import { getSelectedSequence, initPattern, Steps, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
@@ -223,6 +223,7 @@ export async function sequencerPatternView({ controllerRendering }: RenderOption
     if (controllerRendering) {
         if (viewPadPressed) {
             sequencerController();
+            bankController();
         } else {
             patternController();
         }
@@ -273,7 +274,7 @@ function midiHandler(midiMsg: MidiMsg) {
     return encodersHandler(encoders, midiMsg);
 }
 
-export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+export async function sequencerPatternMidiHandler(midiMsg: MidiMsg) {
     const menuStatus = await sequenceMenuHandler(midiMsg);
     if (menuStatus !== false) {
         return menuStatus !== undefined;

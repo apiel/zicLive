@@ -1,10 +1,11 @@
-import { RenderOptions } from '../view';
+import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { MidiMsg } from '../midi';
 import {
     sequencerController,
     sequenceSelectMidiHandler,
     sequencePlayStopMidiHandler,
+    bankController,
 } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
 import { getTrack, getTrackCount, getTrackStyle } from '../track';
@@ -126,6 +127,7 @@ const encoders: Encoders = [
 export async function sequencerEditView({ controllerRendering }: RenderOptions = {}) {
     if (controllerRendering) {
         sequencerController();
+        bankController();
     }
 
     encodersView(encoders);
@@ -135,7 +137,7 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
     renderMessage();
 }
 
-export async function sequencerEditMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
+export async function sequencerEditMidiHandler(midiMsg: MidiMsg) {
     const menuStatus = await sequenceMenuHandler(midiMsg);
     if (menuStatus !== false) {
         return menuStatus !== undefined;

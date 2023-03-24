@@ -7,7 +7,7 @@ import { renderMessage } from '../draw/drawMessage';
 import { getTrackStyle } from '../track';
 import { sequenceNode } from '../nodes/sequence.node';
 import { MidiMsg } from '../midi';
-import { sequencerController, sequencePlayStopMidiHandler } from './controller/sequencerController';
+import { sequencerController, sequencePlayStopMidiHandler, bankController } from './controller/sequencerController';
 
 const { margin } = unit;
 const height = config.screen.size.h / config.sequence.row;
@@ -28,6 +28,7 @@ const sequenceRect = (id: number): Rect => {
 export async function sequencerView({ controllerRendering }: RenderOptions = {}) {
     if (controllerRendering) {
         sequencerController();
+        bankController();
     }
     clear(color.background);
 

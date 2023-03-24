@@ -3,13 +3,19 @@ import { currentPatchId, getPatch } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
 import { kick23 } from '../patches/kick23';
-import { RenderOptions } from '../view';
+import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { encodersHandler, encodersView } from '../layout/encoders.layout';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
 import { synth } from '../patches/synth';
-import { sequencerController, sequenceSelectMidiHandler, sequencePlayStopMidiHandler } from './controller/sequencerController';
+import {
+    sequencerController,
+    sequenceSelectMidiHandler,
+    sequencePlayStopMidiHandler,
+    bankController,
+} from './controller/sequencerController';
+import { patchController } from './controller/patchController';
 
 function getPatchView() {
     const patch = getPatch(currentPatchId);
@@ -25,19 +31,19 @@ function getPatchView() {
 }
 
 export async function patchView({ controllerRendering }: RenderOptions = {}) {
+    const view = getPatchView();
+
     if (controllerRendering) {
         sequencerController();
+        if (viewPadPressed) {
+            bankController();
+        } else {
+            patchController(view?.views.length, view?.currentView);
+        }
     }
 
     clear(color.background);
 
-    const sequence = getSelectedSequence();
-    if (!sequence) {
-        drawText(`No patch selected`, { x: 10, y: 10 });
-        return;
-    }
-
-    const view = getPatchView();
     if (!view) {
         const patch = getPatch(currentPatchId);
         drawText(`No patch view for ${patch.engine.name}`, { x: 10, y: 10 });
@@ -52,8 +58,8 @@ export async function patchView({ controllerRendering }: RenderOptions = {}) {
     renderMessage();
 }
 
-export async function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
-    if (viewPadPressed && await sequencePlayStopMidiHandler(midiMsg)) {
+export async function patchMidiHandler(midiMsg: MidiMsg) {
+    if (viewPadPressed && (await sequencePlayStopMidiHandler(midiMsg))) {
         return true;
     }
 

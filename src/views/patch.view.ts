@@ -9,7 +9,7 @@ import { encodersHandler, encodersView } from '../layout/encoders.layout';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
 import { synth } from '../patches/synth';
-import { sequencerController, sequenceSelectMidiHandler, sequenceToggleMidiHandler } from './controller/sequencerController';
+import { sequencerController, sequenceSelectMidiHandler, sequencePlayStopMidiHandler } from './controller/sequencerController';
 
 function getPatchView() {
     const patch = getPatch(currentPatchId);
@@ -53,10 +53,13 @@ export async function patchView({ controllerRendering }: RenderOptions = {}) {
 }
 
 export async function patchMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
-    if (sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
+    if (viewPadPressed && await sequencePlayStopMidiHandler(midiMsg)) {
         return true;
     }
-    if (await sequenceToggleMidiHandler(midiMsg)) {
+
+    // TODO instead to select bank for sequence
+    // the 10 pad on the right should be used to select the patch view
+    if (sequenceSelectMidiHandler(midiMsg)) {
         return true;
     }
 

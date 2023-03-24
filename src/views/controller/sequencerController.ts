@@ -46,9 +46,8 @@ export function sequencerController() {
     }
 }
 
-export function sequenceSelectMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
-    if (viewPadPressed && midiMsg.isController) {
-        const [type, padKey] = midiMsg.message;
+export function sequenceSelectMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
+    if (isController) {
         if (type === MIDI_TYPE.KEY_RELEASED) {
             const seqId = padSeq.indexOf(padKey);
             if (seqId !== -1) {
@@ -60,7 +59,7 @@ export function sequenceSelectMidiHandler(midiMsg: MidiMsg, viewPadPressed: bool
     return false;
 }
 
-export async function sequenceToggleMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
+export async function sequencePlayStopMidiHandler({ isController, message: [type, padKey] }: MidiMsg) {
     if (isController && type === MIDI_TYPE.KEY_RELEASED) {
         const seqId = padSeq.indexOf(padKey);
         if (seqId !== -1) {

@@ -7,7 +7,7 @@ import { renderMessage } from '../draw/drawMessage';
 import { getTrackStyle } from '../track';
 import { sequenceNode } from '../nodes/sequence.node';
 import { MidiMsg } from '../midi';
-import { sequencerController, sequenceToggleMidiHandler } from './controller/sequencerController';
+import { sequencerController, sequencePlayStopMidiHandler } from './controller/sequencerController';
 
 const { margin } = unit;
 const height = config.screen.size.h / config.sequence.row;
@@ -54,5 +54,5 @@ export async function sequencerView({ controllerRendering }: RenderOptions = {})
 }
 
 export function sequencerMidiHandler(midiMsg: MidiMsg) {
-    return sequenceToggleMidiHandler(midiMsg);
+    return sequencePlayStopMidiHandler(midiMsg);
 }

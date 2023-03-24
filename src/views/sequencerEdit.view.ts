@@ -4,7 +4,7 @@ import { MidiMsg } from '../midi';
 import {
     sequencerController,
     sequenceSelectMidiHandler,
-    sequenceToggleMidiHandler,
+    sequencePlayStopMidiHandler,
 } from './controller/sequencerController';
 import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
 import { getTrack, getTrackCount, getTrackStyle } from '../track';
@@ -141,10 +141,11 @@ export async function sequencerEditMidiHandler(midiMsg: MidiMsg, viewPadPressed:
         return menuStatus !== undefined;
     }
     
-    if (sequenceSelectMidiHandler(midiMsg, viewPadPressed)) {
+    if (viewPadPressed && await sequencePlayStopMidiHandler(midiMsg)) {
         return true;
     }
-    if (await sequenceToggleMidiHandler(midiMsg)) {
+
+    if (sequenceSelectMidiHandler(midiMsg)) {
         return true;
     }
 

@@ -235,7 +235,7 @@ export async function sequencerPatternView({ controllerRendering }: RenderOption
     renderMessage();
 }
 
-function midiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
+function midiHandler(midiMsg: MidiMsg) {
     const [type, key, value] = midiMsg.message;
     if (midiMsg.isController) {
         if (type === MIDI_TYPE.KEY_RELEASED) {
@@ -273,16 +273,16 @@ function midiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
     return encodersHandler(encoders, midiMsg);
 }
 
-export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, _viewPadPressed: boolean) {
+export async function sequencerPatternMidiHandler(midiMsg: MidiMsg, viewPadPressed: boolean) {
     const menuStatus = await sequenceMenuHandler(midiMsg);
     if (menuStatus !== false) {
         return menuStatus !== undefined;
     }
 
-    if (sequenceSelectMidiHandler(midiMsg, _viewPadPressed)) {
+    if (viewPadPressed && sequenceSelectMidiHandler(midiMsg)) {
         return true;
     }
-    const result = midiHandler(midiMsg, _viewPadPressed);
+    const result = midiHandler(midiMsg);
 
     if (result) {
         const sequence = getSelectedSequence();

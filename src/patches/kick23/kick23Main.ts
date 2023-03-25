@@ -13,34 +13,43 @@ const encoders: Encoders = [
     patchEncoder,
     volumeEncoder(fId.Volume),
     {
-        title: 'Distortion',
-        getValue: () => getPatch(currentPatchId).floats[fId.distortion].toString(),
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
             patch.setNumber(fId.distortion, minmax(patch.floats[fId.distortion] + direction, 0, 100));
             return true;
         },
-        unit: '%',
+        node: {
+            title: 'Distortion',
+            getValue: () => getPatch(currentPatchId).floats[fId.distortion].toString(),
+            unit: '%',
+        },
     },
     {
-        title: 'Distortion range',
-        getValue: () => getPatch(currentPatchId).floats[fId.distortionRange].toString(),
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
             patch.setNumber(fId.distortionRange, minmax(patch.floats[fId.distortionRange] + direction, 10, 120));
             return true;
         },
+        node: {
+            title: 'Distortion range',
+            getValue: () => getPatch(currentPatchId).floats[fId.distortionRange].toString(),
+        },
     },
     ...filterEncoders(fId.filterCutoff, fId.filterResonance),
     {
-        title: 'Duration',
-        getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Duration, minmax(patch.floats[fId.Duration] + direction * (shiftPressed ? 10 : 1), 10, 5000));
+            patch.setNumber(
+                fId.Duration,
+                minmax(patch.floats[fId.Duration] + direction * (shiftPressed ? 10 : 1), 10, 5000),
+            );
             return true;
         },
-        unit: 'ms (t)',
+        node: {
+            title: 'Duration',
+            getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),    
+            unit: 'ms (t)',
+        }
     },
     undefined,
 ];

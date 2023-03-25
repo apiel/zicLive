@@ -9,49 +9,57 @@ import { minmax } from '../util';
 import { PatchWavetable } from './PatchWavetable';
 
 export const patchEncoder: EncoderData = {
-    title: 'Patch',
-    getValue: () => `#${`${currentPatchId}`.padStart(3, '0')}`,
     handler: async (direction) => {
         setCurrentPatchId(currentPatchId + direction);
         return true;
     },
-    unit: () => getPatch(currentPatchId).name,
+    node: {
+        title: 'Patch',
+        getValue: () => `#${`${currentPatchId}`.padStart(3, '0')}`,
+        unit: () => getPatch(currentPatchId).name,
+    },
 };
 
 export const volumeEncoder = (fId: number): EncoderData => ({
-    title: 'Volume',
-    getValue: () => {
-        const patch = getPatch(currentPatchId);
-        return Math.round(patch.floats[fId] * 100).toString();
-    },
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
         return true;
     },
-    unit: '%',
+    node: {
+        title: 'Volume',
+        getValue: () => {
+            const patch = getPatch(currentPatchId);
+            return Math.round(patch.floats[fId] * 100).toString();
+        },
+        unit: '%',
+    },
 });
 
 export const filterCutoffEncoder = (fId: number): EncoderData => ({
-    title: 'Filter Cutoff',
-    getValue: () => getPatch(currentPatchId).floats[fId].toString(),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 100 : 10), 200, 8000));
         return true;
     },
-    unit: 'hz',
+    node: {
+        title: 'Filter Cutoff',
+        getValue: () => getPatch(currentPatchId).floats[fId].toString(),
+        unit: 'hz',
+    },
 });
 
 export const filterResonanceEncoder = (fId: number): EncoderData => ({
-    title: 'Filter Resonance',
-    getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * 0.01, 0, 1));
         return true;
     },
-    unit: '%',
+    node: {
+        title: 'Filter Resonance',
+        getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
+        unit: '%',
+    },
 });
 
 export const filterEncoders = (fIdCutoff: number, fIdResonance: number): Tuple<EncoderData, 2> => [
@@ -60,45 +68,51 @@ export const filterEncoders = (fIdCutoff: number, fIdResonance: number): Tuple<E
 ];
 
 export const wavetableEncoder = (sId: number): EncoderData => ({
-    title: 'Wavetable',
-    getValue: () => path.parse(getPatch(currentPatchId).strings[sId]).name,
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setString(sId, await getNextWaveTable(direction, patch.strings[sId]));
         return true;
     },
+    node: {
+        title: 'Wavetable',
+        getValue: () => path.parse(getPatch(currentPatchId).strings[sId]).name,
+    },
 });
 
 export const morphEncoder = (fId: number, patchWavetable: PatchWavetable): EncoderData => ({
-    title: 'Morph',
-    getValue() {
-        const patch = getPatch(currentPatchId);
-        return patch.floats[fId].toFixed(1);
-    },
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 1 : 0.1), 0, 64));
         return true;
     },
-    unit() {
-        const patch = getPatch(currentPatchId);
-        return `/${patchWavetable.get(patch).wavetableCount}`;
-    },
-    info() {
-        const patch = getPatch(currentPatchId);
-        return `${patchWavetable.get(patch).wavetableSampleCount} samples`;
+    node: {
+        title: 'Morph',
+        getValue() {
+            const patch = getPatch(currentPatchId);
+            return patch.floats[fId].toFixed(1);
+        },
+        unit() {
+            const patch = getPatch(currentPatchId);
+            return `/${patchWavetable.get(patch).wavetableCount}`;
+        },
+        info() {
+            const patch = getPatch(currentPatchId);
+            return `${patchWavetable.get(patch).wavetableSampleCount} samples`;
+        },
     },
 });
 
 export const frequencyEncoder = (fId: number): EncoderData => ({
-    title: 'Frequency',
-    getValue: () => getPatch(currentPatchId).floats[fId].toString(),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 10 : 1), 10, 2000));
         return true;
     },
-    unit: 'hz',
+    node: {
+        title: 'Frequency',
+        getValue: () => getPatch(currentPatchId).floats[fId].toString(),
+        unit: 'hz',
+    },
 });
 
 export const wavetableEncoders = (
@@ -113,41 +127,47 @@ export const wavetableEncoders = (
 ];
 
 export const amplitudeEncoder = (fId: number): EncoderData => ({
-    title: 'Amplitude',
-    getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1));
         return true;
     },
-    unit: '%',
+    node: {
+        title: 'Amplitude',
+        getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
+        unit: '%',
+    },
 });
 
 export const modLevelEncoder = (fId: number, i: number, valueColor?: Color): EncoderData => ({
-    title: `Mod${i} level`,
-    getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
         return true;
     },
-    unit: '%',
+    node: {
+        title: `Mod${i} level`,
+        getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
+        unit: '%',
+    },
 });
 
 export const modTimeEncoder = (fId: number, i: number, fIdDuration: number, valueColor?: Color): EncoderData => ({
-    title: `Mod ${i} time`,
-    getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
         return true;
     },
-    unit: '%',
-    info: () => {
-        if (fIdDuration !== undefined) {
-            const patch = getPatch(currentPatchId);
-            return `at ${Math.round(patch.floats[fId] * patch.floats[fIdDuration])} ms`;
-        }
-        return '';
+    node: {
+        title: `Mod ${i} time`,
+        getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
+        unit: '%',
+        info: () => {
+            if (fIdDuration !== undefined) {
+                const patch = getPatch(currentPatchId);
+                return `at ${Math.round(patch.floats[fId] * patch.floats[fIdDuration])} ms`;
+            }
+            return '';
+        },
     },
 });

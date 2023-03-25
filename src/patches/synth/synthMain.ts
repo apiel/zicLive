@@ -15,15 +15,14 @@ const encoders: Encoders = [
     undefined,
     ...filterEncoders(fId.filterCutoff, fId.filterResonance),
     {
-        title: 'Filter Type',
-        getValue: () => `${FilterNames[getPatch(currentPatchId).floats[fId.filterMode]]}`,
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.filterMode,
-                minmax(patch.floats[fId.filterMode] + direction, 0, FilterMode.COUNT - 1),
-            );
+            patch.setNumber(fId.filterMode, minmax(patch.floats[fId.filterMode] + direction, 0, FilterMode.COUNT - 1));
             return true;
+        },
+        node: {
+            title: 'Filter Type',
+            getValue: () => `${FilterNames[getPatch(currentPatchId).floats[fId.filterMode]]}`,
         },
     },
     undefined,

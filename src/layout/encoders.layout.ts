@@ -8,9 +8,10 @@ import { Tuple } from '../interface';
 
 const DEFAULT_DEBOUNCE = 200;
 
-export interface EncoderData extends Encoder {
+export interface EncoderData {
     handler: (direction: number) => Promise<boolean>;
     debounce?: number;
+    node: Encoder;
 }
 
 export type Encoders = Tuple<EncoderData | undefined, EncoderCount>;
@@ -30,7 +31,7 @@ export async function encodersView(encoders: Encoders) {
 
     for (let i = 0; i < encoders.length; i++) {
         const encoder = encoders[i];
-        encoderNode(i, encoder);
+        encoderNode(i, encoder?.node);
     }
 
     renderMessage();

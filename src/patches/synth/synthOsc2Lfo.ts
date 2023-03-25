@@ -15,19 +15,8 @@ const sId = SynthDualOsc.StringId;
 
 const patchWavetable = new PatchWavetable(sId.osc2Wavetable, fId.Osc2Morph);
 
-// drawSliderField(
-//     `Mix`,
-//     patch.floats[fId.Mix],
-//     rowNext(1),
-//     {
-//         edit: (direction) => {
-//             patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction, 0, 1));
-//         },
-//         steps: [0.01, 0.1],
-//     },
-//     { scrollY, leftLabel: 'osc1', rightLabel: 'osc2' },
-// );
-// encoderSlider
+// TODO make osc2 on/off ?
+// TODO change modulation to be positive or negative
 
 const encoders: Encoders = [
     ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable),
@@ -55,8 +44,8 @@ const encoders: Encoders = [
             title: 'Mix',
             getSlider: () => getPatch(currentPatchId).floats[fId.Mix],
             info: () => {
-                return 'osc1                      osc2'
-            }
+                return 'osc1                      osc2';
+            },
         },
     },
 ];
@@ -65,7 +54,16 @@ export const synthOsc2Lfo = {
     header: () => {
         const patch = getPatch(currentPatchId);
         drawWavetable(graphRect, patchWavetable.get(patch).data);
-        drawText('Oscillator 2 / LFO', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
+        const rect = drawText(
+            'Oscillator 2 / LFO',
+            { x: 300, y: 10 },
+            { size: 14, color: color.info, font: font.bold },
+        );
+        drawText(
+            '1 / 2',
+            { x: rect.position.x + rect.size.w + 5, y: 12 },
+            { size: 11, color: color.white, font: font.regular },
+        );
     },
     encoders,
 };

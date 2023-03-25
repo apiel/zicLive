@@ -1,10 +1,10 @@
 import path from 'path';
-import { Wavetable } from 'zic_node';
+import { Color } from 'zic_node_ui';
 import { getNextWaveTable } from '../helpers/getNextWavetable';
 import { Tuple } from '../interface';
 import { EncoderData } from '../layout/encoders.layout';
 import { shiftPressed } from '../midi';
-import { currentPatchId, getPatch, Patch, setCurrentPatchId } from '../patch';
+import { currentPatchId, getPatch, setCurrentPatchId } from '../patch';
 import { minmax } from '../util';
 import { PatchWavetable } from './PatchWavetable';
 
@@ -123,9 +123,9 @@ export const amplitudeEncoder = (fId: number): EncoderData => ({
     unit: '%',
 });
 
-export const modLevelEncoder = (fId: number, i: number): EncoderData => ({
+export const modLevelEncoder = (fId: number, i: number, valueColor?: Color): EncoderData => ({
     title: `Mod${i} level`,
-    getValue: () => Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
+    getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
@@ -134,9 +134,9 @@ export const modLevelEncoder = (fId: number, i: number): EncoderData => ({
     unit: '%',
 });
 
-export const modTimeEncoder = (fId: number, i: number, fIdDuration?: number): EncoderData => ({
+export const modTimeEncoder = (fId: number, i: number, fIdDuration: number, valueColor?: Color): EncoderData => ({
     title: `Mod ${i} time`,
-    getValue: () => Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
+    getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));

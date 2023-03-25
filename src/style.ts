@@ -29,6 +29,14 @@ export const color = {
         },
         info: baseColor.info,
     },
+    graph: [
+        rgb('#7ce793'),
+        rgb('#d5198a'),
+        rgb('#33bdff'),
+        rgb('#e0e310'),
+        rgb('#f7980a'),
+        rgb('#e12310'),
+    ],
     tracks: [
         { color: rgb('#33bdff'), padColor: 78 },
         { color: rgb('#d5198a'), padColor: 95 },

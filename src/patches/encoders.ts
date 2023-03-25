@@ -117,11 +117,37 @@ export const amplitudeEncoder = (fId: number): EncoderData => ({
     getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
-        patch.setNumber(
-            fId,
-            minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1),
-        );
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1));
         return true;
     },
     unit: '%',
+});
+
+export const modLevelEncoder = (fId: number, i: number): EncoderData => ({
+    title: `Mod${i} level`,
+    getValue: () => Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
+        return true;
+    },
+    unit: '%',
+});
+
+export const modTimeEncoder = (fId: number, i: number, fIdDuration?: number): EncoderData => ({
+    title: `Mod ${i} time`,
+    getValue: () => Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
+        return true;
+    },
+    unit: '%',
+    info: () => {
+        if (fIdDuration !== undefined) {
+            const patch = getPatch(currentPatchId);
+            return `at ${Math.round(patch.floats[fId] * patch.floats[fIdDuration])} ms`;
+        }
+        return '';
+    },
 });

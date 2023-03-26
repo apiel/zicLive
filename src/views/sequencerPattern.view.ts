@@ -7,7 +7,7 @@ import { getSelectedSequence, initPattern, Steps, STEP_CONDITIONS } from '../seq
 import { minmax } from '../util';
 import { Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
-import { sequenceEncoder } from './sequencerEdit.view';
+import { sequenceEncoder, isDisabled } from './sequencerEdit.view';
 import { NOTE_END, NOTE_START, sendMidiMessage } from 'zic_node';
 import { getTrack, getTrackStyle } from '../track';
 import { config } from '../config';
@@ -44,14 +44,14 @@ const encoders: Encoders = [
         },
     },
     {
-        title: 'Note',
-        getValue: () => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId === undefined) {
-                return '';
-            }
-            const step = steps[currentStep][0];
-            return step ? Midi.midiToNoteName(step.note, { sharps: true }) : `---`;
+        node: {
+            title: 'Note',
+            getValue: () => {
+                const { steps } = getSelectedSequence();
+                const step = steps[currentStep][0];
+                return step ? Midi.midiToNoteName(step.note, { sharps: true }) : `---`;
+            },
+            isDisabled,
         },
         handler: async (direction) => {
             const { steps, trackId } = getSelectedSequence();
@@ -76,81 +76,80 @@ const encoders: Encoders = [
         },
     },
     {
-        title: 'Velocity',
-        getValue: () => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId === undefined) {
-                return '';
-            }
-            const step = steps[currentStep][0];
-            return step ? `${step.velocity.toString().padStart(3, ' ')}` : `---`;
+        node: {
+            title: 'Velocity',
+            getValue: () => {
+                const { steps } = getSelectedSequence();
+                const step = steps[currentStep][0];
+                return step ? `${step.velocity.toString().padStart(3, ' ')}` : `---`;
+            },
+            unit: () => (getSelectedSequence().steps[currentStep][0] ? `%` : ``),
+            isDisabled,
         },
         handler: async (direction) => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId !== undefined) {
-                const step = steps[currentStep][0];
-                if (step) {
-                    step.velocity = minmax(step.velocity + direction, 1, 100);
-                    return true;
-                }
+            const { steps } = getSelectedSequence();
+            const step = steps[currentStep][0];
+            if (step) {
+                step.velocity = minmax(step.velocity + direction, 1, 100);
+                return true;
             }
             return false;
         },
-        unit: () => (getSelectedSequence().steps[currentStep][0] ? `%` : ``),
     },
     {
-        title: 'Tie',
-        getValue: () => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId === undefined) {
-                return '';
-            }
-            const step = steps[currentStep][0];
-            return step?.tie ? `Tie` : `---`;
+        node: {
+            title: 'Tie',
+            getValue: () => {
+                const { steps } = getSelectedSequence();
+                const step = steps[currentStep][0];
+                return step?.tie ? `Tie` : `---`;
+            },
+            isDisabled,
         },
         handler: async () => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId !== undefined) {
-                const step = steps[currentStep][0];
-                if (step) {
-                    step.tie = !step.tie;
-                    return true;
-                }
+            const { steps } = getSelectedSequence();
+            const step = steps[currentStep][0];
+            if (step) {
+                step.tie = !step.tie;
+                return true;
             }
             return false;
         },
         debounce: 1000,
     },
     {
-        title: 'Step',
-        getValue: () => {
-            const { trackId } = getSelectedSequence();
-            if (trackId === undefined) {
-                return '';
-            }
-            return `${currentStep + 1}`;
+        node: {
+            title: 'Step',
+            getValue: () => `${currentStep + 1}`,
+            unit: () => {
+                const { stepCount } = getSelectedSequence();
+                return `/ ${stepCount}`;
+            },
+            isDisabled,
         },
         handler: async (direction) => {
-            const { trackId, stepCount } = getSelectedSequence();
-            if (trackId !== undefined) {
-                currentStep = minmax(currentStep + direction, 0, stepCount - 1);
-            }
-            return true;
-        },
-        unit: () => {
             const { stepCount } = getSelectedSequence();
-            return `/ ${stepCount}`;
+            currentStep = minmax(currentStep + direction, 0, stepCount - 1);
+            return true;
         },
     },
     {
-        title: 'Patch',
-        getValue: () => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId === undefined) {
+        node: {
+            title: 'Patch',
+            getValue: () => {
+                const { steps } = getSelectedSequence();
+                const step = steps[currentStep][0];
+                return step?.patchId ? '#' + step.patchId.toString().padStart(3, '0') : '---';
+            },
+            unit: () => {
+                const { steps } = getSelectedSequence();
+                const step = steps[currentStep][0];
+                if (step?.patchId) {
+                    return getPatch(step.patchId).name;
+                }
                 return '';
-            }
-            const step = steps[currentStep][0];
-            return step?.patchId ? '#' + step.patchId.toString().padStart(3, '0') : '---';
+            },
+            isDisabled,
         },
         handler: async (direction) => {
             const { steps, trackId } = getSelectedSequence();
@@ -164,33 +163,23 @@ const encoders: Encoders = [
             }
             return false;
         },
-        unit: () => {
-            const { steps } = getSelectedSequence();
-            const step = steps[currentStep][0];
-            if (step?.patchId) {
-                return getPatch(step.patchId).name;
-            }
-            return '';
-        },
     },
     {
-        title: 'Condition',
-        getValue: () => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId === undefined) {
-                return '';
-            }
-            const step = steps[currentStep][0];
-            return step?.condition ? STEP_CONDITIONS[step.condition] : '---';
+        node: {
+            title: 'Condition',
+            getValue: () => {
+                const { steps } = getSelectedSequence();
+                const step = steps[currentStep][0];
+                return step?.condition ? STEP_CONDITIONS[step.condition] : '---';
+            },
+            isDisabled,
         },
         handler: async (direction) => {
-            const { steps, trackId } = getSelectedSequence();
-            if (trackId !== undefined) {
-                const step = steps[currentStep][0];
-                if (step) {
-                    step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
-                    return true;
-                }
+            const { steps } = getSelectedSequence();
+            const step = steps[currentStep][0];
+            if (step) {
+                step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
+                return true;
             }
             return false;
         },

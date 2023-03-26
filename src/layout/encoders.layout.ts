@@ -43,6 +43,9 @@ export function encodersHandler(encoders: Encoders, { message: [type, key, value
         if (state) {
             const encoder = encoders[state.index];
             if (encoder?.handler) {
+                if (encoder.node.isDisabled?.()) {
+                    return false;
+                }
                 const { debounce = DEFAULT_DEBOUNCE } = encoder;
                 if (encoder.debounce === 0 || Date.now() > state.timing + debounce) {
                     state.timing = Date.now();

@@ -30,12 +30,14 @@ export interface EncoderDefault {
     getValue: () => EncoderValue | string;
     unit?: string | (() => string);
     info?: string | (() => string);
+    isDisabled?: () => boolean;
 }
 
 export interface EncoderSlider {
     title: string;
     getSlider: () => number;
     info?: string | (() => string);
+    isDisabled?: () => boolean;
 }
 
 export type Encoder = EncoderDefault | EncoderSlider;
@@ -51,6 +53,10 @@ export function encoderNode(index: number, encoder: Encoder | undefined) {
             { x: rect.position.x + 4, y: rect.position.y + 1 },
             { color: color.foreground3, size: 10, font: font.bold },
         );
+
+        if (encoder.isDisabled?.()) {
+            return;
+        }
 
         if ('getValue' in encoder) {
             encoderDefault(rect, encoder);

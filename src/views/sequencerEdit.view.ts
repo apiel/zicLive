@@ -17,13 +17,15 @@ import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
 
 export const sequenceEncoder: EncoderData = {
-    title: 'Sequence',
-    getValue: () => {
-        const { id, trackId } = getSelectedSequence();
-        return {
-            value: `#${`${id + 1}`.padStart(3, '0')}`,
-            valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
-        };
+    node: {
+        title: 'Sequence',
+        getValue: () => {
+            const { id, trackId } = getSelectedSequence();
+            return {
+                value: `#${`${id + 1}`.padStart(3, '0')}`,
+                valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
+            };
+        },
     },
     handler: async (direction) => {
         const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
@@ -33,34 +35,39 @@ export const sequenceEncoder: EncoderData = {
     },
 };
 
+export const isDisabled = () => {
+    const sequence = getSelectedSequence();
+    return sequence.trackId === undefined;
+};
+
 const encoders: Encoders = [
     sequenceEncoder,
     {
-        title: 'Repeat',
-        getValue: () => {
-            const { trackId, repeat } = getSelectedSequence();
-            return trackId === undefined ? '' : `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`;
+        node: {
+            title: 'Repeat',
+            getValue: () => {
+                const { repeat } = getSelectedSequence();
+                return `x${repeat}${repeat === 0 ? ' infinite' : ' times'}`;
+            },
+            isDisabled,
         },
         handler: async (direction) => {
             const sequence = getSelectedSequence();
-            if (sequence.trackId === undefined) {
-                return false;
-            }
             sequence.repeat = minmax(sequence.repeat + direction, 0, 16);
             return true;
         },
     },
     {
-        title: 'Next sequence',
-        getValue: () => {
-            const { trackId, nextSequenceId } = getSelectedSequence();
-            return trackId === undefined ? '' : nextSequenceId ? `#${`${nextSequenceId + 1}`.padStart(3, '0')}` : `---`;
+        node: {
+            title: 'Next sequence',
+            getValue: () => {
+                const { nextSequenceId } = getSelectedSequence();
+                return nextSequenceId ? `#${`${nextSequenceId + 1}`.padStart(3, '0')}` : `---`;
+            },
+            isDisabled,
         },
         handler: async (direction) => {
             const sequence = getSelectedSequence();
-            if (sequence.trackId === undefined) {
-                return false;
-            }
             const selectedId = getSelectedSequenceId();
             const ids = sequences.filter((s) => s.trackId === sequence.trackId && s.id !== selectedId).map((s) => s.id);
             let idx = sequence.nextSequenceId !== undefined ? ids.indexOf(sequence.nextSequenceId) : -1;
@@ -71,10 +78,12 @@ const encoders: Encoders = [
     },
     undefined,
     {
-        title: 'Track',
-        getValue: () => {
-            const { trackId } = getSelectedSequence();
-            return trackId === undefined ? 'No track' : getTrack(trackId).name;
+        node: {
+            title: 'Track',
+            getValue: () => {
+                const { trackId } = getSelectedSequence();
+                return trackId === undefined ? 'No track' : getTrack(trackId).name;
+            },
         },
         handler: async (direction) => {
             // TODO when changing track for a sequence, patch are not valid anymore
@@ -90,33 +99,30 @@ const encoders: Encoders = [
         },
     },
     {
-        title: 'Detune',
-        getValue: () => {
-            const { trackId, detune } = getSelectedSequence();
-            return trackId === undefined ? '' : detune < 0 ? detune.toString() : `+${detune}`;
+        node: {
+            title: 'Detune',
+            getValue: () => {
+                const { detune } = getSelectedSequence();
+                return detune < 0 ? detune.toString() : `+${detune}`;
+            },
+            unit: 'semitones',
+            isDisabled,
         },
-        unit: 'semitones',
         handler: async (direction) => {
             const sequence = getSelectedSequence();
-            if (sequence.trackId === undefined) {
-                return false;
-            }
             sequence.detune = minmax(sequence.detune + direction, -12, 12);
             return true;
         },
     },
     {
-        title: 'Pattern length',
-        getValue: () => {
-            const { trackId, stepCount } = getSelectedSequence();
-            return trackId === undefined ? '' : `${stepCount}`;
+        node: {
+            title: 'Pattern length',
+            getValue: () => `${getSelectedSequence().stepCount}`,
+            unit: 'steps',
+            isDisabled,
         },
-        unit: 'steps',
         handler: async (direction) => {
             const sequence = getSelectedSequence();
-            if (sequence.trackId === undefined) {
-                return false;
-            }
             sequence.stepCount = minmax(sequence.stepCount + direction, 1, 64);
             return true;
         },
@@ -142,8 +148,8 @@ export async function sequencerEditMidiHandler(midiMsg: MidiMsg) {
     if (menuStatus !== false) {
         return menuStatus !== undefined;
     }
-    
-    if (viewPadPressed && await sequencePlayStopMidiHandler(midiMsg)) {
+
+    if (viewPadPressed && (await sequencePlayStopMidiHandler(midiMsg))) {
         return true;
     }
 

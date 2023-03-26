@@ -15,37 +15,46 @@ const sId = SynthDualOsc.StringId;
 
 const patchWavetable = new PatchWavetable(sId.osc2Wavetable, fId.Osc2Morph);
 
-// TODO make osc2 on/off ?
 // TODO change modulation to be positive or negative
 
 const encoders: Encoders = [
-    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable),
     {
+        node: {
+            title: 'Active',
+            getValue: () => (getPatch(currentPatchId).floats[fId.osc2Active] ? 'On' : 'Off'),
+        },
+        handler: async (direction) => {
+            const patch = getPatch(currentPatchId);
+            patch.setNumber(fId.osc2Active, minmax(patch.floats[fId.osc2Active] + direction, 0, 1));
+            return true;
+        },
+    },
+    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable),
+    amplitudeEncoder(fId.Osc2Amplitude),
+    undefined,
+    {
+        node: {
+            title: 'Freq NoteOn',
+            getValue: () => (getPatch(currentPatchId).floats[fId.osc2FreqNoteOn] ? 'On' : 'Off'),
+        },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
             patch.setNumber(fId.osc2FreqNoteOn, minmax(patch.floats[fId.osc2FreqNoteOn] + direction, 0, 1));
             return true;
         },
-        node: {
-            title: 'Freq NoteOn',
-            getValue: () => (getPatch(currentPatchId).floats[fId.osc2FreqNoteOn] ? 'On' : 'Off'),
-        },
     },
-    amplitudeEncoder(fId.Osc2Amplitude),
-    undefined,
-    undefined,
     {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction * (shiftPressed ? 0.1 : 0.05), 0, 1));
-            return true;
-        },
         node: {
             title: 'Mix',
             getSlider: () => getPatch(currentPatchId).floats[fId.Mix],
             info: () => {
                 return 'osc1                      osc2';
             },
+        },
+        handler: async (direction) => {
+            const patch = getPatch(currentPatchId);
+            patch.setNumber(fId.Mix, minmax(patch.floats[fId.Mix] + direction * (shiftPressed ? 0.1 : 0.05), 0, 1));
+            return true;
         },
     },
 ];

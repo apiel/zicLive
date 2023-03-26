@@ -8,6 +8,7 @@ import { graphRect } from '../graphRect';
 import { PatchWavetable } from '../PatchWavetable';
 import { minmax } from '../../util';
 import { shiftPressed } from '../../midi';
+import { isDisabled } from './synthOsc2Lfo';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;
@@ -28,6 +29,7 @@ const encoders: Encoders = [
             title: 'Osc1 Frequency Mod.',
             getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModPitch] * 100)}`,
             unit: '%',
+            isDisabled,
         },
     },
     {
@@ -43,6 +45,7 @@ const encoders: Encoders = [
             title: 'Osc1 Amplitude Mod.',
             getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModAmplitude] * 100)}`,
             unit: '%',
+            isDisabled,
         },
     },
     {
@@ -58,6 +61,7 @@ const encoders: Encoders = [
             title: 'Osc1 Morph Mod.',
             getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModMorph] * 100)}`,
             unit: '%',
+            isDisabled,
         },
     },
     undefined,
@@ -74,6 +78,7 @@ const encoders: Encoders = [
             title: 'Filter Cutoff Mod.',
             getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModCutOff] * 100)}`,
             unit: '%',
+            isDisabled,
         },
     },
     {
@@ -89,6 +94,7 @@ const encoders: Encoders = [
             title: 'Filter Resonance Mod.',
             getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModResonance] * 100)}`,
             unit: '%',
+            isDisabled,
         },
     },
     undefined,

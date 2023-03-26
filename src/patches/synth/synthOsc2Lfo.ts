@@ -17,6 +17,10 @@ const patchWavetable = new PatchWavetable(sId.osc2Wavetable, fId.Osc2Morph);
 
 // TODO change modulation to be positive or negative
 
+export const isDisabled = () => {
+    return getPatch(currentPatchId).floats[fId.osc2Active] === 0;
+};
+
 const encoders: Encoders = [
     {
         node: {
@@ -29,13 +33,14 @@ const encoders: Encoders = [
             return true;
         },
     },
-    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable),
-    amplitudeEncoder(fId.Osc2Amplitude),
+    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable, isDisabled),
+    amplitudeEncoder(fId.Osc2Amplitude, isDisabled),
     undefined,
     {
         node: {
             title: 'Freq NoteOn',
             getValue: () => (getPatch(currentPatchId).floats[fId.osc2FreqNoteOn] ? 'On' : 'Off'),
+            isDisabled,
         },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
@@ -50,6 +55,7 @@ const encoders: Encoders = [
             info: () => {
                 return 'osc1                      osc2';
             },
+            isDisabled,
         },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);

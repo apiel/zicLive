@@ -67,7 +67,7 @@ export const filterEncoders = (fIdCutoff: number, fIdResonance: number): Tuple<E
     filterResonanceEncoder(fIdResonance),
 ];
 
-export const wavetableEncoder = (sId: number): EncoderData => ({
+export const wavetableEncoder = (sId: number, isDisabled?: IsDisabled): EncoderData => ({
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setString(sId, await getNextWaveTable(direction, patch.strings[sId]));
@@ -76,10 +76,11 @@ export const wavetableEncoder = (sId: number): EncoderData => ({
     node: {
         title: 'Wavetable',
         getValue: () => path.parse(getPatch(currentPatchId).strings[sId]).name,
+        isDisabled,
     },
 });
 
-export const morphEncoder = (fId: number, patchWavetable: PatchWavetable): EncoderData => ({
+export const morphEncoder = (fId: number, patchWavetable: PatchWavetable, isDisabled?: IsDisabled): EncoderData => ({
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 1 : 0.1), 0, 64));
@@ -99,10 +100,11 @@ export const morphEncoder = (fId: number, patchWavetable: PatchWavetable): Encod
             const patch = getPatch(currentPatchId);
             return `${patchWavetable.get(patch).wavetableSampleCount} samples`;
         },
+        isDisabled,
     },
 });
 
-export const frequencyEncoder = (fId: number): EncoderData => ({
+export const frequencyEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData => ({
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 10 : 1), 10, 2000));
@@ -112,6 +114,7 @@ export const frequencyEncoder = (fId: number): EncoderData => ({
         title: 'Frequency',
         getValue: () => getPatch(currentPatchId).floats[fId].toString(),
         unit: 'hz',
+        isDisabled,
     },
 });
 
@@ -120,22 +123,26 @@ export const wavetableEncoders = (
     fIdMorph: number,
     fIdFrequency: number,
     patchWavetable: PatchWavetable,
+    isDisabled?: IsDisabled,
 ): Tuple<EncoderData, 3> => [
-    wavetableEncoder(sIdWavteable),
-    morphEncoder(fIdMorph, patchWavetable),
-    frequencyEncoder(fIdFrequency),
+    wavetableEncoder(sIdWavteable, isDisabled),
+    morphEncoder(fIdMorph, patchWavetable, isDisabled),
+    frequencyEncoder(fIdFrequency, isDisabled),
 ];
 
-export const amplitudeEncoder = (fId: number): EncoderData => ({
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1));
-        return true;
-    },
+type IsDisabled = () => boolean;
+
+export const amplitudeEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData => ({
     node: {
         title: 'Amplitude',
         getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
         unit: '%',
+        isDisabled,
+    },
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1));
+        return true;
     },
 });
 

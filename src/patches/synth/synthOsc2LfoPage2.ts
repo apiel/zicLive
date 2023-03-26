@@ -5,7 +5,6 @@ import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
 import { graphRect } from '../graphRect';
-import { amplitudeEncoder, wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
 import { minmax } from '../../util';
 import { shiftPressed } from '../../midi';

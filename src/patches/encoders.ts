@@ -21,14 +21,20 @@ export const patchEncoder: EncoderData = {
     },
 };
 
-export const volumeEncoder = (fId: number): EncoderData => ({
+export const percentageEncoder = (
+    fId: number,
+    title: string,
+    valueColor?: Color,
+    isDisabled?: IsDisabled,
+): EncoderData => ({
     node: {
-        title: 'Volume',
-        getValue: () => {
-            const patch = getPatch(currentPatchId);
-            return Math.round(patch.floats[fId] * 100).toString();
-        },
+        title,
+        getValue: () => ({
+            value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
+            valueColor,
+        }),
         unit: '%',
+        isDisabled,
     },
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
@@ -36,6 +42,9 @@ export const volumeEncoder = (fId: number): EncoderData => ({
         return true;
     },
 });
+
+export const volumeEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData =>
+    percentageEncoder(fId, `Volume`, undefined, isDisabled);
 
 export const filterCutoffEncoder = (fId: number): EncoderData => ({
     handler: async (direction) => {
@@ -50,18 +59,8 @@ export const filterCutoffEncoder = (fId: number): EncoderData => ({
     },
 });
 
-export const filterResonanceEncoder = (fId: number): EncoderData => ({
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * 0.01, 0, 1));
-        return true;
-    },
-    node: {
-        title: 'Filter Resonance',
-        getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
-        unit: '%',
-    },
-});
+export const filterResonanceEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData =>
+    percentageEncoder(fId, `Filter Resonance`, undefined, isDisabled);
 
 export const filterEncoders = (fIdCutoff: number, fIdResonance: number): Tuple<EncoderData, 2> => [
     filterCutoffEncoder(fIdCutoff),
@@ -124,32 +123,11 @@ export const wavetableEncoders = (
 
 type IsDisabled = () => boolean;
 
-export const amplitudeEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData => ({
-    node: {
-        title: 'Amplitude',
-        getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId] * 100)}`,
-        unit: '%',
-        isDisabled,
-    },
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1));
-        return true;
-    },
-});
+export const amplitudeEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData =>
+    percentageEncoder(fId, `Amplitude`, undefined, isDisabled);
 
-export const modLevelEncoder = (fId: number, i: number, valueColor?: Color): EncoderData => ({
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
-        return true;
-    },
-    node: {
-        title: `Mod${i} level`,
-        getValue: () => ({ value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(), valueColor }),
-        unit: '%',
-    },
-});
+export const modLevelEncoder = (fId: number, i: number, valueColor?: Color): EncoderData =>
+    percentageEncoder(fId, `Mod${i} level`, valueColor);
 
 export const modTimeEncoder = (fId: number, i: number, fIdDuration: number, valueColor?: Color): EncoderData => ({
     handler: async (direction) => {
@@ -187,22 +165,6 @@ export const envMsEncoder = (fId: number, title: string, valueColor?: Color): En
     },
 });
 
-export const envSustainEncoder = (fId: number, title: string, valueColor?: Color): EncoderData => ({
-    node: {
-        title,
-        getValue: () => ({
-            value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
-            valueColor,
-        }),
-        unit: '%',
-    },
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
-        return true;
-    },
-});
-
 export const adsrEncoders = (
     fIdAttack: number,
     fIdDecay: number,
@@ -211,6 +173,6 @@ export const adsrEncoders = (
 ): Tuple<EncoderData, 4> => [
     envMsEncoder(fIdAttack, 'Attack', color.graph[0]),
     envMsEncoder(fIdDecay, 'Decay', color.graph[1]),
-    envSustainEncoder(fIdSustain, 'Sustain', color.graph[2]),
+    percentageEncoder(fIdSustain, 'Sustain', color.graph[2]),
     envMsEncoder(fIdRelease, 'Release', color.graph[3]),
 ];

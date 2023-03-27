@@ -3,7 +3,7 @@ import { currentPatchId, getPatch } from '../../patch';
 import { SynthDualOsc } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
-import { graphRect } from '../graphRect';
+import { graphRect } from '../draw';
 import { drawEnvelope } from '../../draw/drawEnvelope';
 import { adsrEncoders } from '../encoders';
 

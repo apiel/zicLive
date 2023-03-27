@@ -4,7 +4,7 @@ import { SynthDualOsc } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
-import { graphRect } from '../graphRect';
+import { graphRect } from '../draw';
 import { PatchWavetable } from '../PatchWavetable';
 import { isDisabled } from './synthOsc2Lfo';
 import { percentageEncoder } from '../encoders';

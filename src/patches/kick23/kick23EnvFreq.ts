@@ -1,9 +1,8 @@
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
-import { drawText } from 'zic_node_ui';
-import { color, font } from '../../style';
-import { graphRect } from '../graphRect';
+import { color } from '../../style';
+import { drawSubTitle, graphRect } from '../draw';
 import { drawEnvelope } from '../../draw/drawEnvelope';
 import { modLevelEncoder, modTimeEncoder } from '../encoders';
 
@@ -31,7 +30,7 @@ export const kick23EnvFreq = {
             [patch.floats[fId.envFreq4], patch.floats[fId.envFreq4Time], color.graph[3]],
             [0.0, 1.0],
         ]);
-        drawText('Envelope Frequency', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
+        drawSubTitle('Envelope Frequency');
     },
     encoders,
 };

@@ -2,7 +2,6 @@ import { clear, drawText, Events } from 'zic_node_ui';
 import { currentPatchId, getPatch, savePatchAs, setCurrentPatchId } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import kick23 from '../patches/kick23.bak';
 import synth from '../patches/synth.bak';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
@@ -64,9 +63,6 @@ export async function patchViewBak(options: RenderOptions = {}) {
         case 'midi':
             // TODO #38 preset view for midi
             drawText(`Engine "${patch.engine.name}", patch "${patch.name}"`, { x: 10, y: 10 });
-            break;
-        case 'kick23':
-            kick23(patch, scrollY);
             break;
     }
 

@@ -3,9 +3,8 @@ import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
 import { filterEncoders, patchEncoder, percentageEncoder, volumeEncoder } from '../encoders';
-import { drawText } from 'zic_node_ui';
-import { color, font } from '../../style';
 import { shiftPressed } from '../../midi';
+import { drawPatchTitle } from '../draw';
 
 const fId = Kick23.FloatId;
 
@@ -45,7 +44,7 @@ const encoders: Encoders = [
 
 export const kick23Main = {
     header: () => {
-        drawText('Kick 23', { x: 30, y: 10 }, { size: 64, color: color.foreground3, font: font.regular });
+        drawPatchTitle('Kick 23');
     },
     encoders,
 };

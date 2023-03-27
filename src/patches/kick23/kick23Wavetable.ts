@@ -1,10 +1,8 @@
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
-import { drawText } from 'zic_node_ui';
-import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
-import { graphRect } from '../graphRect';
+import { drawSubTitle, graphRect } from '../draw';
 import { wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
 
@@ -26,7 +24,7 @@ export const kick23Wavetable = {
     header: () => {
         const patch = getPatch(currentPatchId);
         drawWavetable(graphRect, patchWavetable.get(patch).data);
-        drawText('Wavetable oscillator', { x: 300, y: 10 }, { size: 14, color: color.info, font: font.bold });
+        drawSubTitle('Wavetable oscillator');
     },
     encoders,
 };

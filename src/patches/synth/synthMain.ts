@@ -3,8 +3,7 @@ import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { FilterMode, FilterNames, SynthDualOsc } from 'zic_node';
 import { filterEncoders, patchEncoder, volumeEncoder } from '../encoders';
-import { drawText } from 'zic_node_ui';
-import { color, font } from '../../style';
+import { drawPatchTitle } from '../draw';
 
 const fId = SynthDualOsc.FloatId;
 
@@ -30,7 +29,7 @@ const encoders: Encoders = [
 
 export const synthMain = {
     header: () => {
-        drawText('Synth', { x: 30, y: 10 }, { size: 64, color: color.foreground3, font: font.regular });
+        drawPatchTitle('Synth');
     },
     encoders,
 };

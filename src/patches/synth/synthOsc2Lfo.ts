@@ -5,7 +5,7 @@ import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
 import { drawSubTitle, graphRect, withPage } from '../draw';
-import { amplitudeEncoder, wavetableEncoders } from '../encoders';
+import { amplitudeEncoder, onOffEncoder, wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
 import { minmax } from '../../util';
 import { shiftPressed } from '../../midi';
@@ -22,32 +22,11 @@ export const isDisabled = () => {
 };
 
 const encoders: Encoders = [
-    {
-        node: {
-            title: 'Active',
-            getValue: () => (getPatch(currentPatchId).floats[fId.osc2Active] ? 'On' : 'Off'),
-        },
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.osc2Active, minmax(patch.floats[fId.osc2Active] + direction, 0, 1));
-            return true;
-        },
-    },
+    onOffEncoder(fId.osc2Active, 'Active'),
     ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable, isDisabled),
     amplitudeEncoder(fId.Osc2Amplitude, isDisabled),
     undefined,
-    {
-        node: {
-            title: 'Freq NoteOn',
-            getValue: () => (getPatch(currentPatchId).floats[fId.osc2FreqNoteOn] ? 'On' : 'Off'),
-            isDisabled,
-        },
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.osc2FreqNoteOn, minmax(patch.floats[fId.osc2FreqNoteOn] + direction, 0, 1));
-            return true;
-        },
-    },
+    onOffEncoder(fId.osc2FreqNoteOn, 'Freq NoteOn', isDisabled),
     {
         node: {
             title: 'Mix',

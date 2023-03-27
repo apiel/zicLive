@@ -43,6 +43,19 @@ export const percentageEncoder = (
     },
 });
 
+export const onOffEncoder = (fId: number, title: string, isDisabled?: IsDisabled): EncoderData => ({
+    node: {
+        title,
+        getValue: () => (getPatch(currentPatchId).floats[fId] ? 'On' : 'Off'),
+        isDisabled,
+    },
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction, 0, 1));
+        return true;
+    },
+});
+
 export const volumeEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData =>
     percentageEncoder(fId, `Volume`, undefined, isDisabled);
 

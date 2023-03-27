@@ -5,10 +5,19 @@ import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { graphRect } from '../graphRect';
 import { drawEnvelope } from '../../draw/drawEnvelope';
+import { minmax } from '../../util';
+import { shiftPressed } from '../../midi';
+import { adsrEncoders } from '../encoders';
 
 const fId = SynthDualOsc.FloatId;
 
-const encoders: Encoders = [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined];
+const encoders: Encoders = [
+    ...adsrEncoders(fId.envAttack, fId.envDecay, fId.envSustain, fId.envRelease),
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+];
 
 export const synthEnv = {
     header: () => {
@@ -19,10 +28,20 @@ export const synthEnv = {
             graphRect,
             env
                 ? [
-                      [0, 0],
-                      [1, patch.floats[fId.envAttack] / env],
-                      [patch.floats[fId.envSustain], (patch.floats[fId.envAttack] + patch.floats[fId.envDecay]) / env],
-                      [patch.floats[fId.envSustain], 1.0 - patch.floats[fId.envRelease] / env],
+                      [0, 0, undefined, color.graph[0]],
+                      [1, patch.floats[fId.envAttack] / env, color.graph[0], color.graph[1]],
+                      [
+                          patch.floats[fId.envSustain],
+                          (patch.floats[fId.envAttack] + patch.floats[fId.envDecay]) / env,
+                          color.graph[1],
+                          color.graph[2],
+                      ],
+                      [
+                          patch.floats[fId.envSustain],
+                          1.0 - patch.floats[fId.envRelease] / env,
+                          color.graph[3],
+                          color.graph[3],
+                      ],
                       [0.0, 1.0],
                   ]
                 : [

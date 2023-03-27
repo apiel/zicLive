@@ -32,8 +32,8 @@ export const color = {
     graph: [
         rgb('#7ce793'),
         rgb('#d5198a'),
-        rgb('#33bdff'),
         rgb('#e0e310'),
+        rgb('#33bdff'),
         rgb('#f7980a'),
         rgb('#e12310'),
     ],

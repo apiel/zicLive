@@ -5,27 +5,23 @@ import { Tuple } from '../interface';
 import { EncoderData } from '../layout/encoders.layout';
 import { shiftPressed } from '../midi';
 import { currentPatchId, getPatch, setCurrentPatchId } from '../patch';
+import { color } from '../style';
 import { minmax } from '../util';
 import { PatchWavetable } from './PatchWavetable';
 
 export const patchEncoder: EncoderData = {
-    handler: async (direction) => {
-        setCurrentPatchId(currentPatchId + direction);
-        return true;
-    },
     node: {
         title: 'Patch',
         getValue: () => `#${`${currentPatchId}`.padStart(3, '0')}`,
         unit: () => getPatch(currentPatchId).name,
     },
+    handler: async (direction) => {
+        setCurrentPatchId(currentPatchId + direction);
+        return true;
+    },
 };
 
 export const volumeEncoder = (fId: number): EncoderData => ({
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
-        return true;
-    },
     node: {
         title: 'Volume',
         getValue: () => {
@@ -33,6 +29,11 @@ export const volumeEncoder = (fId: number): EncoderData => ({
             return Math.round(patch.floats[fId] * 100).toString();
         },
         unit: '%',
+    },
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
+        return true;
     },
 });
 
@@ -81,40 +82,31 @@ export const wavetableEncoder = (sId: number, isDisabled?: IsDisabled): EncoderD
 });
 
 export const morphEncoder = (fId: number, patchWavetable: PatchWavetable, isDisabled?: IsDisabled): EncoderData => ({
+    node: {
+        title: 'Morph',
+        getValue: () => getPatch(currentPatchId).floats[fId].toFixed(1),
+        unit: () => `/${patchWavetable.get(getPatch(currentPatchId)).wavetableCount}`,
+        info: () => `${patchWavetable.get(getPatch(currentPatchId)).wavetableSampleCount} samples`,
+        isDisabled,
+    },
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 1 : 0.1), 0, 64));
         return true;
     },
-    node: {
-        title: 'Morph',
-        getValue() {
-            const patch = getPatch(currentPatchId);
-            return patch.floats[fId].toFixed(1);
-        },
-        unit() {
-            const patch = getPatch(currentPatchId);
-            return `/${patchWavetable.get(patch).wavetableCount}`;
-        },
-        info() {
-            const patch = getPatch(currentPatchId);
-            return `${patchWavetable.get(patch).wavetableSampleCount} samples`;
-        },
-        isDisabled,
-    },
 });
 
 export const frequencyEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData => ({
-    handler: async (direction) => {
-        const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 10 : 1), 10, 2000));
-        return true;
-    },
     node: {
         title: 'Frequency',
         getValue: () => getPatch(currentPatchId).floats[fId].toString(),
         unit: 'hz',
         isDisabled,
+    },
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 10 : 1), 10, 2000));
+        return true;
     },
 });
 
@@ -178,3 +170,47 @@ export const modTimeEncoder = (fId: number, i: number, fIdDuration: number, valu
         },
     },
 });
+
+export const envMsEncoder = (fId: number, title: string, valueColor?: Color): EncoderData => ({
+    node: {
+        title,
+        getValue: () => ({
+            value: getPatch(currentPatchId).floats[fId].toString(),
+            valueColor,
+        }),
+        unit: 'ms',
+    },
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 100 : 10), 0, 9900));
+        return true;
+    },
+});
+
+export const envSustainEncoder = (fId: number, title: string, valueColor?: Color): EncoderData => ({
+    node: {
+        title,
+        getValue: () => ({
+            value: Math.round(getPatch(currentPatchId).floats[fId] * 100).toString(),
+            valueColor,
+        }),
+        unit: '%',
+    },
+    handler: async (direction) => {
+        const patch = getPatch(currentPatchId);
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
+        return true;
+    },
+});
+
+export const adsrEncoders = (
+    fIdAttack: number,
+    fIdDecay: number,
+    fIdSustain: number,
+    fIdRelease: number,
+): Tuple<EncoderData, 4> => [
+    envMsEncoder(fIdAttack, 'Attack', color.graph[0]),
+    envMsEncoder(fIdDecay, 'Decay', color.graph[1]),
+    envSustainEncoder(fIdSustain, 'Sustain', color.graph[2]),
+    envMsEncoder(fIdRelease, 'Release', color.graph[3]),
+];

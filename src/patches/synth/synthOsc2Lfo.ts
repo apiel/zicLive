@@ -1,8 +1,6 @@
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { SynthDualOsc } from 'zic_node';
-import { drawText } from 'zic_node_ui';
-import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
 import { drawSubTitle, graphRect, withPage } from '../draw';
 import { amplitudeEncoder, onOffEncoder, wavetableEncoders } from '../encoders';

@@ -1,6 +1,6 @@
 import { Encoders } from '../../layout/encoders.layout';
 import { SynthDualOsc } from 'zic_node';
-import { adsrEncoders, percentageEncoder } from '../encoders';
+import { percentageEncoder } from '../encoders';
 import { header } from './synthEnv';
 
 const fId = SynthDualOsc.FloatId;

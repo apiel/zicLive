@@ -3,7 +3,7 @@ import { currentPatchId, getPatch } from '../../patch';
 import { SynthDualOsc } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
-import { graphRect } from '../draw';
+import { drawSubTitle, graphRect, withPage } from '../draw';
 import { drawEnvelope } from '../../draw/drawEnvelope';
 import { adsrEncoders } from '../encoders';
 
@@ -47,13 +47,7 @@ export const synthEnv = {
                       [0.0, 1.0],
                   ],
         );
-
-        const rect = drawText('Envelope', { x: 350, y: 10 }, { size: 14, color: color.info, font: font.bold });
-        drawText(
-            '1 / 2',
-            { x: rect.position.x + rect.size.w + 5, y: 12 },
-            { size: 11, color: color.white, font: font.regular },
-        );
+        withPage(drawSubTitle('Envelope', 50), 1, 2);
     },
     encoders,
 };

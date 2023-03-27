@@ -4,7 +4,7 @@ import { SynthDualOsc } from 'zic_node';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
-import { graphRect } from '../draw';
+import { drawSubTitle, graphRect, withPage } from '../draw';
 import { amplitudeEncoder, wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
 import { minmax } from '../../util';
@@ -69,16 +69,7 @@ export const synthOsc2Lfo = {
     header: () => {
         const patch = getPatch(currentPatchId);
         drawWavetable(graphRect, patchWavetable.get(patch).data);
-        const rect = drawText(
-            'Oscillator 2 / LFO',
-            { x: 300, y: 10 },
-            { size: 14, color: color.info, font: font.bold },
-        );
-        drawText(
-            '1 / 2',
-            { x: rect.position.x + rect.size.w + 5, y: 12 },
-            { size: 11, color: color.white, font: font.regular },
-        );
+        withPage(drawSubTitle('Oscillator 2 / LFO'), 1, 2);
     },
     encoders,
 };

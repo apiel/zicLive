@@ -6,9 +6,8 @@ import { color, font } from '../../style';
 import { drawWavetable } from '../../draw/drawWavetable';
 import { graphRect } from '../graphRect';
 import { PatchWavetable } from '../PatchWavetable';
-import { minmax } from '../../util';
-import { shiftPressed } from '../../midi';
 import { isDisabled } from './synthOsc2Lfo';
+import { percentageEncoder } from '../encoders';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;
@@ -16,87 +15,12 @@ const sId = SynthDualOsc.StringId;
 const patchWavetable = new PatchWavetable(sId.osc2Wavetable, fId.Osc2Morph);
 
 const encoders: Encoders = [
-    {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.osc2ModPitch,
-                minmax(patch.floats[fId.osc2ModPitch] + direction * (shiftPressed ? 0.05 : 0.01), -1, 1),
-            );
-            return true;
-        },
-        node: {
-            title: 'Osc1 Frequency Mod.',
-            getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModPitch] * 100)}`,
-            unit: '%',
-            isDisabled,
-        },
-    },
-    {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.osc2ModAmplitude,
-                minmax(patch.floats[fId.osc2ModAmplitude] + direction * (shiftPressed ? 0.05 : 0.01), -1, 1),
-            );
-            return true;
-        },
-        node: {
-            title: 'Osc1 Amplitude Mod.',
-            getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModAmplitude] * 100)}`,
-            unit: '%',
-            isDisabled,
-        },
-    },
-    {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.osc2ModMorph,
-                minmax(patch.floats[fId.osc2ModMorph] + direction * (shiftPressed ? 0.05 : 0.01), -1, 1),
-            );
-            return true;
-        },
-        node: {
-            title: 'Osc1 Morph Mod.',
-            getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModMorph] * 100)}`,
-            unit: '%',
-            isDisabled,
-        },
-    },
+    percentageEncoder(fId.osc2ModPitch, 'Osc1 Frequency Mod.', undefined, isDisabled),
+    percentageEncoder(fId.osc2ModAmplitude, 'Osc1 Amplitude Mod.', undefined, isDisabled),
+    percentageEncoder(fId.osc2ModMorph, 'Osc1 Morph Mod.', undefined, isDisabled),
     undefined,
-    {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.osc2ModCutOff,
-                minmax(patch.floats[fId.osc2ModCutOff] + direction * (shiftPressed ? 0.05 : 0.01), -1, 1),
-            );
-            return true;
-        },
-        node: {
-            title: 'Filter Cutoff Mod.',
-            getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModCutOff] * 100)}`,
-            unit: '%',
-            isDisabled,
-        },
-    },
-    {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(
-                fId.osc2ModResonance,
-                minmax(patch.floats[fId.osc2ModResonance] + direction * (shiftPressed ? 0.05 : 0.01), -1, 1),
-            );
-            return true;
-        },
-        node: {
-            title: 'Filter Resonance Mod.',
-            getValue: () => `${Math.round(getPatch(currentPatchId).floats[fId.osc2ModResonance] * 100)}`,
-            unit: '%',
-            isDisabled,
-        },
-    },
+    percentageEncoder(fId.osc2ModCutOff, 'Filter Cutoff Mod.', undefined, isDisabled),
+    percentageEncoder(fId.osc2ModResonance, 'Filter Resonance Mod.', undefined, isDisabled),
     undefined,
     undefined,
 ];

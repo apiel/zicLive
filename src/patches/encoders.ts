@@ -38,7 +38,7 @@ export const percentageEncoder = (
     },
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
-        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.1 : 0.01), 0, 1));
+        patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 0.05 : 0.01), 0, 1));
         return true;
     },
 });

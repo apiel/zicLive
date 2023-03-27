@@ -2,7 +2,7 @@ import { minmax } from '../../util';
 import { Encoders } from '../../layout/encoders.layout';
 import { currentPatchId, getPatch } from '../../patch';
 import { Kick23 } from 'zic_node';
-import { filterEncoders, patchEncoder, volumeEncoder } from '../encoders';
+import { filterEncoders, patchEncoder, percentageEncoder, volumeEncoder } from '../encoders';
 import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { shiftPressed } from '../../midi';
@@ -12,18 +12,7 @@ const fId = Kick23.FloatId;
 const encoders: Encoders = [
     patchEncoder,
     volumeEncoder(fId.Volume),
-    {
-        handler: async (direction) => {
-            const patch = getPatch(currentPatchId);
-            patch.setNumber(fId.distortion, minmax(patch.floats[fId.distortion] + direction, 0, 100));
-            return true;
-        },
-        node: {
-            title: 'Distortion',
-            getValue: () => getPatch(currentPatchId).floats[fId.distortion].toString(),
-            unit: '%',
-        },
-    },
+    percentageEncoder(fId.distortion, 'Distortion'),
     {
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);

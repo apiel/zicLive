@@ -5,8 +5,6 @@ import { drawText } from 'zic_node_ui';
 import { color, font } from '../../style';
 import { graphRect } from '../graphRect';
 import { drawEnvelope } from '../../draw/drawEnvelope';
-import { minmax } from '../../util';
-import { shiftPressed } from '../../midi';
 import { adsrEncoders } from '../encoders';
 
 const fId = SynthDualOsc.FloatId;
@@ -50,7 +48,12 @@ export const synthEnv = {
                   ],
         );
 
-        drawText('Envelope', { x: 350, y: 10 }, { size: 14, color: color.info, font: font.bold });
+        const rect = drawText('Envelope', { x: 350, y: 10 }, { size: 14, color: color.info, font: font.bold });
+        drawText(
+            '1 / 2',
+            { x: rect.position.x + rect.size.w + 5, y: 12 },
+            { size: 11, color: color.white, font: font.regular },
+        );
     },
     encoders,
 };

@@ -1,7 +1,7 @@
 {
-  "id": 0,
+  "id": 800,
+  "isModified": true,
   "name": "Kick23",
-  "cc": {},
   "floats": {
     "0": 1,
     "1": 12,
@@ -30,5 +30,14 @@
   },
   "strings": {
     "0": "./data/wavetables/0_test.wav"
-  }
+  },
+  "cc": {},
+  "engine": {
+    "path": "./data/patches/kick23",
+    "idStart": 800,
+    "idEnd": 899,
+    "initName": "Init Kick23",
+    "name": "kick23"
+  },
+  "filename": "000.json"
 }

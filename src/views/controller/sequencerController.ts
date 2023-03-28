@@ -3,7 +3,7 @@ import { MidiMsg, midiOutController, MIDI_TYPE } from '../../midi';
 import { akaiApcKey25 } from '../../midi/akaiApcKey25';
 import { getSequence, sequences, setSelectedSequenceId, toggleSequence } from '../../sequence';
 import { getTrackStyle } from '../../track';
-import { sequencerView } from '../sequencer.view';
+import { sequencerView } from '../sequencer/sequencer.view';
 
 // prettier-ignore
 export const padSeq = [

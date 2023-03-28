@@ -16,6 +16,7 @@ import {
 } from '../controller/sequencerController';
 import { patchController, patchPadMidiHandler } from '../controller/patchController';
 import { pageMidiHandler } from '../controller/pageController';
+import { patchMenu, patchMenuHandler } from './patch.menu';
 
 export function getPatchView() {
     const patch = getPatch(currentPatchId);
@@ -55,10 +56,17 @@ export async function patchView({ controllerRendering }: RenderOptions = {}) {
 
     header();
 
+    patchMenu();
+    
     renderMessage();
 }
 
 export async function patchMidiHandler(midiMsg: MidiMsg) {
+    const menuStatus = await patchMenuHandler(midiMsg);
+    if (menuStatus !== false) {
+        return menuStatus !== undefined;
+    }
+
     if (viewPadPressed && (await sequencePlayStopMidiHandler(midiMsg))) {
         return true;
     }

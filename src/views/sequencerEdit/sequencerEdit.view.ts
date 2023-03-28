@@ -4,7 +4,7 @@ import { encodersHandler, encodersView } from '../../layout/encoders.layout';
 import { cleanPadMatrix, MidiMsg, midiOutController, MIDI_TYPE, shiftPressed } from '../../midi';
 import { akaiApcKey25 } from '../../midi/akaiApcKey25';
 import { sequenceEditHeader } from '../../nodes/sequenceEditHeader.node';
-import { sequenceMenuHandler, sequencerMenuNode } from '../../nodes/sequenceMenu.node';
+import { sequenceMenuHandler, sequencerMenu } from './sequencerEdit.menu';
 import { getSelectedSequence, initPattern } from '../../sequence';
 import { getTrackStyle } from '../../track';
 import { RenderOptions, viewPadPressed } from '../../view';
@@ -53,7 +53,7 @@ export async function sequencerEditView({ controllerRendering }: RenderOptions =
         encodersView(patternEncoders);
         sequenceEditHeader(currentStep);
     }
-    sequencerMenuNode();
+    sequencerMenu();
 
     renderMessage();
 }

@@ -81,7 +81,6 @@ export class Patch {
             return;
         }
         const patch = JSON.parse((await readFile(patchFile)).toString());
-        patch.id += this.engine.idStart;
         this.isModified = true;
         Object.assign(this, patch);
         setPatch(patch);

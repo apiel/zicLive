@@ -1,13 +1,13 @@
 import { clear, drawFilledRect, Rect, setColor } from 'zic_node_ui';
-import { config } from '../config';
-import { color, unit } from '../style';
-import { sequences } from '../sequence';
-import { RenderOptions } from '../view';
-import { renderMessage } from '../draw/drawMessage';
-import { getTrackStyle } from '../track';
-import { sequenceNode } from '../nodes/sequence.node';
-import { MidiMsg } from '../midi';
-import { sequencerController, sequencePlayStopMidiHandler, bankController } from './controller/sequencerController';
+import { config } from '../../config';
+import { color, unit } from '../../style';
+import { sequences } from '../../sequence';
+import { RenderOptions } from '../../view';
+import { renderMessage } from '../../draw/drawMessage';
+import { getTrackStyle } from '../../track';
+import { sequenceNode } from '../../nodes/sequence.node';
+import { MidiMsg } from '../../midi';
+import { sequencerController, sequencePlayStopMidiHandler, bankController } from '../controller/sequencerController';
 
 const { margin } = unit;
 const height = config.screen.size.h / config.sequence.row;

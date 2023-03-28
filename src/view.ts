@@ -7,7 +7,6 @@ import { sequencerEditMidiHandler, sequencerEditView } from './views/sequencerEd
 import { View } from './def';
 import { MidiMsg, MIDI_TYPE } from './midi';
 import { akaiApcKey25 } from './midi/akaiApcKey25';
-import { sequencerPatternMidiHandler, sequencerPatternView } from './views/sequencerPattern.view';
 import { patchEventHandlerBak, patchViewBak } from './views/patch2.view';
 
 let view: View = View.Sequencer;
@@ -33,8 +32,6 @@ export const renderView = (options: RenderOptions = {}) => {
             return sequencerView(options);
         case View.SequencerEdit:
             return sequencerEditView(options);
-        case View.SequencerPattern:
-            return sequencerPatternView(options);
         case View.Patch:
             return patchView(options);
         case View.PatchBak:
@@ -72,13 +69,9 @@ export async function viewMidiHandler(midiMsg: MidiMsg) {
                 return true;
             case akaiApcKey25.pad.recArm:
                 viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
-                setView(View.SequencerPattern);
-                return true;
-            case akaiApcKey25.pad.mute:
-                viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
                 setView(View.Patch);
                 return true;
-            case akaiApcKey25.pad.solo:
+            case akaiApcKey25.pad.mute:
                 viewPadPressed = midiMsg.message[0] === MIDI_TYPE.KEY_PRESSED;
                 setView(View.Master);
                 return true;
@@ -90,8 +83,6 @@ export async function viewMidiHandler(midiMsg: MidiMsg) {
             return sequencerMidiHandler(midiMsg);
         case View.SequencerEdit:
             return sequencerEditMidiHandler(midiMsg);
-        case View.SequencerPattern:
-            return sequencerPatternMidiHandler(midiMsg);
         case View.Patch:
             return patchMidiHandler(midiMsg);
         // case View.Master:

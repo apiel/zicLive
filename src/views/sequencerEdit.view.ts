@@ -7,7 +7,7 @@ import {
     sequencePlayStopMidiHandler,
     bankController,
 } from './controller/sequencerController';
-import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId } from '../sequence';
+import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId, initPattern } from '../sequence';
 import { getTrack, getTrackCount, getTrackStyle } from '../track';
 import { minmax } from '../util';
 import { forceSelectedItem } from '../selector';
@@ -15,25 +15,10 @@ import { View } from '../def';
 import { EncoderData, Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
 import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
+import { pageMidiHandler } from './controller/pageController';
+import { changePage, currentStep, patternController, patternEncoders, patternMidiHandler, sequenceEncoder } from './sequencerPattern.view';
 
-export const sequenceEncoder: EncoderData = {
-    node: {
-        title: 'Sequence',
-        getValue: () => {
-            const { id, trackId } = getSelectedSequence();
-            return {
-                value: `#${`${id + 1}`.padStart(3, '0')}`,
-                valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
-            };
-        },
-    },
-    handler: async (direction) => {
-        const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
-        setSelectedSequenceId(id);
-        forceSelectedItem(View.Sequencer, id);
-        return true;
-    },
-};
+
 
 export const isDisabled = () => {
     const sequence = getSelectedSequence();
@@ -132,12 +117,21 @@ const encoders: Encoders = [
 
 export async function sequencerEditView({ controllerRendering }: RenderOptions = {}) {
     if (controllerRendering) {
-        sequencerController();
-        bankController();
+        if (viewPadPressed) {
+            sequencerController();
+            bankController();
+        } else {
+            patternController();
+        }
     }
 
-    encodersView(encoders);
-    sequenceEditHeader();
+    if (currentStep === -1) {
+        encodersView(encoders);
+        sequenceEditHeader();
+    } else {
+        encodersView(patternEncoders);
+        sequenceEditHeader(currentStep);
+    }
     sequencerMenuNode();
 
     renderMessage();
@@ -149,13 +143,23 @@ export async function sequencerEditMidiHandler(midiMsg: MidiMsg) {
         return menuStatus !== undefined;
     }
 
-    if (viewPadPressed && (await sequencePlayStopMidiHandler(midiMsg))) {
+    if (pageMidiHandler(midiMsg, changePage)) {
         return true;
     }
 
-    if (sequenceSelectMidiHandler(midiMsg)) {
+    if (viewPadPressed && sequenceSelectMidiHandler(midiMsg)) {
         return true;
     }
+    const result = patternMidiHandler(midiMsg);
 
-    return encodersHandler(encoders, midiMsg);
+    if (result) {
+        const sequence = getSelectedSequence();
+        if (sequence.trackId !== undefined) {
+            initPattern(sequence);
+        }
+    }
+
+    return result;
+
+    // return encodersHandler(encoders, midiMsg);
 }

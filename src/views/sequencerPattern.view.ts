@@ -3,21 +3,46 @@ import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { cleanPadMatrix, MidiMsg, midiOutController, MIDI_TYPE, shiftPressed } from '../midi';
 import { bankController, sequencerController, sequenceSelectMidiHandler } from './controller/sequencerController';
-import { getSelectedSequence, initPattern, Steps, STEP_CONDITIONS } from '../sequence';
+import { getSelectedSequence, getSelectedSequenceId, initPattern, sequences, setSelectedSequenceId, Steps, STEP_CONDITIONS } from '../sequence';
 import { minmax } from '../util';
-import { Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
+import { EncoderData, Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
 import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
-import { sequenceEncoder, isDisabled } from './sequencerEdit.view';
+import { isDisabled } from './sequencerEdit.view';
 import { NOTE_END, NOTE_START, sendMidiMessage } from 'zic_node';
 import { getTrack, getTrackStyle } from '../track';
 import { config } from '../config';
 import { getPatch } from '../patch';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
 import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
-
-let currentStep = 0;
+import { forceSelectedItem } from '../selector';
+import { View } from '../def';
 
 // TODO for note encoder, debounce only rendering but not change...
+
+export let currentStep = -1;
+export function changePage(direction: number) {
+    const { stepCount } = getSelectedSequence();
+    currentStep = minmax(currentStep + direction, -1, stepCount - 1); // - 1 is the main page
+}
+
+export const sequenceEncoder: EncoderData = {
+    node: {
+        title: 'Sequence',
+        getValue: () => {
+            const { id, trackId } = getSelectedSequence();
+            return {
+                value: `#${`${id + 1}`.padStart(3, '0')}`,
+                valueColor: trackId === undefined ? undefined : getTrackStyle(trackId).color,
+            };
+        },
+    },
+    handler: async (direction) => {
+        const id = minmax(getSelectedSequenceId() + direction, 0, sequences.length - 1);
+        setSelectedSequenceId(id);
+        forceSelectedItem(View.Sequencer, id);
+        return true;
+    },
+};
 
 function initNote(steps: Steps, trackId: number) {
     const previousStep = steps
@@ -35,7 +60,7 @@ function initNote(steps: Steps, trackId: number) {
     };
 }
 
-const encoders: Encoders = [
+export const patternEncoders: Encoders = [
     {
         ...sequenceEncoder,
         handler: (direction) => {
@@ -187,7 +212,7 @@ const encoders: Encoders = [
     undefined,
 ];
 
-function patternController() {
+export function patternController() {
     if (midiOutController !== undefined) {
         const { steps, trackId, stepCount } = getSelectedSequence();
         cleanPadMatrix();
@@ -206,26 +231,7 @@ function patternController() {
     }
 }
 
-export async function sequencerPatternView({ controllerRendering }: RenderOptions = {}) {
-    // TODO implement init option to reset currentStep
-
-    if (controllerRendering) {
-        if (viewPadPressed) {
-            sequencerController();
-            bankController();
-        } else {
-            patternController();
-        }
-    }
-
-    encodersView(encoders);
-    sequenceEditHeader(currentStep);
-    sequencerMenuNode();
-
-    renderMessage();
-}
-
-function midiHandler(midiMsg: MidiMsg) {
+export function patternMidiHandler(midiMsg: MidiMsg) {
     const [type, key, value] = midiMsg.message;
     if (midiMsg.isController) {
         if (type === MIDI_TYPE.KEY_RELEASED) {
@@ -260,26 +266,5 @@ function midiHandler(midiMsg: MidiMsg) {
         }
     }
 
-    return encodersHandler(encoders, midiMsg);
-}
-
-export async function sequencerPatternMidiHandler(midiMsg: MidiMsg) {
-    const menuStatus = await sequenceMenuHandler(midiMsg);
-    if (menuStatus !== false) {
-        return menuStatus !== undefined;
-    }
-
-    if (viewPadPressed && sequenceSelectMidiHandler(midiMsg)) {
-        return true;
-    }
-    const result = midiHandler(midiMsg);
-
-    if (result) {
-        const sequence = getSelectedSequence();
-        if (sequence.trackId !== undefined) {
-            initPattern(sequence);
-        }
-    }
-
-    return result;
+    return encodersHandler(patternEncoders, midiMsg);
 }

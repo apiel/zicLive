@@ -15,6 +15,7 @@ import {
     bankController,
 } from './controller/sequencerController';
 import { patchController, patchPadMidiHandler } from './controller/patchController';
+import { pageMidiHandler } from './controller/pageController';
 
 export function getPatchView() {
     const patch = getPatch(currentPatchId);
@@ -70,23 +71,10 @@ export async function patchMidiHandler(midiMsg: MidiMsg) {
     if (!view) {
         return false;
     }
-    if (midiMsg.isController) {
-        switch (midiMsg.message[1]) {
-            case akaiApcKey25.pad.down: {
-                if (midiMsg.message[0] === MIDI_TYPE.KEY_RELEASED) {
-                    view.changeView(+1);
-                    return true;
-                }
-                return false;
-            }
-            case akaiApcKey25.pad.up: {
-                if (midiMsg.message[0] === MIDI_TYPE.KEY_RELEASED) {
-                    view.changeView(-1);
-                    return true;
-                }
-                return false;
-            }
-        }
+
+    if (pageMidiHandler(midiMsg, view.changeView.bind(view))) {
+        return true;
     }
+
     return encodersHandler(view.data.encoders, midiMsg);
 }

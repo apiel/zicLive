@@ -5,13 +5,14 @@ import { Kick23 } from 'zic_node';
 import { filterEncoders, patchEncoder, percentageEncoder, volumeEncoder } from '../encoders';
 import { shiftPressed } from '../../../midi';
 import { drawPatchTitle } from '../draw';
+import { color } from '../../../style';
 
 const fId = Kick23.FloatId;
 
 const encoders: Encoders = [
     patchEncoder,
     volumeEncoder(fId.Volume),
-    percentageEncoder(fId.distortion, 'Distortion'),
+    percentageEncoder(fId.distortion, 'Distortion', { bgColor: color.encoder[2] }),
     {
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
@@ -21,9 +22,10 @@ const encoders: Encoders = [
         node: {
             title: 'Distortion range',
             getValue: () => getPatch(currentPatchId).floats[fId.distortionRange].toString(),
+            bgColor: color.encoder[2],
         },
     },
-    ...filterEncoders(fId.filterCutoff, fId.filterResonance),
+    ...filterEncoders(fId.filterCutoff, fId.filterResonance, { bgColor: color.encoder[1] }),
     {
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
@@ -35,9 +37,9 @@ const encoders: Encoders = [
         },
         node: {
             title: 'Duration',
-            getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),    
+            getValue: () => getPatch(currentPatchId).floats[fId.Duration].toString(),
             unit: 'ms (t)',
-        }
+        },
     },
     undefined,
 ];

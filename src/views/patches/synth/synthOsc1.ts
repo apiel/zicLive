@@ -5,6 +5,7 @@ import { drawWavetable } from '../../../draw/drawWavetable';
 import { drawSubTitle, graphRect } from '../draw';
 import { amplitudeEncoder, wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
+import { color } from '../../../style';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;
@@ -12,7 +13,9 @@ const sId = SynthDualOsc.StringId;
 const patchWavetable = new PatchWavetable(sId.oscWavetable, fId.OscMorph);
 
 const encoders: Encoders = [
-    ...wavetableEncoders(sId.oscWavetable, fId.OscMorph, fId.OscFrequency, patchWavetable),
+    ...wavetableEncoders(sId.oscWavetable, fId.OscMorph, fId.OscFrequency, patchWavetable, {
+        bgColor: color.encoder[2],
+    }),
     undefined,
     amplitudeEncoder(fId.OscAmplitude),
     undefined,

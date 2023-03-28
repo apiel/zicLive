@@ -70,7 +70,7 @@ export const onOffEncoder = (
 export const volumeEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData =>
     percentageEncoder(fId, `Volume`, { isDisabled });
 
-export const filterCutoffEncoder = (fId: number): EncoderData => ({
+export const filterCutoffEncoder = (fId: number, { isDisabled, bgColor }: EncoderOptions = {}): EncoderData => ({
     handler: async (direction) => {
         const patch = getPatch(currentPatchId);
         patch.setNumber(fId, minmax(patch.floats[fId] + direction * (shiftPressed ? 100 : 10), 200, 8000));
@@ -80,16 +80,19 @@ export const filterCutoffEncoder = (fId: number): EncoderData => ({
         title: 'Filter Cutoff',
         getValue: () => getPatch(currentPatchId).floats[fId].toString(),
         unit: 'hz',
+        isDisabled,
+        bgColor,
     },
 });
 
-export const filterResonanceEncoder = (fId: number, isDisabled?: IsDisabled): EncoderData =>
-    percentageEncoder(fId, `Filter Resonance`, { isDisabled });
+export const filterResonanceEncoder = (fId: number, options: EncoderOptions = {}): EncoderData =>
+    percentageEncoder(fId, `Filter Resonance`, options);
 
-export const filterEncoders = (fIdCutoff: number, fIdResonance: number): Tuple<EncoderData, 2> => [
-    filterCutoffEncoder(fIdCutoff),
-    filterResonanceEncoder(fIdResonance),
-];
+export const filterEncoders = (
+    fIdCutoff: number,
+    fIdResonance: number,
+    options: EncoderOptions = {},
+): Tuple<EncoderData, 2> => [filterCutoffEncoder(fIdCutoff, options), filterResonanceEncoder(fIdResonance, options)];
 
 export const wavetableEncoder = (sId: number, { isDisabled, bgColor }: EncoderOptions = {}): EncoderData => ({
     handler: async (direction) => {

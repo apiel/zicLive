@@ -4,6 +4,7 @@ import { currentPatchId, getPatch } from '../../../patch';
 import { FilterMode, FilterNames, SynthDualOsc } from 'zic_node';
 import { filterEncoders, patchEncoder, volumeEncoder } from '../encoders';
 import { drawPatchTitle } from '../draw';
+import { color } from '../../../style';
 
 const fId = SynthDualOsc.FloatId;
 
@@ -12,7 +13,7 @@ const encoders: Encoders = [
     volumeEncoder(fId.Volume),
     undefined,
     undefined,
-    ...filterEncoders(fId.filterCutoff, fId.filterResonance),
+    ...filterEncoders(fId.filterCutoff, fId.filterResonance, { bgColor: color.encoder[1] }),
     {
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);
@@ -22,6 +23,7 @@ const encoders: Encoders = [
         node: {
             title: 'Filter Type',
             getValue: () => `${FilterNames[getPatch(currentPatchId).floats[fId.filterMode]]}`,
+            bgColor: color.encoder[1],
         },
     },
     undefined,

@@ -7,6 +7,7 @@ import { amplitudeEncoder, onOffEncoder, wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
 import { minmax } from '../../../util';
 import { shiftPressed } from '../../../midi';
+import { color } from '../../../style';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;
@@ -21,10 +22,10 @@ export const isDisabled = () => {
 
 const encoders: Encoders = [
     onOffEncoder(fId.osc2Active, 'Active'),
-    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable, isDisabled),
+    ...wavetableEncoders(sId.osc2Wavetable, fId.Osc2Morph, fId.Osc2Frequency, patchWavetable, { isDisabled, bgColor: color.encoder[2] }),
     amplitudeEncoder(fId.Osc2Amplitude, isDisabled),
     undefined,
-    onOffEncoder(fId.osc2FreqNoteOn, 'Freq NoteOn', isDisabled),
+    onOffEncoder(fId.osc2FreqNoteOn, 'Freq NoteOn', { isDisabled, bgColor: color.encoder[1] }),
     {
         node: {
             title: 'Mix',
@@ -33,6 +34,7 @@ const encoders: Encoders = [
                 return 'osc1                      osc2';
             },
             isDisabled,
+            bgColor: color.encoder[1],
         },
         handler: async (direction) => {
             const patch = getPatch(currentPatchId);

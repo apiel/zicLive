@@ -25,26 +25,28 @@ export interface EncoderValue {
     valueColor?: Color;
 }
 
-export interface EncoderDefault {
+interface EncoderBase {
     title: string;
+    isDisabled?: () => boolean;
+    bgColor?: Color;
+}
+
+export interface EncoderDefault extends EncoderBase {
     getValue: () => EncoderValue | string;
     unit?: string | (() => string);
     info?: string | (() => string);
-    isDisabled?: () => boolean;
 }
 
-export interface EncoderSlider {
-    title: string;
+export interface EncoderSlider extends EncoderBase {
     getSlider: () => number;
     info?: string | (() => string);
-    isDisabled?: () => boolean;
 }
 
 export type Encoder = EncoderDefault | EncoderSlider;
 
 export function encoderNode(index: number, encoder: Encoder | undefined) {
     const rect = getRect(index);
-    setColor(color.foreground);
+    setColor(encoder?.bgColor ?? color.encoder[0]);
     drawFilledRect(rect);
     if (encoder) {
         const { title } = encoder;
@@ -70,13 +72,13 @@ function encoderSlider(rect: Rect, { getSlider, info }: EncoderSlider) {
     const value = getSlider();
 
     setColor(color.info);
-    const sliderY = rect.position.y + (rect.size.h * 0.4);
+    const sliderY = rect.position.y + rect.size.h * 0.4;
     const x = rect.position.x + 5;
     const width = rect.size.w - 10;
 
     drawLine({ x, y: sliderY + 4 }, { x: x + width, y: sliderY + 4 });
     drawFilledRect({
-        position: { x: x + (width * value) - 2, y: sliderY },
+        position: { x: x + width * value - 2, y: sliderY },
         size: { w: 4, h: 8 },
     });
 

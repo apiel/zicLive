@@ -29,6 +29,11 @@ export const color = {
         },
         info: baseColor.info,
     },
+    encoder: [
+        baseColor.foreground,
+        rgb('#1d1e1f'),
+        rgb('#222324'),
+    ],
     graph: [
         rgb('#7ce793'),
         rgb('#d5198a'),

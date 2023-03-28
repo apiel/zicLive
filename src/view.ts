@@ -1,9 +1,9 @@
 import { Events } from 'zic_node_ui';
 import { eventMenu } from './events';
 import { masterEventHandler, masterView } from './views/master.view';
-import { patchMidiHandler, patchView } from './views/patch.view';
+import { patchMidiHandler, patchView } from './views/patches/patch.view';
 import { sequencerMidiHandler, sequencerView } from './views/sequencer.view';
-import { sequencerEditMidiHandler, sequencerEditView } from './views/sequencerEdit.view';
+import { sequencerEditMidiHandler, sequencerEditView } from './views/sequencerEdit/sequencerEdit.view';
 import { View } from './def';
 import { MidiMsg, MIDI_TYPE } from './midi';
 import { akaiApcKey25 } from './midi/akaiApcKey25';

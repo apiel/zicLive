@@ -1,7 +1,7 @@
 import { sendMidiMessage } from 'zic_node';
 import { MidiMsg, midiOutController, MIDI_TYPE } from '../../midi';
 import { akaiApcKey25 } from '../../midi/akaiApcKey25';
-import { getPatchView } from '../patch.view';
+import { getPatchView } from '../patches/patch.view';
 import { padBanks } from './sequencerController';
 
 export function patchController(count = 0, active = 0) {

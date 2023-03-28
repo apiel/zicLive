@@ -1,31 +1,15 @@
-import { RenderOptions, viewPadPressed } from '../view';
-import { renderMessage } from '../draw/drawMessage';
-import { MidiMsg } from '../midi';
-import {
-    sequencerController,
-    sequenceSelectMidiHandler,
-    sequencePlayStopMidiHandler,
-    bankController,
-} from './controller/sequencerController';
-import { sequences, getSelectedSequenceId, getSelectedSequence, setSelectedSequenceId, initPattern } from '../sequence';
-import { getTrack, getTrackCount, getTrackStyle } from '../track';
-import { minmax } from '../util';
-import { forceSelectedItem } from '../selector';
-import { View } from '../def';
-import { EncoderData, Encoders, encodersHandler, encodersView } from '../layout/encoders.layout';
-import { sequenceEditHeader } from '../nodes/sequenceEditHeader.node';
-import { sequenceMenuHandler, sequencerMenuNode } from '../nodes/sequenceMenu.node';
-import { pageMidiHandler } from './controller/pageController';
-import { changePage, currentStep, patternController, patternEncoders, patternMidiHandler, sequenceEncoder } from './sequencerPattern.view';
-
-
+import { Encoders } from '../../../layout/encoders.layout';
+import { getSelectedSequence, getSelectedSequenceId, sequences } from '../../../sequence';
+import { getTrack, getTrackCount } from '../../../track';
+import { minmax } from '../../../util';
+import { sequenceEncoder } from './sequenceEncoder';
 
 export const isDisabled = () => {
     const sequence = getSelectedSequence();
     return sequence.trackId === undefined;
 };
 
-const encoders: Encoders = [
+export const mainEncoders: Encoders = [
     sequenceEncoder,
     {
         node: {
@@ -114,52 +98,3 @@ const encoders: Encoders = [
     },
     undefined,
 ];
-
-export async function sequencerEditView({ controllerRendering }: RenderOptions = {}) {
-    if (controllerRendering) {
-        if (viewPadPressed) {
-            sequencerController();
-            bankController();
-        } else {
-            patternController();
-        }
-    }
-
-    if (currentStep === -1) {
-        encodersView(encoders);
-        sequenceEditHeader();
-    } else {
-        encodersView(patternEncoders);
-        sequenceEditHeader(currentStep);
-    }
-    sequencerMenuNode();
-
-    renderMessage();
-}
-
-export async function sequencerEditMidiHandler(midiMsg: MidiMsg) {
-    const menuStatus = await sequenceMenuHandler(midiMsg);
-    if (menuStatus !== false) {
-        return menuStatus !== undefined;
-    }
-
-    if (pageMidiHandler(midiMsg, changePage)) {
-        return true;
-    }
-
-    if (viewPadPressed && sequenceSelectMidiHandler(midiMsg)) {
-        return true;
-    }
-    const result = patternMidiHandler(midiMsg);
-
-    if (result) {
-        const sequence = getSelectedSequence();
-        if (sequence.trackId !== undefined) {
-            initPattern(sequence);
-        }
-    }
-
-    return result;
-
-    // return encodersHandler(encoders, midiMsg);
-}

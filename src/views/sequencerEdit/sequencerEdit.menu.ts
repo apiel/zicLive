@@ -6,7 +6,7 @@ import { menuHandler, menuNode } from '../../nodes/menu.node';
 const menuItems = [
     {
         text: 'Save',
-        // FIXME to: 
+        // FIXME to:
         // handler: withSuccess('Sequences saved', () => saveSequence(getSelectedSequence())),
         handler: () => withSuccess('Sequences saved', () => saveSequence(getSelectedSequence()))(),
     },
@@ -14,6 +14,8 @@ const menuItems = [
         text: 'Reload',
         handler: () => withInfo('Sequence loaded', () => loadSequence(getSelectedSequenceId()))(),
     },
+    // save as
+    // vs copy / paste
 ];
 
 export function sequencerMenu() {

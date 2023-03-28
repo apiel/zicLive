@@ -1,4 +1,4 @@
-import { Encoders } from '../../layout/encoders.layout';
+import { Encoders } from '../../../layout/encoders.layout';
 import { SynthDualOsc } from 'zic_node';
 import { percentageEncoder } from '../encoders';
 import { header } from './synthEnv';

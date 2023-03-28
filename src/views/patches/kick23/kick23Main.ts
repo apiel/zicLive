@@ -1,9 +1,9 @@
-import { minmax } from '../../util';
-import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch } from '../../patch';
+import { minmax } from '../../../util';
+import { Encoders } from '../../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../../patch';
 import { Kick23 } from 'zic_node';
 import { filterEncoders, patchEncoder, percentageEncoder, volumeEncoder } from '../encoders';
-import { shiftPressed } from '../../midi';
+import { shiftPressed } from '../../../midi';
 import { drawPatchTitle } from '../draw';
 
 const fId = Kick23.FloatId;

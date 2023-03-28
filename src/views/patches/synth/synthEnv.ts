@@ -1,9 +1,9 @@
-import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch } from '../../patch';
+import { Encoders } from '../../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../../patch';
 import { SynthDualOsc } from 'zic_node';
-import { color } from '../../style';
+import { color } from '../../../style';
 import { drawSubTitle, graphRect, withPage } from '../draw';
-import { drawEnvelope } from '../../draw/drawEnvelope';
+import { drawEnvelope } from '../../../draw/drawEnvelope';
 import { adsrEncoders } from '../encoders';
 
 const fId = SynthDualOsc.FloatId;

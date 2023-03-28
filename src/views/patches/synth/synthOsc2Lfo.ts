@@ -1,12 +1,12 @@
-import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch } from '../../patch';
+import { Encoders } from '../../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../../patch';
 import { SynthDualOsc } from 'zic_node';
-import { drawWavetable } from '../../draw/drawWavetable';
+import { drawWavetable } from '../../../draw/drawWavetable';
 import { drawSubTitle, graphRect, withPage } from '../draw';
 import { amplitudeEncoder, onOffEncoder, wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';
-import { minmax } from '../../util';
-import { shiftPressed } from '../../midi';
+import { minmax } from '../../../util';
+import { shiftPressed } from '../../../midi';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;

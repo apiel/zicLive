@@ -1,5 +1,5 @@
 import { getWavetable, Wavetable } from 'zic_node';
-import { Patch } from '../patch';
+import { Patch } from '../../patch';
 
 export class PatchWavetable {
     wavetable!: Wavetable;

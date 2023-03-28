@@ -1,15 +1,15 @@
 import path from 'path';
 import { getWavetable, SynthDualOsc, Wavetable, FilterNames, FilterMode } from 'zic_node';
-import { getNextWaveTable } from '../helpers/getNextWavetable';
-import { Patch } from '../patch';
-import { minmax } from '../util';
-import { config } from '../config';
-import { drawWavetable2 } from '../draw/drawWavetable';
-import { drawField, drawFieldDual } from '../draw/drawField';
-import { drawEnvelope2 } from '../draw/drawEnvelope';
-import { rowGetAndAdd, rowGet, rowNext } from '../draw/rowNext';
-import { drawSeparator } from '../draw/drawSeparator';
-import { drawSliderField } from '../draw/drawSlider';
+import { getNextWaveTable } from '../../helpers/getNextWavetable';
+import { Patch } from '../../patch';
+import { minmax } from '../../util';
+import { config } from '../../config';
+import { drawWavetable2 } from '../../draw/drawWavetable';
+import { drawField, drawFieldDual } from '../../draw/drawField';
+import { drawEnvelope2 } from '../../draw/drawEnvelope';
+import { rowGetAndAdd, rowGet, rowNext } from '../../draw/rowNext';
+import { drawSeparator } from '../../draw/drawSeparator';
+import { drawSliderField } from '../../draw/drawSlider';
 
 const fId = SynthDualOsc.FloatId;
 const sId = SynthDualOsc.StringId;

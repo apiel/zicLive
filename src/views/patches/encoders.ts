@@ -1,12 +1,12 @@
 import path from 'path';
 import { Color } from 'zic_node_ui';
-import { getNextWaveTable } from '../helpers/getNextWavetable';
-import { Tuple } from '../interface';
-import { EncoderData } from '../layout/encoders.layout';
-import { shiftPressed } from '../midi';
-import { currentPatchId, getPatch, setCurrentPatchId } from '../patch';
-import { color } from '../style';
-import { minmax } from '../util';
+import { getNextWaveTable } from '../../helpers/getNextWavetable';
+import { Tuple } from '../../interface';
+import { EncoderData } from '../../layout/encoders.layout';
+import { shiftPressed } from '../../midi';
+import { currentPatchId, getPatch, setCurrentPatchId } from '../../patch';
+import { color } from '../../style';
+import { minmax } from '../../util';
 import { PatchWavetable } from './PatchWavetable';
 
 export const patchEncoder: EncoderData = {

@@ -1,7 +1,7 @@
-import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch } from '../../patch';
+import { Encoders } from '../../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../../patch';
 import { SynthDualOsc } from 'zic_node';
-import { drawWavetable } from '../../draw/drawWavetable';
+import { drawWavetable } from '../../../draw/drawWavetable';
 import { drawSubTitle, graphRect, withPage } from '../draw';
 import { PatchWavetable } from '../PatchWavetable';
 import { isDisabled } from './synthOsc2Lfo';

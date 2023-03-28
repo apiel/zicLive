@@ -1,6 +1,6 @@
 import { drawText, Rect } from 'zic_node_ui';
-import { config } from '../config';
-import { color, font } from '../style';
+import { config } from '../../config';
+import { color, font } from '../../style';
 
 export const graphRect = { position: { x: 10, y: 10 }, size: { w: config.screen.size.w - 20, h: 70 } };
 

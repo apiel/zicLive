@@ -1,7 +1,7 @@
-import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch } from '../../patch';
+import { Encoders } from '../../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../../patch';
 import { Kick23 } from 'zic_node';
-import { drawWavetable } from '../../draw/drawWavetable';
+import { drawWavetable } from '../../../draw/drawWavetable';
 import { drawSubTitle, graphRect } from '../draw';
 import { wavetableEncoders } from '../encoders';
 import { PatchWavetable } from '../PatchWavetable';

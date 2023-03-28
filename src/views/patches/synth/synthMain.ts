@@ -1,6 +1,6 @@
-import { minmax } from '../../util';
-import { Encoders } from '../../layout/encoders.layout';
-import { currentPatchId, getPatch } from '../../patch';
+import { minmax } from '../../../util';
+import { Encoders } from '../../../layout/encoders.layout';
+import { currentPatchId, getPatch } from '../../../patch';
 import { FilterMode, FilterNames, SynthDualOsc } from 'zic_node';
 import { filterEncoders, patchEncoder, volumeEncoder } from '../encoders';
 import { drawPatchTitle } from '../draw';

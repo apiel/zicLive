@@ -2,7 +2,7 @@ import { clear, drawText, Events } from 'zic_node_ui';
 import { currentPatchId, getPatch, savePatchAs, setCurrentPatchId } from '../patch';
 import { getSelectedSequence } from '../sequence';
 import { color } from '../style';
-import synth from '../patches/synth.bak';
+import synth from './patches/synth.bak';
 import { eventEdit, eventSelector, getEditMode } from '../events';
 import { cleanSelectableItems } from '../selector';
 import { config } from '../config';

@@ -1,13 +1,13 @@
 import { clear, drawText } from 'zic_node_ui';
 import { currentPatchId, getPatch } from '../patch';
 import { color } from '../style';
-import { kick23 } from '../patches/kick23';
+import { kick23 } from './patches/kick23';
 import { RenderOptions, viewPadPressed } from '../view';
 import { renderMessage } from '../draw/drawMessage';
 import { encodersHandler, encodersView } from '../layout/encoders.layout';
 import { MidiMsg, MIDI_TYPE } from '../midi';
 import { akaiApcKey25 } from '../midi/akaiApcKey25';
-import { synth } from '../patches/synth';
+import { synth } from './patches/synth';
 import {
     sequencerController,
     sequenceSelectMidiHandler,

@@ -1,6 +1,6 @@
-import { Encoders } from '../layout/encoders.layout';
-import { currentPatchId } from '../patch';
-import { minmax } from '../util';
+import { Encoders } from '../../layout/encoders.layout';
+import { currentPatchId } from '../../patch';
+import { minmax } from '../../util';
 
 // TODO when pressing patch view button several time switch between views
 // TODO long press patch view button to allow to select a different patch

@@ -6,7 +6,7 @@ import { fileExist, minmax } from './util';
 
 export let currentPatchId = 0;
 export function setCurrentPatchId(id: number) {
-    currentPatchId = minmax(0, PATCH_COUNT - 1, id);
+    currentPatchId = minmax(id, 0, PATCH_COUNT - 1);
 }
 
 const sortedEngine = Object.values(config.engines)
@@ -76,8 +76,11 @@ export class Patch {
         const patchFile = `${this.engine.path}/${this.filename}`;
         if (!(await fileExist(patchFile))) {
             this.isModified = false;
-            this.name = this.engine.initName;
             // TODO might want to assign default patch
+            // right now get the first patch from the engine
+            this.set(getPatch(this.engine.idStart));
+            this.name = this.engine.initName;
+
             return;
         }
         const patch = JSON.parse((await readFile(patchFile)).toString());

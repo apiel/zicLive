@@ -16,7 +16,9 @@ export const patchEncoder: EncoderData = {
         unit: () => getPatch(currentPatchId).name,
     },
     handler: async (direction) => {
-        setCurrentPatchId(currentPatchId + direction);
+        setCurrentPatchId(
+            currentPatchId + direction * (shiftPressed ? ([1,-1].includes(direction) ? 10 : 50) : 1),
+        );
         return true;
     },
 };

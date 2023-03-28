@@ -12,6 +12,8 @@ const menuItems = [
         text: 'Reload',
         handler: () => withInfo('Patch loaded', () => getPatch(currentPatchId).load())(),
     },
+    // save as
+    // vs copy / paste
 ];
 
 export function patchMenu() {

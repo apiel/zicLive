@@ -78,9 +78,10 @@ export async function sequencerEditMidiHandler(midiMsg: MidiMsg) {
         if (sequence.trackId !== undefined) {
             initPattern(sequence);
         }
+        return true;
     }
 
-    return result;
+    return encodersHandler(currentStep === -1 ? mainEncoders : patternEncoders, midiMsg);
 }
 
 function patternMidiHandler(midiMsg: MidiMsg) {
@@ -118,5 +119,5 @@ function patternMidiHandler(midiMsg: MidiMsg) {
         }
     }
 
-    return encodersHandler(patternEncoders, midiMsg);
+    return false;
 }

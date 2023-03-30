@@ -157,7 +157,7 @@ export const patternEncoders: Encoders = [
         },
         handler: async (direction) => {
             const { steps } = getSelectedSequence();
-            const step = steps[currentStep][0];
+            const step = steps[currentStep]?.[0];
             if (step) {
                 step.condition = minmax((step?.condition || 0) + direction, 0, STEP_CONDITIONS.length - 1);
                 return true;
